@@ -1,0 +1,25 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3B82F6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#1E40AF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle with gradient -->
+  <circle cx="256" cy="256" r="256" fill="url(#bgGradient)"/>
+  
+  <!-- White circular background for logo -->
+  <circle cx="256" cy="256" r="200" fill="white" opacity="0.95"/>
+  
+  <!-- Main N letter -->
+  <path d="M160 180 L160 332 L190 332 L190 248 L322 332 L352 332 L352 180 L322 180 L322 264 L190 180 L160 180 Z" fill="url(#bgGradient)"/>
+  
+  <!-- Decorative dots -->
+  <circle cx="200" cy="380" r="8" fill="#F59E0B"/>
+  <circle cx="312" cy="380" r="8" fill="#EF4444"/>
+  <circle cx="256" cy="395" r="6" fill="#10B981"/>
+  
+  <!-- Subtle shadow under N -->
+  <path d="M165 185 L165 337 L195 337 L195 253 L327 337 L357 337 L357 185 L327 185 L327 269 L195 185 L165 185 Z" fill="black" opacity="0.1"/>
+</svg>

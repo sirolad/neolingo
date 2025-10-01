@@ -3,11 +3,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --btn-primary-bg: #2563EB;
+  --btn-primary-text: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-btn-primary-bg: var(--btn-primary-bg);
+  --color-btn-primary-text: var(--btn-primary-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -16,6 +20,8 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --btn-primary-bg: #2563EB;
+    --btn-primary-text: #ffffff;
   }
 }
 
@@ -23,4 +29,34 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Font fallbacks for design system fonts */
+.font-\[Parkinsans\] {
+  font-family: 'Parkinsans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.font-\[Metropolis\] {
+  font-family: 'Metropolis', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+/* Override for buttons to ensure text is visible */
+.btn-primary {
+  background-color: var(--btn-primary-bg) !important;
+  color: var(--btn-primary-text) !important;
+  border: none !important;
+}
+
+.btn-primary * {
+  color: var(--btn-primary-text) !important;
+}
+
+.btn-primary:hover {
+  background-color: #1D4ED8 !important;
+  color: var(--btn-primary-text) !important;
+}
+
+.btn-primary:focus {
+  background-color: #1D4ED8 !important;
+  color: var(--btn-primary-text) !important;
 }

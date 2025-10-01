@@ -1,0 +1,87 @@
+{
+  "name": "Neolingo - Yoruba Language Learning",
+  "short_name": "Neolingo",
+  "description": "A collaborative platform for learning and expanding the Yoruba language dictionary",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["education", "productivity", "social"],
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Make Suggestion",
+      "short_name": "Suggest",
+      "description": "Suggest a new Yoruba word",
+      "url": "/suggest",
+      "icons": [
+        {
+          "src": "/icons/icon.svg",
+          "sizes": "any"
+        }
+      ]
+    },
+    {
+      "name": "Vote on Words",
+      "short_name": "Vote",
+      "description": "Vote for the best word suggestions",
+      "url": "/vote",
+      "icons": [
+        {
+          "src": "/icons/icon.svg",
+          "sizes": "any"
+        }
+      ]
+    },
+    {
+      "name": "Dictionary",
+      "short_name": "Dictionary",
+      "description": "Browse the Yoruba dictionary",
+      "url": "/dictionary",
+      "icons": [
+        {
+          "src": "/icons/icon.svg",
+          "sizes": "any"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/desktop-home.png",
+      "sizes": "1280x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Neolingo home screen on desktop"
+    },
+    {
+      "src": "/screenshots/mobile-home.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Neolingo home screen on mobile"
+    }
+  ]
+}
