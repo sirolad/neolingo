@@ -14,10 +14,10 @@ export default function Onboarding1() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
+    <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
       
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-6 md:px-8 lg:px-12 pt-16 md:pt-20 lg:pt-24 pb-6 md:pb-8 lg:pb-10">
+      <div className="flex-1 flex flex-col px-6 md:px-8 lg:px-12 py-6 md:py-8 lg:py-10">
         
         {/* Container for responsive layout */}
         <div className="flex-1 flex flex-col lg:flex-row lg:items-center lg:justify-between max-w-7xl mx-auto w-full">

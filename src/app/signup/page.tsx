@@ -84,9 +84,9 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
+    <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-6 pt-12 pb-6">
+      <div className="flex-1 flex flex-col px-6 py-6">
         <div className="flex-1 flex flex-col justify-center">
           
           {/* Content Card */}

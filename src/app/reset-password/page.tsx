@@ -104,9 +104,9 @@ export default function ResetPasswordPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
+      <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
         {/* Back Button */}
-        <div className="px-5 py-3">
+        <div className="px-5 py-3 flex-shrink-0">
           <Link
             href="/signin"
             className="inline-flex items-center justify-center w-[34px] h-[34px] rounded-lg hover:bg-gray-100 transition-colors"
@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
         </div>
 
         {/* Content Card */}
-        <div className="flex-1 flex flex-col justify-center px-5 py-8 sm:py-12">
+        <div className="flex-1 flex flex-col justify-center px-5 py-6">
           <div className="w-full max-w-md mx-auto sm:max-w-lg lg:max-w-xl">
             <div className="bg-white rounded-[20px] border border-[#EFEFEF] px-4 py-6 sm:px-6 lg:px-8 text-center">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -169,8 +169,8 @@ export default function ResetPasswordPage() {
   // Success screen (Reset Password 6)
   if (step === "success") {
     return (
-      <div className="min-h-screen bg-[#F4F4F4] flex flex-col justify-center items-center px-5 py-12">
-        <div className="w-full max-w-md mx-auto text-center">
+      <div className="h-screen bg-[#F4F4F4] flex flex-col justify-center items-center px-5 py-6 overflow-hidden">
+        <div className="w-full max-w-md mx-auto text-center flex-1 flex flex-col justify-center">
           {/* Success Icon - simplified representation of the Figma illustration */}
           <div className="mb-11">
             <div className="w-[300px] h-[310px] mx-auto mb-8 relative">
@@ -210,9 +210,9 @@ export default function ResetPasswordPage() {
   // New password screen (Reset Password 5)
   if (step === "newPassword") {
     return (
-      <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
+      <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
         {/* Back Button */}
-        <div className="px-5 py-3">
+        <div className="px-5 py-3 flex-shrink-0">
           <button
             onClick={() => setStep("email")}
             className="inline-flex items-center justify-center w-[34px] h-[34px] rounded-lg hover:bg-gray-100 transition-colors"
@@ -222,7 +222,7 @@ export default function ResetPasswordPage() {
         </div>
 
         {/* Content Container */}
-        <div className="flex-1 flex flex-col justify-center px-5 py-8 sm:py-12">
+        <div className="flex-1 flex flex-col justify-center px-5 py-6">
           <div className="w-full max-w-md mx-auto sm:max-w-lg lg:max-w-xl">
             <div className="bg-white rounded-[20px] border border-[#EFEFEF] px-4 py-6 sm:px-6 lg:px-8">
               {/* Header */}
@@ -342,9 +342,9 @@ export default function ResetPasswordPage() {
 
   // Email step (Reset Password 1) - default
   return (
-    <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
+    <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
       {/* Back Button */}
-      <div className="px-5 py-3">
+      <div className="px-5 py-3 flex-shrink-0">
         <Link
           href="/signin"
           className="inline-flex items-center justify-center w-[34px] h-[34px] rounded-lg hover:bg-gray-100 transition-colors"
@@ -354,7 +354,7 @@ export default function ResetPasswordPage() {
       </div>
 
       {/* Content Container - responsive */}
-      <div className="flex-1 flex flex-col justify-center px-5 py-8 sm:py-12">
+      <div className="flex-1 flex flex-col justify-center px-5 py-6">
         <div className="w-full max-w-md mx-auto sm:max-w-lg lg:max-w-xl">
           {/* Card Container matching Figma */}
           <div className="bg-white rounded-[20px] border border-[#EFEFEF] px-4 py-6 sm:px-6 lg:px-8">
