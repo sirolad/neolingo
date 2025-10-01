@@ -8,10 +8,10 @@ export default function SplashPage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Auto-navigate to onboarding after 4 seconds
+    // Auto-navigate to onboarding after 3 seconds
     const timer = setTimeout(() => {
       router.push("/onboarding/1");
-    }, 4000);
+    }, 3000);
 
     return () => clearTimeout(timer);
   }, [router]);
