@@ -140,7 +140,7 @@ export default function SignUpPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-primary font-[Parkinsans]">
+                      <FormLabel className="text-xs font-medium text-primary font-[Parkinsans]">
                         Email Address
                       </FormLabel>
                       <FormControl>
@@ -168,7 +168,7 @@ export default function SignUpPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-primary font-[Parkinsans]">
+                      <FormLabel className="text-xs font-medium text-primary font-[Parkinsans]">
                         Password
                       </FormLabel>
                       <FormControl>
@@ -209,7 +209,7 @@ export default function SignUpPage() {
                   name="confirmPassword"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-semibold text-primary font-[Parkinsans]">
+                      <FormLabel className="text-xs font-medium text-primary font-[Parkinsans]">
                         Confirm Password
                       </FormLabel>
                       <FormControl>
