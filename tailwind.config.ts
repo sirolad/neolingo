@@ -9,9 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Brand colors based on Figma - Updated for visibility
+        // Brand colors based on Figma - Dark theme
         primary: {
-          DEFAULT: '#2563EB', // Bright blue
+          DEFAULT: '#111111', // Dark gray/black matching Figma
           50: '#EFF6FF',
           100: '#DBEAFE',
           200: '#BFDBFE',

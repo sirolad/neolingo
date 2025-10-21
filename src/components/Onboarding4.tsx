@@ -17,7 +17,7 @@ export default function Onboarding4() {
     <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
       
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-6 md:px-8 lg:px-12 py-6 md:py-8 lg:py-10">
+      <div className="flex-1 flex flex-col px-10 md:px-8 lg:px-12 pt-8 md:pt-12 lg:pt-26 py-16 md:pb-8 lg:pb-10 mb-16">
         
         {/* Container for responsive layout */}
         <div className="flex-1 flex flex-col lg:flex-row lg:items-center lg:justify-between max-w-7xl mx-auto w-full">
@@ -25,7 +25,7 @@ export default function Onboarding4() {
           {/* Illustration Area */}
           <div className="flex-1 flex items-center justify-center relative lg:mr-12">
             {/* Abstract Illustration - focused on suggestion/input theme */}
-            <div className="w-80 md:w-96 lg:w-[500px] h-80 md:h-96 lg:h-[500px] relative">
+            <div className="w-80 md:w-96 lg:w-[500px] h-70 md:h-96 lg:h-[500px] relative">
               <div className="absolute inset-0 flex items-center justify-center">
                 {/* Main container representing input/suggestion interface */}
                 <div className="w-72 md:w-80 lg:w-96 h-64 md:h-72 lg:h-80 bg-[#FEFEFE] border-2 md:border-3 lg:border-4 border-[#111111] rounded-lg md:rounded-xl lg:rounded-2xl relative p-6 md:p-8 lg:p-10 shadow-lg">
@@ -84,19 +84,18 @@ export default function Onboarding4() {
                 
                 {/* Decorative elements */}
                 <div className="absolute -top-2 md:-top-3 lg:-top-4 left-8 md:left-10 lg:left-12 w-3 md:w-4 lg:w-5 h-3 md:h-4 lg:h-5 bg-[#EBEBEB] rounded-full"></div>
-                <div className="absolute -bottom-2 md:-bottom-3 lg:-bottom-4 right-12 md:right-16 lg:right-20 w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6 bg-[#111111] rounded md:rounded-lg"></div>
               </div>
             </div>
           </div>
 
           {/* Content Area */}
-          <div className="space-y-6 md:space-y-8 lg:space-y-10 mt-8 lg:mt-0 lg:flex-shrink-0 lg:max-w-md xl:max-w-lg">
+          <div className="space-y-6 md:space-y-8 lg:space-y-10 lg:flex-shrink-0 lg:max-w-md xl:max-w-lg pt-16">
             {/* Text Content */}
             <div className="text-center lg:text-left space-y-3 md:space-y-4 lg:space-y-5">
               <h1 className="text-[26px] md:text-[32px] lg:text-[38px] xl:text-[42px] font-medium leading-[36px] md:leading-[42px] lg:leading-[48px] xl:leading-[52px] tracking-[-0.5px] text-[#111111] font-[Parkinsans]">
                 Suggest Words Your Way
               </h1>
-              <p className="text-[15px] md:text-[17px] lg:text-[19px] xl:text-[21px] font-normal leading-[21px] md:leading-[25px] lg:leading-[28px] xl:leading-[31px] text-[rgba(17,17,17,0.8)] font-[Metropolis] px-4 lg:px-0 max-w-lg mx-auto lg:mx-0">
+              <p className="text-[14px] md:text-[17px] lg:text-[19px] xl:text-[21px] font-normal leading-[21px] md:leading-[25px] lg:leading-[28px] xl:leading-[31px] text-[rgba(17,17,17,0.8)] font-[Metropolis] max-w-lg mx-auto lg:mx-0">
                 Suggest words, adaptive, functional, rooted, or playful. Every idea helps shape the dictionary.
               </p>
             </div>

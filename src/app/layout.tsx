@@ -67,7 +67,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/icons/icon.svg" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased container`}
       >
         <AuthProvider>
           {children}

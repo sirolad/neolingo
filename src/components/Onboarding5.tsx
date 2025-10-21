@@ -13,13 +13,13 @@ export default function Onboarding5() {
     <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
       
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-6 md:px-8 lg:px-12 py-6 md:py-8 lg:py-10">
+      <div className="flex-1 flex flex-col px-10 md:px-8 lg:px-12 pt-8 md:pt-12 lg:pt-26 py-16 md:pb-8 lg:pb-10 mb-16">
         
         {/* Container for responsive layout */}
         <div className="flex-1 flex flex-col lg:flex-row lg:items-center lg:justify-between max-w-7xl mx-auto w-full">
           
           {/* Illustration Area */}
-          <div className="flex-1 flex items-center justify-center relative lg:mr-12">
+          <div className="flex-1 flex items-center justify-center relative lg:mr-12 pt-4">
             {/* Abstract Illustration - focused on voting/community theme */}
             <div className="w-80 md:w-96 lg:w-[520px] h-80 md:h-96 lg:h-[520px] relative">
               <div className="absolute inset-0 flex items-center justify-center">
