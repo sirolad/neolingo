@@ -178,29 +178,35 @@ export default function SuggestPage() {
             <form onSubmit={handleSubmit} className="p-6 md:p-8 lg:p-10 space-y-6 md:space-y-8 lg:space-y-10">
               {/* Two-column layout for larger screens */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                <Input
-                  name="englishWord"
-                  type="text"
-                  label="English Word"
-                  placeholder="Enter the English word"
-                  value={formData.englishWord}
-                  onChange={handleInputChange}
-                  error={errors.englishWord}
-                  disabled={submitting}
-                  className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
-                />
+                <div className="space-y-2 md:space-y-3">
+                  <label htmlFor="englishWord" className="block text-sm md:text-base lg:text-lg font-medium text-neutral-950">English Word</label>
+                  <Input
+                    id="englishWord"
+                    name="englishWord"
+                    type="text"
+                    placeholder="Enter the English word"
+                    value={formData.englishWord}
+                    onChange={handleInputChange}
+                    error={errors.englishWord}
+                    disabled={submitting}
+                    className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
+                  />
+                </div>
 
-                <Input
-                  name="yorubaWord"
-                  type="text"
-                  label="Yoruba Translation"
-                  placeholder="Enter the Yoruba translation"
-                  value={formData.yorubaWord}
-                  onChange={handleInputChange}
-                  error={errors.yorubaWord}
-                  disabled={submitting}
-                  className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
-                />
+                <div className="space-y-2 md:space-y-3">
+                  <label htmlFor="yorubaWord" className="block text-sm md:text-base lg:text-lg font-medium text-neutral-950">Yoruba Translation</label>
+                  <Input
+                    id="yorubaWord"
+                    name="yorubaWord"
+                    type="text"
+                    placeholder="Enter the Yoruba translation"
+                    value={formData.yorubaWord}
+                    onChange={handleInputChange}
+                    error={errors.yorubaWord}
+                    disabled={submitting}
+                    className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2 md:space-y-3">
