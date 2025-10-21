@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import {Button} from "@/components/ui/Button";
 
 export default function Onboarding5() {
   const router = useRouter();
@@ -110,14 +111,14 @@ export default function Onboarding5() {
 
             {/* Action Button - Only Continue button, no Skip */}
             <div className="flex">
-              <button
+              <Button
                 onClick={handleContinue}
-                className="w-full h-[58px] md:h-[64px] lg:h-[70px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] hover:bg-[#333333] transition-all active:scale-[0.98]"
+                className="w-full btn-big md:h-[64px] lg:h-[70px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] hover:bg-[#333333] transition-all active:scale-[0.98]"
               >
                 <span className="text-[16px] md:text-[18px] lg:text-[20px] font-semibold leading-[22px] md:leading-[24px] lg:leading-[26px] text-white font-[Parkinsans]">
                   Continue
                 </span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>

@@ -153,12 +153,12 @@
 }
 
 .btn-primary:hover {
-  background-color: #1D4ED8 !important;
+  background-color: #171717 !important;
   color: var(--btn-primary-text) !important;
 }
 
 .btn-primary:focus {
-  background-color: #1D4ED8 !important;
+  background-color: #171717 !important;
   color: var(--btn-primary-text) !important;
 }
 

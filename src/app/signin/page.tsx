@@ -182,9 +182,6 @@ export default function SignInPage() {
                             className="h-[52px] pr-20 border-border rounded-xl font-[Metropolis] text-[14px] placeholder:text-muted-foreground focus:border-primary"
                             {...field}
                           />
-                          <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
-                            <Lock className="w-4 h-4 text-muted-foreground" />
-                          </div>
                           <Button
                             type="button"
                             variant="ghost"
@@ -208,7 +205,7 @@ export default function SignInPage() {
                 {/* Remember Me and Forgot Password */}
                 <div className="flex items-center justify-between pt-2">
                   <label className="flex items-center space-x-2">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={rememberMe}
                       onChange={(e) => setRememberMe(e.target.checked)}
