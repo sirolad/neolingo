@@ -187,10 +187,12 @@ export default function SuggestPage() {
                     placeholder="Enter the English word"
                     value={formData.englishWord}
                     onChange={handleInputChange}
-                    error={errors.englishWord}
                     disabled={submitting}
                     className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
                   />
+                  {errors.englishWord && (
+                    <p className="text-sm md:text-base text-error-600">{errors.englishWord}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2 md:space-y-3">
@@ -202,10 +204,12 @@ export default function SuggestPage() {
                     placeholder="Enter the Yoruba translation"
                     value={formData.yorubaWord}
                     onChange={handleInputChange}
-                    error={errors.yorubaWord}
                     disabled={submitting}
                     className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
                   />
+                  {errors.yorubaWord && (
+                    <p className="text-sm md:text-base text-error-600">{errors.yorubaWord}</p>
+                  )}
                 </div>
               </div>
 
