@@ -66,11 +66,11 @@ export default function SignUpPage() {
   return (
     <div className="h-screen bg-secondary flex flex-col overflow-hidden">
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-6 py-6">
+      <div className="flex-1 flex flex-col px-6 py-6 mb-2">
         <div className="flex-1 flex flex-col justify-center">
 
           {/* Content Card */}
-          <div className="bg-card rounded-3xl border border-border p-6 mx-auto w-full max-w-md">
+          <div className="bg-card rounded-3xl border border-border p-4 mx-auto w-full max-w-md">
 
             {/* Header */}
             <div className="text-center mb-5">
@@ -133,7 +133,7 @@ export default function SignUpPage() {
 
             {/* Sign Up Form */}
             <Form {...form}>
-              <form id="signup-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+              <form id="signup-form" onSubmit={form.handleSubmit(handleSubmit)} className="space-y-2">
                 {/* Email Input */}
                 <FormField
                   control={form.control}
