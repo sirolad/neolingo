@@ -76,7 +76,7 @@ export default function SignInPage() {
 
             {/* Header */}
             <div className="text-center mb-5">
-              <h1 className="text-[28px] font-medium leading-[34px] text-foreground font-[Parkinsans] mb-1">
+              <h1 className="text-[26px] font-medium leading-[34px] text-foreground font-[Parkinsans] mb-1">
                 Sign into Your Account
               </h1>
               <p className="text-[14px] font-normal leading-[14px] text-muted-foreground font-[Metropolis]">

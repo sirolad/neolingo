@@ -95,6 +95,8 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* Automatic dark mode detection disabled - use manual dark mode class instead */
+/*
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0A0A0A;
@@ -124,6 +126,7 @@
     --ring: #3B82F6;
   }
 }
+*/
 
 /* Font fallbacks for design system fonts */
 .font-\[Parkinsans\] {
