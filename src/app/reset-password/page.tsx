@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Mail, Eye, EyeOff, Check } from "lucide-react";
+import { Input } from '@/components/ui/Input'
+import { Button } from '@/components/ui/Button'
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState("");
@@ -243,7 +245,7 @@ export default function ResetPasswordPage() {
                     Password
                   </label>
                   <div className="relative">
-                    <input
+                    <Input
                       type={showPassword ? "text" : "password"}
                       name="password"
                       value={password}
@@ -252,7 +254,7 @@ export default function ResetPasswordPage() {
                       disabled={loading}
                       className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white font-[Metropolis] text-[14px] sm:text-[15px] leading-[20px] text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#989898] hover:text-[#656565] transition-colors"
@@ -262,7 +264,7 @@ export default function ResetPasswordPage() {
                       ) : (
                         <EyeOff className="w-5 h-5" />
                       )}
-                    </button>
+                    </Button>
                   </div>
                   {passwordError && (
                     <p className="text-[12px] text-red-500 font-[Metropolis] mt-1">
@@ -277,7 +279,7 @@ export default function ResetPasswordPage() {
                     Confirm Password
                   </label>
                   <div className="relative">
-                    <input
+                    <Input
                       type={showConfirmPassword ? "text" : "password"}
                       name="confirmPassword"
                       value={confirmPassword}
@@ -286,7 +288,7 @@ export default function ResetPasswordPage() {
                       disabled={loading}
                       className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white font-[Metropolis] text-[14px] sm:text-[15px] leading-[20px] text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
@@ -298,7 +300,7 @@ export default function ResetPasswordPage() {
                       ) : (
                         <EyeOff className="w-5 h-5" />
                       )}
-                    </button>
+                    </Button>
                   </div>
                   {confirmPasswordError && (
                     <p className="text-[12px] text-red-500 font-[Metropolis] mt-1">
@@ -308,15 +310,15 @@ export default function ResetPasswordPage() {
                 </div>
 
                 {/* Reset Password Button */}
-                <button
+                <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
+                  className="w-full btn-big sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
                     {loading ? "Resetting..." : "Reset Password"}
                   </span>
-                </button>
+                </Button>
               </form>
 
               {/* Footer Links */}

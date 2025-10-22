@@ -7,6 +7,7 @@ import { Layout } from '@/components/layout/Layout'
 import { Button } from '@/components/ui/Button'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { useAuth } from '@/contexts/AuthContext'
+import createClient from '@/lib/supabase/client'
 
 interface WordCard {
   id: string
@@ -18,6 +19,7 @@ interface WordCard {
 }
 
 export default function HomePage() {
+  const supabase = createClient()
   const { user, logout } = useAuth()
   const [refreshing, setRefreshing] = useState(false)
 

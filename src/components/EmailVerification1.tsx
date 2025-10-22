@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button'
 
 export default function EmailVerification1() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function EmailVerification1() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
+    <div className="h-screen bg-[#F4F4F4] flex flex-col">
       {/* Back Button */}
       <div className="absolute top-[77px] md:top-[90px] lg:top-[110px] left-6 md:left-8 lg:left-12 z-10">
         <button
@@ -85,14 +86,14 @@ export default function EmailVerification1() {
           </div>
 
           {/* Action Button */}
-          <button
+          <Button
             onClick={handleContinue}
-            className="w-full h-[58px] md:h-[64px] lg:h-[70px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] hover:bg-[#333333] active:scale-[0.98] transition-all"
+            className="w-full btn-big md:h-[64px] lg:h-[70px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] hover:bg-[#333333] active:scale-[0.98] transition-all"
           >
             <span className="text-[16px] md:text-[18px] lg:text-[20px] font-semibold leading-[22px] md:leading-[24px] lg:leading-[26px] text-white font-[Parkinsans]">
               Verify Email Address
             </span>
-          </button>
+          </Button>
         </div>
       </div>
     </div>

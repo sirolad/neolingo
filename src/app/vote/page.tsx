@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Vote, ArrowLeft, TrendingUp, RefreshCcw } from 'lucide-react'
 import { Layout } from '@/components/layout/Layout'
 import { WordCard } from '@/components/ui/WordCard'
-import { mockAuth, type MockUser } from '@/lib/mockAuth'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface WordSuggestion {
   id: string
@@ -22,18 +22,19 @@ interface WordSuggestion {
 
 export default function VotePage() {
   const router = useRouter()
-  const [user, setUser] = useState<MockUser | null>(null)
+  const { appUser, isLoading: authLoading } = useAuth()
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [suggestions, setSuggestions] = useState<WordSuggestion[]>([])
 
   useEffect(() => {
-    const currentUser = mockAuth.getCurrentUser()
-    if (!currentUser) {
+    if (authLoading) return
+
+    if (!appUser) {
       router.push('/signin')
       return
     }
-    setUser(currentUser)
+
     loadSuggestions()
     setLoading(false)
   }, [router])
@@ -101,7 +102,20 @@ export default function VotePage() {
     )
   }
 
-  if (!user) {
+  if (loading || authLoading) {
+    return (
+      <Layout variant="home">
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-4"></div>
+            <p className="text-neutral-600">Loading...</p>
+          </div>
+        </div>
+      </Layout>
+    )
+  }
+
+  if (!appUser) {
     return null
   }
 
