@@ -1,15 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createClient from '@/lib/supabase/server';
+import { getBaseUrl } from '@/lib/urls';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') || '/dashboard';
+  const next = searchParams.get('next') || '/home';
 
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+
+    if (error) {
+      console.error('Auth callback error:', error);
+      // Redirect to signin with error
+      return NextResponse.redirect(
+        new URL('/signin?error=auth_callback_failed', getBaseUrl())
+      );
+    }
+
+    if (data?.user) {
+      console.log('✅ Auth callback successful for user:', data.user.email);
+    }
   }
 
-  return NextResponse.redirect(new URL(next, request.url));
+  // Redirect to  home
+  return NextResponse.redirect(new URL(next, getBaseUrl()));
 }

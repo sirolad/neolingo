@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -19,6 +19,9 @@ import { signInSchema, type SignInFormData } from '@/lib/schemas/auth';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { getCallbackUrl } from '@/lib/urls';
+import { SocialProvider } from '@/types';
+import '@/lib/debug-urls'; // Import debug utilities
 
 export default function SignInPage() {
   const router = useRouter();
@@ -26,6 +29,18 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  // Check for auth callback errors
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+
+    if (error === 'auth_callback_failed') {
+      toast.error('Authentication failed. Please try again.');
+      // Clean up the URL
+      router.replace('/signin');
+    }
+  }, [router]);
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -56,9 +71,10 @@ export default function SignInPage() {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'apple') => {
+  const handleSocialLogin = async (provider: SocialProvider) => {
     try {
-      const redirectTo = `${window.location.origin}/auth/callback`;
+      const redirectTo = getCallbackUrl();
+      console.log('🚀 Starting social login with:', { provider, redirectTo });
       const result = await socialLogin(provider, redirectTo);
 
       if (result) {
