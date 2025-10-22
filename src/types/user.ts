@@ -7,6 +7,7 @@ export interface AppUser extends BaseEntity {
   displayName?: string | null;
   avatar?: string | null;
   provider?: string | null;
+  name?: string | null;
   // keep raw for advanced uses when needed
   raw?: User;
 }

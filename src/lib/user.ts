@@ -15,5 +15,6 @@ export function normalizeUser(u: User | null): AppUser | null {
     provider: appMeta?.provider ?? null,
     createdAt: (u as User).created_at ?? null,
     raw: u,
+    name: meta.name ?? null,
   };
 }

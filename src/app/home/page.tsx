@@ -21,8 +21,9 @@ interface WordCard {
 export default function HomePage() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const supabase = createClient();
-  const { user, logout } = useAuth();
+  const { appUser, logout } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
+  const user = appUser;
 
   const wordCards: WordCard[] = [
     {
