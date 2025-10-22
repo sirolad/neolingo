@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Mail, Eye, EyeOff, Lock } from 'lucide-react'
+import { Mail, Eye, EyeOff } from 'lucide-react'
 import { mockAuth, mockSocialLogin } from '@/lib/mockAuth'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -17,8 +17,10 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { signUpSchema, type SignUpFormData } from '@/lib/schemas/auth'
+import createClient from "@/lib/supabase/client";
 
 export default function SignUpPage() {
+  const supabase = createClient()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -39,7 +41,20 @@ export default function SignUpPage() {
     setApiError('')
 
     try {
-      const user = await mockAuth.signup(data.email, data.password)
+      const {error} = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      })
+
+      if (error) {
+        setApiError(error.message)
+      }
+
+
+
 
       if (user) {
         // Success - redirect to email verification
@@ -180,9 +195,6 @@ export default function SignUpPage() {
                             className="h-[52px] pr-20 border-border rounded-xl font-[Metropolis] text-[14px] placeholder:text-muted-foreground focus:border-primary"
                             {...field}
                           />
-                          <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
-                            <Lock className="w-4 h-4 text-muted-foreground" />
-                          </div>
                           <Button
                             type="button"
                             variant="ghost"
@@ -221,9 +233,6 @@ export default function SignUpPage() {
                             className="h-[52px] pr-20 border-border rounded-xl font-[Metropolis] text-[14px] placeholder:text-muted-foreground focus:border-primary"
                             {...field}
                           />
-                          <div className="absolute right-12 top-1/2 transform -translate-y-1/2">
-                            <Lock className="w-4 h-4 text-muted-foreground" />
-                          </div>
                           <Button
                             type="button"
                             variant="ghost"
