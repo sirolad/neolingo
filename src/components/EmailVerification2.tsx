@@ -15,7 +15,7 @@ export default function EmailVerification2() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prevTime) => {
+      setTimeLeft(prevTime => {
         if (prevTime <= 1) {
           clearInterval(timer);
           return 0;
@@ -51,7 +51,7 @@ export default function EmailVerification2() {
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
-      
+
       // Clear error state when user starts typing
       if (state === 'error') {
         setState('initial');
@@ -64,7 +64,10 @@ export default function EmailVerification2() {
     }
   };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
     if (e.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1]?.focus();
     }
@@ -74,13 +77,13 @@ export default function EmailVerification2() {
     // Check if code is complete
     if (code.every(digit => digit !== '')) {
       const codeString = code.join('');
-      
+
       // Simulate verification process - in real app, this would make an API call
       // For demo purposes:
       // - Codes starting with '1' are valid
       // - Code '61237' triggers error state (as seen in Figma)
       // - Other codes also trigger error for demonstration
-      
+
       if (codeString === '12345' || codeString.startsWith('1')) {
         // Valid code - go to success screen
         router.push('/email-verification/5');
@@ -117,8 +120,20 @@ export default function EmailVerification2() {
           onClick={handleBack}
           className="w-[34px] h-[34px] md:w-[40px] md:h-[40px] lg:w-[44px] lg:h-[44px] flex items-center justify-center rounded-full hover:bg-white/50 transition-colors"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="md:w-6 md:h-6 lg:w-7 lg:h-7">
-            <path d="M20 12H4M4 12L10 6M4 12L10 18" stroke="#292929" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            className="md:w-6 md:h-6 lg:w-7 lg:h-7"
+          >
+            <path
+              d="M20 12H4M4 12L10 6M4 12L10 18"
+              stroke="#292929"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
       </div>
@@ -136,20 +151,17 @@ export default function EmailVerification2() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-5 md:px-8 lg:px-12 pt-[136px] md:pt-[160px] lg:pt-[180px]">
-        
         {/* Content Card */}
         <div className="bg-white rounded-[20px] md:rounded-[24px] lg:rounded-[28px] border border-[#EFEFEF] p-4 md:p-6 lg:p-8 mx-auto w-full max-w-[390px] md:max-w-[480px] lg:max-w-[560px] shadow-sm">
-          
           {/* Header */}
           <div className="mb-6 md:mb-8 lg:mb-10">
             <h1 className="text-[28px] md:text-[32px] lg:text-[36px] font-medium leading-[34px] md:leading-[38px] lg:leading-[42px] text-[#292929] font-[Parkinsans] mb-2 md:mb-3 lg:mb-4">
               Enter Verification Code
             </h1>
             <p className="text-[14px] md:text-[16px] lg:text-[18px] font-normal leading-[18px] md:leading-[22px] lg:leading-[26px] text-[#656565] font-[Metropolis]">
-              {state === 'resent' 
+              {state === 'resent'
                 ? "We've sent a new activation code to your email johndoe@gmail.com"
-                : "We've sent an activation code to your email johndoe@gmail.com"
-              }
+                : "We've sent an activation code to your email johndoe@gmail.com"}
             </p>
           </div>
 
@@ -159,18 +171,20 @@ export default function EmailVerification2() {
               {code.map((digit, index) => (
                 <div key={index} className="relative">
                   <input
-                    ref={(el) => { inputRefs.current[index] = el; }}
+                    ref={el => {
+                      inputRefs.current[index] = el;
+                    }}
                     type="text"
                     inputMode="numeric"
                     maxLength={1}
                     value={digit}
-                    onChange={(e) => handleCodeChange(index, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    onChange={e => handleCodeChange(index, e.target.value)}
+                    onKeyDown={e => handleKeyDown(index, e)}
                     className={`w-[48px] h-[48px] md:w-[56px] md:h-[56px] lg:w-[64px] lg:h-[64px] text-center text-[21px] md:text-[24px] lg:text-[28px] font-semibold border rounded-[2px] md:rounded-[3px] lg:rounded-[4px] font-[Montserrat] focus:outline-none focus:ring-2 focus:ring-[#111111] focus:ring-opacity-50 transition-all ${
                       isError
-                        ? 'border-[#CB0000] border-b-2 md:border-b-3 lg:border-b-4 bg-white text-[#111111]' 
-                        : digit 
-                          ? 'border-[#454545] border-b-2 md:border-b-3 lg:border-b-4 bg-white text-[#111111]' 
+                        ? 'border-[#CB0000] border-b-2 md:border-b-3 lg:border-b-4 bg-white text-[#111111]'
+                        : digit
+                          ? 'border-[#454545] border-b-2 md:border-b-3 lg:border-b-4 bg-white text-[#111111]'
                           : 'border-[#888888] border-b-2 md:border-b-3 lg:border-b-4 bg-white text-[#111111]'
                     }`}
                     style={{
@@ -181,18 +195,35 @@ export default function EmailVerification2() {
                   />
                 </div>
               ))}
-              
+
               {/* Error Icon */}
               {isError && (
                 <div className="flex items-center ml-3 md:ml-4 lg:ml-5">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-[#CB0000] md:w-7 md:h-7 lg:w-8 lg:h-8">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
-                    <path d="M15 9l-6 6M9 9l6 6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    className="text-[#CB0000] md:w-7 md:h-7 lg:w-8 lg:h-8"
+                  >
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    />
+                    <path
+                      d="M15 9l-6 6M9 9l6 6"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                    />
                   </svg>
                 </div>
               )}
             </div>
-            
+
             {/* Error Message */}
             {isError && (
               <div className="text-center mb-4 md:mb-5 lg:mb-6">

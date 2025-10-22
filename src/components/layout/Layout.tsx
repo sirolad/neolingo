@@ -1,17 +1,10 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { usePathname } from 'next/navigation'
-import { cn } from '@/lib/utils'
-import { ResponsiveNavigation } from './ResponsiveNavigation'
-
-export interface LayoutProps {
-  children: React.ReactNode
-  className?: string
-  variant?: 'default' | 'auth' | 'home'
-  backgroundGradient?: boolean
-  showNavigation?: boolean
-}
+import React from 'react';
+import { usePathname } from 'next/navigation';
+import { cn } from '@/lib/utils';
+import { ResponsiveNavigation } from './ResponsiveNavigation';
+import type { LayoutProps } from '@/types';
 
 const Layout: React.FC<LayoutProps> = ({
   children,
@@ -20,14 +13,15 @@ const Layout: React.FC<LayoutProps> = ({
   backgroundGradient = false,
   showNavigation = true,
 }) => {
-  const pathname = usePathname()
-  
+  const pathname = usePathname();
+
   // Determine if navigation should be shown based on current route
-  const hideNavigationRoutes = ['/signin', '/signup', '/splash']
-  const shouldShowNavigation = showNavigation && 
+  const hideNavigationRoutes = ['/signin', '/signup', '/splash'];
+  const shouldShowNavigation =
+    showNavigation &&
     !hideNavigationRoutes.some(route => pathname?.startsWith(route)) &&
     !pathname?.startsWith('/onboarding') &&
-    !pathname?.startsWith('/email-verification')
+    !pathname?.startsWith('/email-verification');
 
   const getVariantClasses = () => {
     switch (variant) {
@@ -36,41 +30,33 @@ const Layout: React.FC<LayoutProps> = ({
           'min-h-screen bg-white',
           'flex flex-col',
           'relative overflow-hidden',
-        ]
+        ];
       case 'home':
-        return [
-          'min-h-screen bg-neutral-50',
-          'flex flex-col',
-        ]
+        return ['min-h-screen bg-neutral-50', 'flex flex-col'];
       default:
-        return [
-          'min-h-screen bg-white',
-          'flex flex-col',
-        ]
+        return ['min-h-screen bg-white', 'flex flex-col'];
     }
-  }
+  };
 
-  const backgroundClasses = backgroundGradient ? [
-    'bg-gradient-to-br from-blue-50 via-white to-purple-50',
-  ] : []
+  const backgroundClasses = backgroundGradient
+    ? ['bg-gradient-to-br from-blue-50 via-white to-purple-50']
+    : [];
 
   return (
-    <div className={cn(
-      getVariantClasses(),
-      backgroundClasses,
-      className
-    )}>
+    <div className={cn(getVariantClasses(), backgroundClasses, className)}>
       {/* Responsive Navigation */}
       {shouldShowNavigation && <ResponsiveNavigation />}
 
       {/* Main Content */}
-      <main className={cn(
-        'flex-1 flex flex-col',
-        variant === 'auth' && 'px-6 py-8',
-        variant === 'home' && !shouldShowNavigation && 'px-4 py-4',
-        variant === 'home' && shouldShowNavigation && 'md:px-0 md:py-0',  // Remove padding on desktop when nav is present
-        shouldShowNavigation && 'pb-20 md:pb-0', // Add bottom padding for mobile nav
-      )}>
+      <main
+        className={cn(
+          'flex-1 flex flex-col',
+          variant === 'auth' && 'px-6 py-8',
+          variant === 'home' && !shouldShowNavigation && 'px-4 py-4',
+          variant === 'home' && shouldShowNavigation && 'md:px-0 md:py-0', // Remove padding on desktop when nav is present
+          shouldShowNavigation && 'pb-20 md:pb-0' // Add bottom padding for mobile nav
+        )}
+      >
         {children}
       </main>
 
@@ -85,8 +71,8 @@ const Layout: React.FC<LayoutProps> = ({
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export { Layout }
-export default Layout
+export { Layout };
+export default Layout;

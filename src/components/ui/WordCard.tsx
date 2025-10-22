@@ -1,21 +1,6 @@
-import React from 'react'
-import { Button } from './Button'
-
-interface WordCardProps {
-  word: string
-  translation?: string
-  definition?: string
-  type: 'suggestion' | 'voting' | 'dictionary'
-  bgColor?: string
-  borderColor?: string
-  tagColor?: string
-  tagText?: string
-  votes?: number
-  onAction?: () => void
-  actionText?: string
-  actionIcon?: React.ReactNode
-  className?: string
-}
+import React from 'react';
+import { Button } from './Button';
+import type { WordCardProps } from '@/types';
 
 export function WordCard({
   word,
@@ -29,14 +14,18 @@ export function WordCard({
   onAction,
   actionText,
   actionIcon,
-  className = ''
+  className = '',
 }: WordCardProps) {
   return (
-    <div className={`${bgColor} ${borderColor} border rounded-xl p-4 ${className}`}>
+    <div
+      className={`${bgColor} ${borderColor} border rounded-xl p-4 ${className}`}
+    >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           {tagText && (
-            <div className={`px-3 py-1 rounded-full text-xs font-medium ${tagColor}`}>
+            <div
+              className={`px-3 py-1 rounded-full text-xs font-medium ${tagColor}`}
+            >
               {tagText}
             </div>
           )}
@@ -58,22 +47,14 @@ export function WordCard({
           </Button>
         )}
       </div>
-      
+
       <div className="space-y-2">
-        <h3 className="text-2xl font-bold text-neutral-950">
-          {word}
-        </h3>
+        <h3 className="text-2xl font-bold text-neutral-950">{word}</h3>
         {translation && (
-          <p className="text-lg text-neutral-700 font-medium">
-            {translation}
-          </p>
+          <p className="text-lg text-neutral-700 font-medium">{translation}</p>
         )}
-        {definition && (
-          <p className="text-sm text-neutral-600">
-            {definition}
-          </p>
-        )}
+        {definition && <p className="text-sm text-neutral-600">{definition}</p>}
       </div>
     </div>
-  )
+  );
 }

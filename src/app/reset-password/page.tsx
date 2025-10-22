@@ -1,47 +1,49 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft, Mail, Eye, EyeOff, Check } from "lucide-react";
+import React, { useState } from 'react';
+import Link from 'next/link';
+import { ArrowLeft, Mail, Eye, EyeOff, Check } from 'lucide-react';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 export default function ResetPasswordPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [step, setStep] = useState<"email" | "newPassword" | "success">(
-    "email"
+  const [step, setStep] = useState<'email' | 'newPassword' | 'success'>(
+    'email'
   );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
-    if (error) setError("");
+    if (error) setError('');
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
-    if (passwordError) setPasswordError("");
+    if (passwordError) setPasswordError('');
   };
 
   const handleConfirmPasswordChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     setConfirmPassword(e.target.value);
-    if (confirmPasswordError) setConfirmPasswordError("");
+    if (confirmPasswordError) setConfirmPasswordError('');
   };
 
   const validateEmailForm = () => {
     if (!email) {
-      setError("Email is required");
+      setError('Email is required');
       return false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setError("Please enter a valid email");
+      setError('Please enter a valid email');
       return false;
     }
     return true;
@@ -51,18 +53,18 @@ export default function ResetPasswordPage() {
     let isValid = true;
 
     if (!password) {
-      setPasswordError("Password is required");
+      setPasswordError('Password is required');
       isValid = false;
     } else if (password.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
+      setPasswordError('Password must be at least 6 characters');
       isValid = false;
     }
 
     if (!confirmPassword) {
-      setConfirmPasswordError("Please confirm your password");
+      setConfirmPasswordError('Please confirm your password');
       isValid = false;
     } else if (password !== confirmPassword) {
-      setConfirmPasswordError("Passwords do not match");
+      setConfirmPasswordError('Passwords do not match');
       isValid = false;
     }
 
@@ -93,13 +95,13 @@ export default function ResetPasswordPage() {
     // Simulate API call for password reset
     setTimeout(() => {
       setLoading(false);
-      setStep("success");
+      setStep('success');
     }, 2000);
   };
 
   const handleContinueToNewPassword = () => {
     setSubmitted(false);
-    setStep("newPassword");
+    setStep('newPassword');
   };
 
   if (submitted) {
@@ -126,7 +128,7 @@ export default function ResetPasswordPage() {
                 Check Your Email
               </h1>
               <p className="text-[14px] sm:text-[15px] font-normal leading-[18px] sm:leading-[20px] text-[#656565] font-[Metropolis] mb-6 max-w-sm mx-auto">
-                We&apos;ve sent password recovery instructions to{" "}
+                We&apos;ve sent password recovery instructions to{' '}
                 <span className="font-medium text-[#292929]">{email}</span>
               </p>
 
@@ -167,7 +169,7 @@ export default function ResetPasswordPage() {
   }
 
   // Success screen (Reset Password 6)
-  if (step === "success") {
+  if (step === 'success') {
     return (
       <div className="h-screen bg-[#F4F4F4] flex flex-col justify-center items-center px-5 py-6 overflow-hidden">
         <div className="w-full max-w-md mx-auto text-center flex-1 flex flex-col justify-center">
@@ -195,7 +197,7 @@ export default function ResetPasswordPage() {
 
           {/* Continue Button */}
           <button
-            onClick={() => (window.location.href = "/signin")}
+            onClick={() => (window.location.href = '/signin')}
             className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] transition-all duration-200"
           >
             <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
@@ -208,13 +210,13 @@ export default function ResetPasswordPage() {
   }
 
   // New password screen (Reset Password 5)
-  if (step === "newPassword") {
+  if (step === 'newPassword') {
     return (
       <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
         {/* Back Button */}
         <div className="px-5 py-3 flex-shrink-0">
           <button
-            onClick={() => setStep("email")}
+            onClick={() => setStep('email')}
             className="inline-flex items-center justify-center w-[34px] h-[34px] rounded-lg hover:bg-gray-100 transition-colors"
           >
             <ArrowLeft className="w-6 h-6 text-[#292929]" />
@@ -243,8 +245,8 @@ export default function ResetPasswordPage() {
                     Password
                   </label>
                   <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
                       name="password"
                       value={password}
                       onChange={handlePasswordChange}
@@ -252,7 +254,7 @@ export default function ResetPasswordPage() {
                       disabled={loading}
                       className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white font-[Metropolis] text-[14px] sm:text-[15px] leading-[20px] text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
                       className="absolute right-4 top-1/2 transform -translate-y-1/2 text-[#989898] hover:text-[#656565] transition-colors"
@@ -262,7 +264,7 @@ export default function ResetPasswordPage() {
                       ) : (
                         <EyeOff className="w-5 h-5" />
                       )}
-                    </button>
+                    </Button>
                   </div>
                   {passwordError && (
                     <p className="text-[12px] text-red-500 font-[Metropolis] mt-1">
@@ -277,8 +279,8 @@ export default function ResetPasswordPage() {
                     Confirm Password
                   </label>
                   <div className="relative">
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
+                    <Input
+                      type={showConfirmPassword ? 'text' : 'password'}
                       name="confirmPassword"
                       value={confirmPassword}
                       onChange={handleConfirmPasswordChange}
@@ -286,7 +288,7 @@ export default function ResetPasswordPage() {
                       disabled={loading}
                       className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white font-[Metropolis] text-[14px] sm:text-[15px] leading-[20px] text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
                     />
-                    <button
+                    <Button
                       type="button"
                       onClick={() =>
                         setShowConfirmPassword(!showConfirmPassword)
@@ -298,7 +300,7 @@ export default function ResetPasswordPage() {
                       ) : (
                         <EyeOff className="w-5 h-5" />
                       )}
-                    </button>
+                    </Button>
                   </div>
                   {confirmPasswordError && (
                     <p className="text-[12px] text-red-500 font-[Metropolis] mt-1">
@@ -308,15 +310,15 @@ export default function ResetPasswordPage() {
                 </div>
 
                 {/* Reset Password Button */}
-                <button
+                <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
+                  className="w-full btn-big sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-                    {loading ? "Resetting..." : "Reset Password"}
+                    {loading ? 'Resetting...' : 'Reset Password'}
                   </span>
-                </button>
+                </Button>
               </form>
 
               {/* Footer Links */}
@@ -405,7 +407,7 @@ export default function ResetPasswordPage() {
                 className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
               >
                 <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-                  {loading ? "Sending..." : "Send Code"}
+                  {loading ? 'Sending...' : 'Send Code'}
                 </span>
               </button>
             </form>

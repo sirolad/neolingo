@@ -45,7 +45,7 @@ export default function UserLanguage() {
             <div className="w-[1px] h-full bg-[#C8102E]"></div>
           </div>
         </div>
-      )
+      ),
     },
     {
       id: 'french',
@@ -59,7 +59,7 @@ export default function UserLanguage() {
             <div className="w-1/3 h-full bg-[#CE1126]"></div>
           </div>
         </div>
-      )
+      ),
     },
     {
       id: 'spanish',
@@ -76,13 +76,12 @@ export default function UserLanguage() {
             <div className="flex-1 bg-[#C60B1E]"></div>
           </div>
         </div>
-      )
-    }
+      ),
+    },
   ];
 
   return (
     <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
-      
       {/* Back Button */}
       <div className="absolute top-12 left-5 z-10">
         <button
@@ -90,7 +89,13 @@ export default function UserLanguage() {
           className="w-8 h-8 flex items-center justify-center rounded-full"
         >
           <svg width="20" height="10" viewBox="0 0 20 10" fill="none">
-            <path d="M20 5H2M2 5L6 1M2 5L6 9" stroke="#292929" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            <path
+              d="M20 5H2M2 5L6 1M2 5L6 9"
+              stroke="#292929"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </button>
       </div>
@@ -98,10 +103,8 @@ export default function UserLanguage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-6 pt-16 pb-6">
         <div className="flex-1 flex flex-col justify-center">
-          
           {/* Content Card */}
           <div className="bg-white rounded-3xl border border-[#EFEFEF] p-6 mx-auto w-full max-w-md">
-            
             {/* Header */}
             <div className="text-center mb-8">
               {/* Progress Indicators */}
@@ -121,7 +124,7 @@ export default function UserLanguage() {
 
             {/* Language Options */}
             <div className="space-y-4 mb-8">
-              {languages.map((language) => (
+              {languages.map(language => (
                 <button
                   key={language.id}
                   onClick={() => setSelectedLanguage(language.id)}
@@ -137,14 +140,16 @@ export default function UserLanguage() {
                       {language.name}
                     </span>
                   </div>
-                  
+
                   {/* Radio Button */}
                   <div className="flex items-center">
-                    <div className={`w-[22px] h-[22px] rounded-full border-[1.5px] flex items-center justify-center ${
-                      selectedLanguage === language.id
-                        ? 'border-[#111111]'
-                        : 'border-[rgba(17,17,17,0.3)]'
-                    }`}>
+                    <div
+                      className={`w-[22px] h-[22px] rounded-full border-[1.5px] flex items-center justify-center ${
+                        selectedLanguage === language.id
+                          ? 'border-[#111111]'
+                          : 'border-[rgba(17,17,17,0.3)]'
+                      }`}
+                    >
                       {selectedLanguage === language.id && (
                         <div className="w-[10px] h-[10px] bg-[#111111] rounded-full"></div>
                       )}

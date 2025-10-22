@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 
 export default function SplashPage() {
   const router = useRouter();
@@ -10,7 +10,7 @@ export default function SplashPage() {
   useEffect(() => {
     // Auto-navigate to onboarding after 3 seconds
     const timer = setTimeout(() => {
-      router.push("/onboarding/1");
+      router.push('/onboarding/1');
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -23,7 +23,7 @@ export default function SplashPage() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{
           duration: 0.8,
-          ease: "easeOut",
+          ease: 'easeOut',
         }}
         className="text-center"
       >

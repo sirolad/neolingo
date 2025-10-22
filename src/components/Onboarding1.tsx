@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
 
 export default function Onboarding1() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push("/onboarding/4");
+    router.push('/onboarding/4');
   };
 
   const handleSkip = () => {
-    router.push("/signup");
+    router.push('/signup');
   };
   return (
     <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
-      
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-10 md:px-8 lg:px-12 pt-8 md:pt-12 lg:pt-26 py-16 md:pb-8 lg:pb-10 mb-16">
         {/* Container for responsive layout */}
@@ -81,23 +81,23 @@ export default function Onboarding1() {
 
             {/* Action Buttons */}
             <div className="flex space-x-6 md:space-x-8">
-              <button
+              <Button
                 onClick={handleSkip}
-                className="flex-1 h-[58px] md:h-[64px] lg:h-[70px] flex items-center justify-center border border-[rgba(17,17,17,0.7)] rounded-full bg-transparent hover:bg-[rgba(17,17,17,0.05)] transition-all active:scale-[0.98]"
+                className="flex-1 btn-big md:h-[64px] lg:h-[70px] flex items-center justify-center border border-[rgba(17,17,17,0.7)] rounded-full bg-transparent hover:bg-[rgba(17,17,17,0.05)] transition-all active:scale-[0.98]"
               >
                 <span className="text-[16px] md:text-[18px] lg:text-[20px] font-bold leading-[22px] md:leading-[24px] lg:leading-[26px] text-[rgba(17,17,17,0.7)] font-[Parkinsans]">
                   Skip
                 </span>
-              </button>
+              </Button>
 
-              <button
+              <Button
                 onClick={handleNext}
-                className="flex-1 h-[58px] md:h-[64px] lg:h-[70px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] hover:bg-[#333333] transition-all active:scale-[0.98]"
+                className="flex-1 btn-big md:h-[64px] lg:h-[70px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] hover:bg-[#333333] transition-all active:scale-[0.98]"
               >
                 <span className="text-[16px] md:text-[18px] lg:text-[20px] font-semibold leading-[22px] md:leading-[24px] lg:leading-[26px] text-white font-[Parkinsans]">
                   Next
                 </span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>

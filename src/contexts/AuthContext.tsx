@@ -1,80 +1,170 @@
-'use client'
+'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { mockAuth, type MockUser } from '@/lib/mockAuth'
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
+import { useRouter } from 'next/navigation';
+import type { User } from '@supabase/supabase-js';
+import createClient from '@/lib/supabase/client';
+import { normalizeUser } from '@/lib/user';
+import type { AuthContextType, SocialProvider } from '@/types';
 
-interface AuthContextType {
-  user: MockUser | null
-  isLoading: boolean
-  isAuthenticated: boolean
-  login: (email: string, password: string) => Promise<MockUser | null>
-  signup: (email: string, password: string, name?: string) => Promise<MockUser>
-  logout: () => void
-  checkAuth: () => void
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<MockUser | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const router = useRouter()
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  // Derive a normalized app-level user for UI components
+  const appUser = useMemo(() => normalizeUser(user), [user]);
+  const router = useRouter();
 
-  const checkAuth = () => {
-    const currentUser = mockAuth.getCurrentUser()
-    setUser(currentUser)
-    setIsLoading(false)
-  }
+  const supabase = useMemo(() => createClient(), []);
+
+  const checkAuth = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) {
+        console.warn('Supabase getUser error', error);
+        setUser(null);
+      } else {
+        setUser(data?.user ?? null);
+      }
+    } catch (err) {
+      console.warn('checkAuth unexpected error', err);
+      setUser(null);
+    }
+    setIsLoading(false);
+  }, [supabase]);
 
   useEffect(() => {
     // Initial auth check
-    checkAuth()
-  }, [])
+    checkAuth();
+  }, [checkAuth]);
 
-  const login = async (email: string, password: string): Promise<MockUser | null> => {
-    const loggedInUser = await mockAuth.login(email, password)
-    if (loggedInUser) {
-      setUser(loggedInUser)
+  const login = async (
+    email: string,
+    password: string
+  ): Promise<User | null> => {
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        console.warn('Supabase signIn error', error);
+        setUser(null);
+        return null;
+      }
+      const signedUser = data.user ?? null;
+      setUser(signedUser);
+      return signedUser;
+    } catch (err) {
+      console.warn('login unexpected error', err);
+      setUser(null);
+      return null;
     }
-    return loggedInUser
-  }
+  };
 
-  const signup = async (email: string, password: string, name?: string): Promise<MockUser> => {
-    const newUser = await mockAuth.signup(email, password, name)
-    setUser(newUser)
-    return newUser
-  }
+  const signup = async (
+    email: string,
+    password: string,
+    name?: string,
+    redirectTo?: string
+  ): Promise<User | null> => {
+    try {
+      const signUpPayload: {
+        email: string;
+        password: string;
+        options?: { emailRedirectTo?: string };
+      } = { email, password };
+      if (redirectTo) {
+        signUpPayload.options = { emailRedirectTo: redirectTo };
+      }
 
-  const logout = () => {
-    mockAuth.logout()
-    setUser(null)
-    router.push('/signin')
-  }
+      const { data, error } = await supabase.auth.signUp(signUpPayload);
+      if (error) {
+        console.warn('Supabase signUp error', error);
+        setUser(null);
+        return null;
+      }
+      const createdUser = data.user ?? null;
+      setUser(createdUser);
+      return createdUser;
+    } catch (err) {
+      console.warn('signup unexpected error', err);
+      setUser(null);
+      return null;
+    }
+  };
+
+  const socialLogin = async (
+    provider: SocialProvider,
+    redirectTo?: string
+  ): Promise<User | null> => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: provider,
+        options: redirectTo ? { redirectTo } : undefined,
+      });
+
+      if (error) {
+        console.warn('Supabase social login error', error);
+        return null;
+      }
+
+      // If Supabase returns a user (rare for OAuth flows that redirect), set it
+      const returnedUser = (data as { user?: User | null })?.user ?? null;
+      if (returnedUser) {
+        setUser(returnedUser);
+        return returnedUser;
+      }
+
+      // OAuth usually redirects the browser; return null to indicate redirect in progress
+      return null;
+    } catch (err) {
+      console.warn('socialLogin unexpected error', err);
+      return null;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) console.warn('Supabase signOut error', error);
+    } catch (err) {
+      console.warn('logout unexpected error', err);
+    }
+
+    setUser(null);
+    router.push('/signin');
+  };
 
   const value: AuthContextType = {
     user,
+    appUser,
     isLoading,
-    isAuthenticated: !!user,
+    isAuthenticated: !!appUser,
     login,
     signup,
     logout,
-    checkAuth
-  }
+    checkAuth,
+    socialLogin,
+  };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error('useAuth must be used within an AuthProvider');
   }
-  return context
+  return context;
 }
 
-export default AuthContext
+export default AuthContext;

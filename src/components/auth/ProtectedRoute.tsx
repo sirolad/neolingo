@@ -1,23 +1,23 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
-import { Layout } from '@/components/layout/Layout'
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
+import { Layout } from '@/components/layout/Layout';
 
 interface ProtectedRouteProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { user, isLoading } = useAuth()
-  const router = useRouter()
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     if (!isLoading && !user) {
-      router.push('/signin')
+      router.push('/signin');
     }
-  }, [user, isLoading, router])
+  }, [user, isLoading, router]);
 
   // Show minimal loading state only during initial auth check
   if (isLoading) {
@@ -30,15 +30,15 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
           </div>
         </div>
       </Layout>
-    )
+    );
   }
 
   // If no user after loading, return null (will redirect)
   if (!user) {
-    return null
+    return null;
   }
 
-  return <>{children}</>
+  return <>{children}</>;
 }
 
-export default ProtectedRoute
+export default ProtectedRoute;

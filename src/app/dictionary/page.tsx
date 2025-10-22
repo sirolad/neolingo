@@ -1,45 +1,47 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import { Book, ArrowLeft, Star } from 'lucide-react'
-import { Layout } from '@/components/layout/Layout'
-import { SearchBar } from '@/components/ui/SearchBar'
-import { WordCard } from '@/components/ui/WordCard'
-import { Button } from '@/components/ui/Button'
-import { mockAuth, type MockUser } from '@/lib/mockAuth'
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { Book, ArrowLeft, Star } from 'lucide-react';
+import { Layout } from '@/components/layout/Layout';
+import { SearchBar } from '@/components/ui/SearchBar';
+import { WordCard } from '@/components/ui/WordCard';
+import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DictionaryWord {
-  id: string
-  yorubaWord: string
-  englishWord: string
-  definition: string
-  context?: string
-  category: string
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
-  isFavorite: boolean
-  usage: number
+  id: string;
+  yorubaWord: string;
+  englishWord: string;
+  definition: string;
+  context?: string;
+  category: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  isFavorite: boolean;
+  usage: number;
 }
 
 export default function DictionaryPage() {
-  const router = useRouter()
-  const [user, setUser] = useState<MockUser | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [words, setWords] = useState<DictionaryWord[]>([])
+  const router = useRouter();
+  const { appUser, isLoading: authLoading } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [words, setWords] = useState<DictionaryWord[]>([]);
 
   useEffect(() => {
-    const currentUser = mockAuth.getCurrentUser()
-    if (!currentUser) {
-      router.push('/signin')
-      return
+    // Wait for auth check to complete
+    if (authLoading) return;
+
+    if (!appUser) {
+      router.push('/signin');
+      return;
     }
-    setUser(currentUser)
-    loadDictionaryWords()
-    setLoading(false)
-  }, [router])
+
+    loadDictionaryWords();
+    setLoading(false);
+  }, [router, appUser, authLoading]);
 
   const loadDictionaryWords = () => {
     // Mock dictionary data
@@ -53,39 +55,42 @@ export default function DictionaryPage() {
         category: 'emotions',
         difficulty: 'beginner',
         isFavorite: true,
-        usage: 245
+        usage: 245,
       },
       {
         id: '2',
         yorubaWord: 'Ọgbọn',
         englishWord: 'Wisdom',
-        definition: 'The quality of having experience, knowledge, and good judgment',
+        definition:
+          'The quality of having experience, knowledge, and good judgment',
         context: 'Ọgbọn ju agbara lọ (Wisdom is better than strength)',
         category: 'abstract',
         difficulty: 'intermediate',
         isFavorite: false,
-        usage: 189
+        usage: 189,
       },
       {
         id: '3',
         yorubaWord: 'Lẹwa',
         englishWord: 'Beautiful',
         definition: 'Having beauty; aesthetically pleasing',
-        context: 'Mo ri obirin lẹwa kan ni oja (I saw a beautiful woman at the market)',
+        context:
+          'Mo ri obirin lẹwa kan ni oja (I saw a beautiful woman at the market)',
         category: 'appearance',
         difficulty: 'beginner',
         isFavorite: true,
-        usage: 312
+        usage: 312,
       },
       {
         id: '4',
         yorubaWord: 'Ireti',
         englishWord: 'Hope',
-        definition: 'A feeling of expectation and desire for a certain thing to happen',
+        definition:
+          'A feeling of expectation and desire for a certain thing to happen',
         category: 'emotions',
         difficulty: 'beginner',
         isFavorite: false,
-        usage: 156
+        usage: 156,
       },
       {
         id: '5',
@@ -96,7 +101,7 @@ export default function DictionaryPage() {
         category: 'abstract',
         difficulty: 'intermediate',
         isFavorite: false,
-        usage: 203
+        usage: 203,
       },
       {
         id: '6',
@@ -107,13 +112,13 @@ export default function DictionaryPage() {
         category: 'emotions',
         difficulty: 'beginner',
         isFavorite: true,
-        usage: 278
-      }
-    ]
-    setWords(mockWords)
-  }
+        usage: 278,
+      },
+    ];
+    setWords(mockWords);
+  };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <Layout variant="home">
         <div className="flex-1 flex items-center justify-center">
@@ -123,57 +128,75 @@ export default function DictionaryPage() {
           </div>
         </div>
       </Layout>
-    )
+    );
   }
 
-  if (!user) {
-    return null
+  if (!appUser) {
+    return null;
   }
 
   const categories = [
     { id: 'all', label: 'All Words', count: words.length },
-    { id: 'emotions', label: 'Emotions', count: words.filter(w => w.category === 'emotions').length },
-    { id: 'abstract', label: 'Abstract', count: words.filter(w => w.category === 'abstract').length },
-    { id: 'appearance', label: 'Appearance', count: words.filter(w => w.category === 'appearance').length }
-  ]
+    {
+      id: 'emotions',
+      label: 'Emotions',
+      count: words.filter(w => w.category === 'emotions').length,
+    },
+    {
+      id: 'abstract',
+      label: 'Abstract',
+      count: words.filter(w => w.category === 'abstract').length,
+    },
+    {
+      id: 'appearance',
+      label: 'Appearance',
+      count: words.filter(w => w.category === 'appearance').length,
+    },
+  ];
 
-  const filteredWords = words.filter(word => {
-    const matchesSearch = searchQuery === '' || 
-      word.yorubaWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      word.englishWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      word.definition.toLowerCase().includes(searchQuery.toLowerCase())
-    
-    const matchesCategory = selectedCategory === 'all' || word.category === selectedCategory
-    
-    return matchesSearch && matchesCategory
-  }).sort((a, b) => {
-    // Sort by usage (most used first), then alphabetically
-    if (a.usage !== b.usage) return b.usage - a.usage
-    return a.yorubaWord.localeCompare(b.yorubaWord)
-  })
+  const filteredWords = words
+    .filter(word => {
+      const matchesSearch =
+        searchQuery === '' ||
+        word.yorubaWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        word.englishWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        word.definition.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesCategory =
+        selectedCategory === 'all' || word.category === selectedCategory;
+
+      return matchesSearch && matchesCategory;
+    })
+    .sort((a, b) => {
+      // Sort by usage (most used first), then alphabetically
+      if (a.usage !== b.usage) return b.usage - a.usage;
+      return a.yorubaWord.localeCompare(b.yorubaWord);
+    });
 
   const handleGoBack = () => {
-    router.push('/home')
-  }
+    router.push('/home');
+  };
 
   const handleToggleFavorite = (wordId: string) => {
-    setWords(prev => 
-      prev.map(word => 
-        word.id === wordId 
-          ? { ...word, isFavorite: !word.isFavorite }
-          : word
+    setWords(prev =>
+      prev.map(word =>
+        word.id === wordId ? { ...word, isFavorite: !word.isFavorite } : word
       )
-    )
-  }
+    );
+  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'beginner': return 'bg-green-100 text-green-800'
-      case 'intermediate': return 'bg-yellow-100 text-yellow-800'
-      case 'advanced': return 'bg-red-100 text-red-800'
-      default: return 'bg-neutral-100 text-neutral-800'
+      case 'beginner':
+        return 'bg-green-100 text-green-800';
+      case 'intermediate':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'advanced':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-neutral-100 text-neutral-800';
     }
-  }
+  };
 
   return (
     <Layout variant="home">
@@ -187,7 +210,9 @@ export default function DictionaryPage() {
             <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
             <span className="font-medium text-sm md:text-base">Back</span>
           </button>
-          <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">Dictionary</h1>
+          <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
+            Dictionary
+          </h1>
           <div className="w-16 md:w-20"></div> {/* Spacer for centering */}
         </div>
 
@@ -209,7 +234,8 @@ export default function DictionaryPage() {
                   Yoruba Dictionary
                 </h2>
                 <p className="text-neutral-600 text-sm md:text-base lg:text-lg">
-                  {filteredWords.length} word{filteredWords.length !== 1 ? 's' : ''} available
+                  {filteredWords.length} word
+                  {filteredWords.length !== 1 ? 's' : ''} available
                 </p>
               </div>
             </div>
@@ -225,10 +251,12 @@ export default function DictionaryPage() {
 
             {/* Category Filters */}
             <div className="flex flex-wrap gap-2 md:gap-3">
-              {categories.map((category) => (
+              {categories.map(category => (
                 <Button
                   key={category.id}
-                  variant={selectedCategory === category.id ? 'primary' : 'outline'}
+                  variant={
+                    selectedCategory === category.id ? 'primary' : 'outline'
+                  }
                   size="sm"
                   onClick={() => setSelectedCategory(category.id)}
                   className="h-8 md:h-10 lg:h-12 px-3 md:px-4 lg:px-5 text-xs md:text-sm lg:text-base hover:scale-105 active:scale-95 transition-transform"
@@ -253,7 +281,9 @@ export default function DictionaryPage() {
                   {/* Header with favorite and difficulty */}
                   <div className="flex items-center justify-between mb-4 md:mb-6">
                     <div className="flex items-center gap-2 md:gap-3">
-                      <div className={`px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-xs md:text-sm lg:text-base font-medium ${getDifficultyColor(word.difficulty)}`}>
+                      <div
+                        className={`px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-xs md:text-sm lg:text-base font-medium ${getDifficultyColor(word.difficulty)}`}
+                      >
                         {word.difficulty}
                       </div>
                       <div className="px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 bg-neutral-100 text-neutral-600 rounded-full text-xs md:text-sm lg:text-base">
@@ -263,12 +293,14 @@ export default function DictionaryPage() {
                     <button
                       onClick={() => handleToggleFavorite(word.id)}
                       className={`p-2 md:p-3 lg:p-4 rounded-full transition-all hover:scale-110 active:scale-95 ${
-                        word.isFavorite 
-                          ? 'text-yellow-500 bg-yellow-50 hover:bg-yellow-100' 
+                        word.isFavorite
+                          ? 'text-yellow-500 bg-yellow-50 hover:bg-yellow-100'
                           : 'text-neutral-400 hover:text-yellow-500 hover:bg-neutral-50'
                       }`}
                     >
-                      <Star className={`w-5 h-5 md:w-6 md:h-6 ${word.isFavorite ? 'fill-current' : ''}`} />
+                      <Star
+                        className={`w-5 h-5 md:w-6 md:h-6 ${word.isFavorite ? 'fill-current' : ''}`}
+                      />
                     </button>
                   </div>
 
@@ -288,8 +320,12 @@ export default function DictionaryPage() {
                   {/* Context if available */}
                   {word.context && (
                     <div className="bg-purple-50 hover:bg-purple-100 transition-colors rounded-xl md:rounded-2xl p-4 md:p-5 lg:p-6">
-                      <h4 className="text-sm md:text-base lg:text-lg font-medium text-purple-800 mb-2 md:mb-3">Usage Example:</h4>
-                      <p className="text-sm md:text-base lg:text-lg text-purple-700 italic leading-relaxed">&quot;{word.context}&quot;</p>
+                      <h4 className="text-sm md:text-base lg:text-lg font-medium text-purple-800 mb-2 md:mb-3">
+                        Usage Example:
+                      </h4>
+                      <p className="text-sm md:text-base lg:text-lg text-purple-700 italic leading-relaxed">
+                        &quot;{word.context}&quot;
+                      </p>
                     </div>
                   )}
                 </div>
@@ -306,7 +342,9 @@ export default function DictionaryPage() {
               className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft p-8 md:p-10 lg:p-12 text-center col-span-full"
             >
               <Book className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-neutral-400 mx-auto mb-4 md:mb-6 lg:mb-8" />
-              <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-neutral-800 mb-2 md:mb-3 lg:mb-4">No Words Found</h3>
+              <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-neutral-800 mb-2 md:mb-3 lg:mb-4">
+                No Words Found
+              </h3>
               <p className="text-neutral-600 text-sm md:text-base lg:text-lg max-w-md mx-auto mb-4 md:mb-6">
                 Try adjusting your search or filter criteria
               </p>
@@ -325,5 +363,5 @@ export default function DictionaryPage() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }
