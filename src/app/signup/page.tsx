@@ -40,7 +40,7 @@ export default function SignUpPage() {
     setLoading(true);
 
     try {
-      const redirectTo = `${window.location.origin}/auth/callback`;
+      const redirectTo = getCallbackUrl();
       const created = await signup(
         data.email,
         data.password,
@@ -70,6 +70,7 @@ export default function SignUpPage() {
   const handleSocialLogin = async (provider: 'google' | 'apple') => {
     try {
       const redirectTo = getCallbackUrl();
+      console.log('🚀 Starting social login with:', { provider, redirectTo });
       const result = await socialLogin(provider, redirectTo);
 
       if (result) {
