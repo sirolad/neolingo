@@ -47,7 +47,7 @@ export const newPasswordSchema = z
     path: ['confirmPassword'],
   })
 
-// Export types
+// Export types (moved to @/types/auth.ts)
 export type SignUpFormData = z.infer<typeof signUpSchema>
 export type SignInFormData = z.infer<typeof signInSchema>
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>

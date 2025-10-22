@@ -1,21 +1,6 @@
 import React from 'react'
 import { Button } from './Button'
-
-interface WordCardProps {
-  word: string
-  translation?: string
-  definition?: string
-  type: 'suggestion' | 'voting' | 'dictionary'
-  bgColor?: string
-  borderColor?: string
-  tagColor?: string
-  tagText?: string
-  votes?: number
-  onAction?: () => void
-  actionText?: string
-  actionIcon?: React.ReactNode
-  className?: string
-}
+import type { WordCardProps } from '@/types'
 
 export function WordCard({
   word,

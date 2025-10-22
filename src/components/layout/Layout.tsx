@@ -4,14 +4,7 @@ import React from 'react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { ResponsiveNavigation } from './ResponsiveNavigation'
-
-export interface LayoutProps {
-  children: React.ReactNode
-  className?: string
-  variant?: 'default' | 'auth' | 'home'
-  backgroundGradient?: boolean
-  showNavigation?: boolean
-}
+import type { LayoutProps } from '@/types'
 
 const Layout: React.FC<LayoutProps> = ({
   children,

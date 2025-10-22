@@ -2,15 +2,7 @@
 
 import React from 'react'
 import { Button } from '@/components/ui/Button'
-
-export interface SocialButtonProps {
-  provider: 'google' | 'apple' | 'facebook'
-  type: 'signin' | 'signup'
-  onClick?: () => void
-  loading?: boolean
-  disabled?: boolean
-  className?: string
-}
+import type { SocialButtonProps } from '@/types'
 
 const SocialButton: React.FC<SocialButtonProps> = ({
   provider,

@@ -11,31 +11,8 @@ import React, {
 import { useRouter } from 'next/navigation'
 import type { User } from '@supabase/supabase-js'
 import createClient from '@/lib/supabase/client'
-import { normalizeUser, type AppUser } from '@/lib/user'
-
-interface AuthContextType {
-  // Supabase User when authenticated, or null
-  user: User | null
-  // Normalized app-specific user shape for UI consumption
-  appUser: AppUser | null
-  isLoading: boolean
-  isAuthenticated: boolean
-  // Methods return Supabase User on success (or null)
-  login: (email: string, password: string) => Promise<User | null>
-  // redirectTo will be forwarded to Supabase's email redirect option (used for verification flows)
-  signup: (
-    email: string,
-    password: string,
-    name?: string,
-    redirectTo?: string,
-  ) => Promise<User | null>
-  logout: () => void
-  checkAuth: () => void
-  socialLogin: (
-    provider: 'google' | 'apple',
-    redirectTo?: string,
-  ) => Promise<User | null>
-}
+import { normalizeUser } from '@/lib/user'
+import type { AppUser, AuthContextType, SocialProvider } from '@/types'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
@@ -45,7 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Derive a normalized app-level user for UI components
   const appUser = useMemo(() => normalizeUser(user), [user])
   const router = useRouter()
-  // Create Supabase client once per component mount
+
   const supabase = useMemo(() => createClient(), [])
 
   const checkAuth = useCallback(async () => {
@@ -99,9 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     name?: string,
     redirectTo?: string,
   ): Promise<User | null> => {
-    // Use Supabase to sign up, fallback to mockAuth if needed
     try {
-      // typed payload to avoid `any`
       const signUpPayload: {
         email: string
         password: string
@@ -128,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const socialLogin = async (
-    provider: 'google' | 'apple',
+    provider: SocialProvider,
     redirectTo?: string,
   ): Promise<User | null> => {
     try {

@@ -1,15 +1,5 @@
 import type { User } from '@supabase/supabase-js'
-
-export interface AppUser {
-  id: string
-  email?: string | null
-  displayName?: string | null
-  avatar?: string | null
-  provider?: string | null
-  createdAt?: string | null
-  // keep raw for advanced uses when needed
-  raw?: User
-}
+import type { AppUser } from '@/types'
 
 export function normalizeUser(u: User | null): AppUser | null {
   if (!u) return null
