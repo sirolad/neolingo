@@ -20,6 +20,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { getCallbackUrl } from '@/lib/urls';
+import { SocialProvider } from '@/types';
+import '@/lib/debug-urls'; // Import debug utilities
 
 export default function SignInPage() {
   const router = useRouter();
@@ -57,9 +59,10 @@ export default function SignInPage() {
     }
   };
 
-  const handleSocialLogin = async (provider: 'google' | 'apple') => {
+  const handleSocialLogin = async (provider: SocialProvider) => {
     try {
       const redirectTo = getCallbackUrl();
+      console.log('🚀 Starting social login with:', { provider, redirectTo });
       const result = await socialLogin(provider, redirectTo);
 
       if (result) {

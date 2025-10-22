@@ -20,6 +20,6 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Redirect to the intended page or home
+  // Redirect to  home
   return NextResponse.redirect(new URL(next, getBaseUrl()));
 }

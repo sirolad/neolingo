@@ -107,6 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     redirectTo?: string
   ): Promise<User | null> => {
     try {
+      console.log('🔐 Supabase OAuth request:', { provider, redirectTo });
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: redirectTo ? { redirectTo } : undefined,

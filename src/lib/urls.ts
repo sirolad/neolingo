@@ -6,8 +6,14 @@
  * Get the base URL for the current environment
  */
 export function getBaseUrl(): string {
-  // In production, use the environment variable or fallback
-  if (process.env.NODE_ENV === 'production') {
+  // Check if we're in the browser
+  if (typeof window !== 'undefined') {
+    // In browser, use window.location.origin for current domain
+    return window.location.origin;
+  }
+
+  // On server side, use environment variable or fallback
+  if (isProduction()) {
     return (
       process.env.NEXT_PUBLIC_SITE_URL || 'https://neolingo-swart.vercel.app'
     );
@@ -21,7 +27,18 @@ export function getBaseUrl(): string {
  * Get the OAuth callback URL
  */
 export function getCallbackUrl(): string {
-  return `${getBaseUrl()}/auth/callback`;
+  const baseUrl = getBaseUrl();
+  const callbackUrl = `${baseUrl}/auth/callback`;
+
+  // Debug logging in development
+  if (isDevelopment()) {
+    console.log('🔗 OAuth Callback URL:', callbackUrl);
+    console.log('🌍 Base URL:', baseUrl);
+    console.log('🔧 Environment:', process.env.NODE_ENV);
+    console.log('🌐 Site URL:', process.env.NEXT_PUBLIC_SITE_URL);
+  }
+
+  return callbackUrl;
 }
 
 /**
