@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
       console.error('Auth callback error:', error);
@@ -17,6 +17,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(
         new URL('/signin?error=auth_callback_failed', getBaseUrl())
       );
+    }
+
+    if (data?.user) {
+      console.log('✅ Auth callback successful for user:', data.user.email);
     }
   }
 
