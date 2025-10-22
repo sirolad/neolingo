@@ -1,21 +1,20 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import {Button} from "@/components/ui/Button";
+import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/Button';
 
 export default function Onboarding1() {
   const router = useRouter();
 
   const handleNext = () => {
-    router.push("/onboarding/4");
+    router.push('/onboarding/4');
   };
 
   const handleSkip = () => {
-    router.push("/signup");
+    router.push('/signup');
   };
   return (
     <div className="h-screen bg-[#F4F4F4] flex flex-col overflow-hidden">
-      
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-10 md:px-8 lg:px-12 pt-8 md:pt-12 lg:pt-26 py-16 md:pb-8 lg:pb-10 mb-16">
         {/* Container for responsive layout */}

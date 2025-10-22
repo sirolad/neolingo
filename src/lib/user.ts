@@ -1,11 +1,11 @@
-import type { User } from '@supabase/supabase-js'
-import type { AppUser } from '@/types'
+import type { User } from '@supabase/supabase-js';
+import type { AppUser } from '@/types';
 
 export function normalizeUser(u: User | null): AppUser | null {
-  if (!u) return null
+  if (!u) return null;
 
-  const meta = u.user_metadata ?? {}
-  const appMeta = u.app_metadata ?? {}
+  const meta = u.user_metadata ?? {};
+  const appMeta = u.app_metadata ?? {};
 
   return {
     id: u.id,
@@ -15,5 +15,5 @@ export function normalizeUser(u: User | null): AppUser | null {
     provider: appMeta?.provider ?? null,
     createdAt: (u as User).created_at ?? null,
     raw: u,
-  }
+  };
 }

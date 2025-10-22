@@ -1,5 +1,5 @@
-import type { NextConfig } from "next";
-import withPWA from "next-pwa";
+import type { NextConfig } from 'next';
+import withPWA from 'next-pwa';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -7,16 +7,16 @@ const nextConfig: NextConfig = {
 
 // PWA configuration
 export default withPWA({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
   runtimeCaching: [
     {
       urlPattern: /^https?.*/, // Cache all HTTP requests
-      handler: "NetworkFirst",
+      handler: 'NetworkFirst',
       options: {
-        cacheName: "https-calls",
+        cacheName: 'https-calls',
         networkTimeoutSeconds: 15,
         expiration: {
           maxEntries: 150,
@@ -28,4 +28,4 @@ export default withPWA({
       },
     },
   ],
-})(nextConfig as any);
+})(nextConfig as Record<string, unknown>);

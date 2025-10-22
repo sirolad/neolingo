@@ -10,24 +10,24 @@ jobs:
   update-dependencies:
     name: Update Dependencies
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-          
+
       - name: Update dependencies
         run: |
           npm update
           npm audit fix --force
-          
+
       - name: Check for changes
         id: changes
         run: |
@@ -36,7 +36,7 @@ jobs:
           else
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
-          
+
       - name: Create Pull Request
         if: steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v5
@@ -46,11 +46,11 @@ jobs:
           title: 'chore: update dependencies'
           body: |
             This PR updates project dependencies to their latest versions.
-            
+
             ## Changes
             - Updated npm dependencies
             - Applied security fixes from npm audit
-            
+
             ## Testing
             Please review the changes and ensure the application still works correctly.
           branch: dependency-update

@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Mail, Eye, EyeOff } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Mail, Eye, EyeOff } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
@@ -14,18 +14,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { signInSchema, type SignInFormData } from '@/lib/schemas/auth'
-import { Checkbox } from '@/components/ui/checkbox'
-import { useAuth } from '@/contexts/AuthContext'
-import { toast } from 'sonner'
+} from '@/components/ui/form';
+import { signInSchema, type SignInFormData } from '@/lib/schemas/auth';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export default function SignInPage() {
-  const router = useRouter()
-  const { login, socialLogin } = useAuth()
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
+  const router = useRouter();
+  const { login, socialLogin } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -33,42 +33,42 @@ export default function SignInPage() {
       email: '',
       password: '',
     },
-  })
+  });
 
   const handleSubmit = async (data: SignInFormData) => {
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const result = await login(data.email, data.password)
+      const result = await login(data.email, data.password);
 
       if (!result) {
-        toast.error('Login failed. Please check your credentials.')
-        return
+        toast.error('Login failed. Please check your credentials.');
+        return;
       }
 
       // Success - redirect to home
-      router.push('/home')
+      router.push('/home');
     } catch (err) {
-      console.error(err)
-      toast.error('Login failed. Please try again.')
+      console.error(err);
+      toast.error('Login failed. Please try again.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSocialLogin = async (provider: 'google' | 'apple') => {
     try {
-      const redirectTo = `${window.location.origin}/auth/callback`
-      const result = await socialLogin(provider, redirectTo)
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      const result = await socialLogin(provider, redirectTo);
 
       if (result) {
-        router.push('/home')
+        router.push('/home');
       }
     } catch (error) {
-      console.error(error)
-      toast.error('Social login failed. Please try again.')
+      console.error(error);
+      toast.error('Social login failed. Please try again.');
     }
-  }
+  };
 
   return (
     <div className="h-screen bg-secondary flex flex-col overflow-hidden">
@@ -267,5 +267,5 @@ export default function SignInPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

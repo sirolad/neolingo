@@ -1,73 +1,81 @@
-import React from 'react'
-import { useRouter, usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
-import { TrendingUp, Vote, Lightbulb, Book, User, Settings, LogOut } from 'lucide-react'
-import { useAuth } from '@/contexts/AuthContext'
+import React from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { motion } from 'framer-motion';
+import {
+  TrendingUp,
+  Vote,
+  Lightbulb,
+  Book,
+  User,
+  Settings,
+  LogOut,
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface NavItemProps {
-  icon: React.ReactNode
-  label: string
-  href: string
-  active?: boolean
-  onClick: () => void
+  icon: React.ReactNode;
+  label: string;
+  href: string;
+  active?: boolean;
+  onClick: () => void;
 }
 
 function NavItem({ icon, label, active = false, onClick }: NavItemProps) {
   return (
-    <button 
+    <button
       onClick={onClick}
       className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm ${
-        active 
-          ? 'text-primary-800 bg-primary-50 shadow-sm' 
+        active
+          ? 'text-primary-800 bg-primary-50 shadow-sm'
           : 'text-neutral-600 hover:text-neutral-800 hover:bg-neutral-50'
       }`}
     >
       {icon}
       <span>{label}</span>
     </button>
-  )
+  );
 }
 
 export function TopNavigation() {
-  const router = useRouter()
-  const pathname = usePathname()
-  const { user, logout } = useAuth()
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   const navItems = [
     {
       icon: <TrendingUp className="w-5 h-5" />,
       label: 'Home',
-      href: '/home'
+      href: '/home',
     },
     {
       icon: <Lightbulb className="w-5 h-5" />,
       label: 'Suggest',
-      href: '/suggest'
+      href: '/suggest',
     },
     {
       icon: <Vote className="w-5 h-5" />,
       label: 'Vote',
-      href: '/vote'
+      href: '/vote',
     },
     {
       icon: <Book className="w-5 h-5" />,
       label: 'Dictionary',
-      href: '/dictionary'
-    }
-  ]
+      href: '/dictionary',
+    },
+  ];
 
   const handleNavigation = (href: string) => {
-    router.push(href)
-  }
+    router.push(href);
+  };
 
   const handleLogout = () => {
-    logout()
-  }
+    logout();
+  };
 
   const handleProfile = () => {
     // Navigate to profile or settings page
-    console.log('Profile clicked')
-  }
+    console.log('Profile clicked');
+  };
 
   return (
     <motion.nav
@@ -97,7 +105,7 @@ export function TopNavigation() {
           transition={{ duration: 0.2, delay: 0.1 }}
           className="flex items-center gap-2"
         >
-          {navItems.map((item) => (
+          {navItems.map(item => (
             <NavItem
               key={item.href}
               icon={item.icon}
@@ -122,7 +130,9 @@ export function TopNavigation() {
               <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-neutral-50 rounded-lg">
                 <div className="text-lg">{user.avatar}</div>
                 <div className="text-sm">
-                  <div className="font-semibold text-neutral-950">{user.name}</div>
+                  <div className="font-semibold text-neutral-950">
+                    {user.name}
+                  </div>
                   <div className="text-neutral-600">Contributor</div>
                 </div>
               </div>
@@ -160,5 +170,5 @@ export function TopNavigation() {
         </motion.div>
       </div>
     </motion.nav>
-  )
+  );
 }

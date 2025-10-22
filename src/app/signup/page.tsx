@@ -1,12 +1,12 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Mail, Eye, EyeOff } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Mail, Eye, EyeOff } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
@@ -14,17 +14,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { signUpSchema, type SignUpFormData } from '@/lib/schemas/auth'
-import { useAuth } from '@/contexts/AuthContext'
-import { toast } from 'sonner'
+} from '@/components/ui/form';
+import { signUpSchema, type SignUpFormData } from '@/lib/schemas/auth';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export default function SignUpPage() {
-  const { signup, socialLogin } = useAuth()
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const { signup, socialLogin } = useAuth();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
@@ -33,52 +33,52 @@ export default function SignUpPage() {
       password: '',
       confirmPassword: '',
     },
-  })
+  });
 
   const handleSubmit = async (data: SignUpFormData) => {
-    setLoading(true)
+    setLoading(true);
 
     try {
-      const redirectTo = `${window.location.origin}/auth/callback`
+      const redirectTo = `${window.location.origin}/auth/callback`;
       const created = await signup(
         data.email,
         data.password,
         undefined,
-        redirectTo,
-      )
+        redirectTo
+      );
 
       if (!created) {
         // signup failed or returned null
-        toast.error('Registration failed. Please try again.')
-        return
+        toast.error('Registration failed. Please try again.');
+        return;
       }
 
       // On success, inform the user and navigate to email verification
       toast.success(
-        'Sign up successful! Check your email for the confirmation link!',
-      )
-      router.push('/email-verification/1')
+        'Sign up successful! Check your email for the confirmation link!'
+      );
+      router.push('/email-verification/1');
     } catch {
-      console.error('Registration failed. Please try again.')
-      toast.error('Registration failed. Please try again.')
+      console.error('Registration failed. Please try again.');
+      toast.error('Registration failed. Please try again.');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleSocialLogin = async (provider: 'google' | 'apple') => {
     try {
-      const redirectTo = `${window.location.origin}/auth/callback`
-      const result = await socialLogin(provider, redirectTo)
+      const redirectTo = `${window.location.origin}/auth/callback`;
+      const result = await socialLogin(provider, redirectTo);
 
       if (result) {
-        router.push('/home')
+        router.push('/home');
       }
     } catch (error) {
-      console.error(error)
-      toast.error('Social login failed. Please try again.')
+      console.error(error);
+      toast.error('Social login failed. Please try again.');
     }
-  }
+  };
 
   return (
     <div className="h-screen bg-secondary flex flex-col overflow-hidden">
@@ -297,5 +297,5 @@ export default function SignUpPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

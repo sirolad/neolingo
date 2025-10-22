@@ -1,46 +1,49 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
-import "./globals.css";
-import { Toaster } from '@/components/ui/sonner'
+import './globals.css';
+import { Toaster } from '@/components/ui/sonner';
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Neolingo - Yoruba Language Learning",
-  description: "A collaborative platform for learning and expanding the Yoruba language dictionary",
-  manifest: "/manifest.json",
+  title: 'Neolingo - Yoruba Language Learning',
+  description:
+    'A collaborative platform for learning and expanding the Yoruba language dictionary',
+  manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
-    title: "Neolingo",
+    statusBarStyle: 'default',
+    title: 'Neolingo',
   },
   formatDetection: {
     telephone: false,
   },
   openGraph: {
-    type: "website",
-    siteName: "Neolingo",
-    title: "Neolingo - Yoruba Language Learning",
-    description: "A collaborative platform for learning and expanding the Yoruba language dictionary",
+    type: 'website',
+    siteName: 'Neolingo',
+    title: 'Neolingo - Yoruba Language Learning',
+    description:
+      'A collaborative platform for learning and expanding the Yoruba language dictionary',
   },
   twitter: {
-    card: "summary",
-    title: "Neolingo - Yoruba Language Learning",
-    description: "A collaborative platform for learning and expanding the Yoruba language dictionary",
+    card: 'summary',
+    title: 'Neolingo - Yoruba Language Learning',
+    description:
+      'A collaborative platform for learning and expanding the Yoruba language dictionary',
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#3B82F6",
+  themeColor: '#3B82F6',
 };
 
 export default function RootLayout({
@@ -70,10 +73,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-      <Toaster richColors position="top-center"/>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <Toaster richColors position="top-center" />
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );

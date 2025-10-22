@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 
@@ -7,37 +7,37 @@
 :root {
   /* Neolingo Brand Colors */
   --radius: 0.75rem;
-  --background: #FAFAFA;
+  --background: #fafafa;
   --foreground: #171717;
-  --card: #FFFFFF;
+  --card: #ffffff;
   --card-foreground: #171717;
-  --popover: #FFFFFF;
+  --popover: #ffffff;
   --popover-foreground: #171717;
-  
+
   /* Primary Brand - Dark (matching Figma) */
   --primary: #111111;
-  --primary-foreground: #FFFFFF;
-  
+  --primary-foreground: #ffffff;
+
   /* Secondary Colors */
-  --secondary: #F5F5F5;
+  --secondary: #f5f5f5;
   --secondary-foreground: #404040;
-  
+
   /* Muted Colors */
-  --muted: #F5F5F5;
+  --muted: #f5f5f5;
   --muted-foreground: #737373;
-  
+
   /* Accent Colors */
-  --accent: #F5F5F5;
+  --accent: #f5f5f5;
   --accent-foreground: #171717;
-  
+
   /* Status Colors */
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
   /* Border and Input */
-  --border: #E5E5E5;
-  --input: #E5E5E5;
-  --ring: #2563EB;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #2563eb;
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -130,11 +130,23 @@
 
 /* Font fallbacks for design system fonts */
 .font-\[Parkinsans\] {
-  font-family: 'Parkinsans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family:
+    'Parkinsans',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 
 .font-\[Metropolis\] {
-  font-family: 'Metropolis', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family:
+    'Metropolis',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 
 /* Override for buttons to ensure text is visible */
@@ -163,38 +175,38 @@
 }
 
 .dark {
-  --background: #0A0A0A;
-  --foreground: #FAFAFA;
+  --background: #0a0a0a;
+  --foreground: #fafafa;
   --card: #171717;
-  --card-foreground: #FAFAFA;
+  --card-foreground: #fafafa;
   --popover: #171717;
-  --popover-foreground: #FAFAFA;
-  
+  --popover-foreground: #fafafa;
+
   --primary: #111111;
-  --primary-foreground: #FFFFFF;
-  
+  --primary-foreground: #ffffff;
+
   --secondary: #262626;
-  --secondary-foreground: #FAFAFA;
-  
+  --secondary-foreground: #fafafa;
+
   --muted: #262626;
-  --muted-foreground: #A3A3A3;
-  
+  --muted-foreground: #a3a3a3;
+
   --accent: #262626;
-  --accent-foreground: #FAFAFA;
-  
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  
+  --accent-foreground: #fafafa;
+
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
   --border: #262626;
   --input: #262626;
-  --ring: #3B82F6;
-  
+  --ring: #3b82f6;
+
   /* Charts for future use */
-  --chart-1: #3B82F6;
-  --chart-2: #10B981;
-  --chart-3: #F59E0B;
-  --chart-4: #EF4444;
-  --chart-5: #8B5CF6;
+  --chart-1: #3b82f6;
+  --chart-2: #10b981;
+  --chart-3: #f59e0b;
+  --chart-4: #ef4444;
+  --chart-5: #8b5cf6;
 }
 
 @layer base {

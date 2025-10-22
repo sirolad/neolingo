@@ -1,112 +1,123 @@
-import type { ReactNode } from 'react'
-import type { WordCard as DictionaryWordCard } from './dictionary'
+import type { ReactNode } from 'react';
 
 // Button component props
 export interface ButtonProps {
-  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
-  size?: 'default' | 'sm' | 'lg' | 'icon'
-  className?: string
-  children: ReactNode
-  onClick?: () => void
-  disabled?: boolean
-  type?: 'button' | 'submit' | 'reset'
+  variant?:
+    | 'default'
+    | 'destructive'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link';
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  className?: string;
+  children: ReactNode;
+  onClick?: () => void;
+  disabled?: boolean;
+  type?: 'button' | 'submit' | 'reset';
 }
 
 // Badge component props
 export interface BadgeProps {
-  variant?: 'default' | 'secondary' | 'destructive' | 'outline'
-  className?: string
-  children: ReactNode
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline';
+  className?: string;
+  children: ReactNode;
 }
 
 // Word card component props
 export interface WordCardProps {
-  word: string
-  translation?: string
-  definition?: string
-  type: 'suggestion' | 'voting' | 'dictionary'
-  bgColor?: string
-  borderColor?: string
-  tagColor?: string
-  tagText?: string
-  votes?: number
-  onAction?: () => void
-  actionText?: string
-  actionIcon?: React.ReactNode
-  className?: string
+  word: string;
+  translation?: string;
+  definition?: string;
+  type: 'suggestion' | 'voting' | 'dictionary';
+  bgColor?: string;
+  borderColor?: string;
+  tagColor?: string;
+  tagText?: string;
+  votes?: number;
+  onAction?: () => void;
+  actionText?: string;
+  actionIcon?: React.ReactNode;
+  className?: string;
 }
 
 // Search bar component props
 export interface SearchBarProps {
-  placeholder?: string
-  value?: string
-  onChange?: (value: string) => void
-  onSearch?: (query: string) => void
-  className?: string
+  placeholder?: string;
+  value?: string;
+  onChange?: (value: string) => void;
+  onSearch?: (query: string) => void;
+  className?: string;
 }
 
 // Social button component props
 export interface SocialButtonProps {
-  provider: 'google' | 'apple' | 'facebook'
-  type: 'signin' | 'signup'
-  onClick?: () => void
-  loading?: boolean
-  disabled?: boolean
-  className?: string
+  provider: 'google' | 'apple' | 'facebook';
+  type: 'signin' | 'signup';
+  onClick?: () => void;
+  loading?: boolean;
+  disabled?: boolean;
+  className?: string;
 }
 
 // Navigation item props
 export interface NavItemProps {
-  href: string
-  label: string
-  icon?: ReactNode
-  isActive?: boolean
-  onClick?: () => void
+  href: string;
+  label: string;
+  icon?: ReactNode;
+  isActive?: boolean;
+  onClick?: () => void;
 }
 
 // Layout component props
 export interface LayoutProps {
-  children: React.ReactNode
-  className?: string
-  variant?: 'default' | 'auth' | 'home'
-  backgroundGradient?: boolean
-  showNavigation?: boolean
+  children: React.ReactNode;
+  className?: string;
+  variant?: 'default' | 'auth' | 'home';
+  backgroundGradient?: boolean;
+  showNavigation?: boolean;
 }
 
 // Protected route props
 export interface ProtectedRouteProps {
-  children: ReactNode
-  fallback?: ReactNode
-  redirectTo?: string
+  children: ReactNode;
+  fallback?: ReactNode;
+  redirectTo?: string;
 }
 
 // Responsive navigation props
 export interface ResponsiveNavigationProps {
-  items: NavItemProps[]
-  className?: string
+  items: NavItemProps[];
+  className?: string;
 }
 
 // Form field context value
 export type FormFieldContextValue<
-  TFieldValues extends Record<string, any> = Record<string, any>,
+  TFieldValues extends Record<string, unknown> = Record<string, unknown>,
   TName extends string = string,
 > = {
-  name: TName
-}
+  name: TName;
+};
 
 // Form item context value
 export type FormItemContextValue = {
-  id: string
-}
+  id: string;
+};
 
 // Toaster props
 export type ToasterProps = {
-  position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'
-  toastOptions?: any
-  richColors?: boolean
-  closeButton?: boolean
-  className?: string
-}
+  position?:
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right';
+  toastOptions?: Record<string, unknown>;
+  richColors?: boolean;
+  closeButton?: boolean;
+  className?: string;
+};
 
 // Verification state type
-export type VerificationState = 'initial' | 'error' | 'resent'
+export type VerificationState = 'initial' | 'error' | 'resent';

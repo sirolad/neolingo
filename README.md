@@ -40,12 +40,14 @@ A modern language learning application built with Next.js 15, TypeScript, and Ta
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/sirolad/neolingo-app.git
 cd neolingo-app
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 # or
@@ -55,12 +57,14 @@ pnpm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env.local
 # Edit .env.local with your configuration
 ```
 
 4. Run the development server:
+
 ```bash
 npm run dev
 # or

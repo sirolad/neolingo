@@ -1,47 +1,47 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { useRouter } from 'next/navigation'
-import { Book, ArrowLeft, Star } from 'lucide-react'
-import { Layout } from '@/components/layout/Layout'
-import { SearchBar } from '@/components/ui/SearchBar'
-import { WordCard } from '@/components/ui/WordCard'
-import { Button } from '@/components/ui/Button'
-import { useAuth } from '@/contexts/AuthContext'
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
+import { Book, ArrowLeft, Star } from 'lucide-react';
+import { Layout } from '@/components/layout/Layout';
+import { SearchBar } from '@/components/ui/SearchBar';
+import { WordCard } from '@/components/ui/WordCard';
+import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface DictionaryWord {
-  id: string
-  yorubaWord: string
-  englishWord: string
-  definition: string
-  context?: string
-  category: string
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
-  isFavorite: boolean
-  usage: number
+  id: string;
+  yorubaWord: string;
+  englishWord: string;
+  definition: string;
+  context?: string;
+  category: string;
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  isFavorite: boolean;
+  usage: number;
 }
 
 export default function DictionaryPage() {
-  const router = useRouter()
-  const { appUser, isLoading: authLoading } = useAuth()
-  const [loading, setLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [words, setWords] = useState<DictionaryWord[]>([])
+  const router = useRouter();
+  const { appUser, isLoading: authLoading } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [words, setWords] = useState<DictionaryWord[]>([]);
 
   useEffect(() => {
     // Wait for auth check to complete
-    if (authLoading) return
+    if (authLoading) return;
 
     if (!appUser) {
-      router.push('/signin')
-      return
+      router.push('/signin');
+      return;
     }
 
-    loadDictionaryWords()
-    setLoading(false)
-  }, [router, appUser, authLoading])
+    loadDictionaryWords();
+    setLoading(false);
+  }, [router, appUser, authLoading]);
 
   const loadDictionaryWords = () => {
     // Mock dictionary data
@@ -114,9 +114,9 @@ export default function DictionaryPage() {
         isFavorite: true,
         usage: 278,
       },
-    ]
-    setWords(mockWords)
-  }
+    ];
+    setWords(mockWords);
+  };
 
   if (loading || authLoading) {
     return (
@@ -128,11 +128,11 @@ export default function DictionaryPage() {
           </div>
         </div>
       </Layout>
-    )
+    );
   }
 
   if (!appUser) {
-    return null
+    return null;
   }
 
   const categories = [
@@ -140,63 +140,63 @@ export default function DictionaryPage() {
     {
       id: 'emotions',
       label: 'Emotions',
-      count: words.filter((w) => w.category === 'emotions').length,
+      count: words.filter(w => w.category === 'emotions').length,
     },
     {
       id: 'abstract',
       label: 'Abstract',
-      count: words.filter((w) => w.category === 'abstract').length,
+      count: words.filter(w => w.category === 'abstract').length,
     },
     {
       id: 'appearance',
       label: 'Appearance',
-      count: words.filter((w) => w.category === 'appearance').length,
+      count: words.filter(w => w.category === 'appearance').length,
     },
-  ]
+  ];
 
   const filteredWords = words
-    .filter((word) => {
+    .filter(word => {
       const matchesSearch =
         searchQuery === '' ||
         word.yorubaWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
         word.englishWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        word.definition.toLowerCase().includes(searchQuery.toLowerCase())
+        word.definition.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesCategory =
-        selectedCategory === 'all' || word.category === selectedCategory
+        selectedCategory === 'all' || word.category === selectedCategory;
 
-      return matchesSearch && matchesCategory
+      return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
       // Sort by usage (most used first), then alphabetically
-      if (a.usage !== b.usage) return b.usage - a.usage
-      return a.yorubaWord.localeCompare(b.yorubaWord)
-    })
+      if (a.usage !== b.usage) return b.usage - a.usage;
+      return a.yorubaWord.localeCompare(b.yorubaWord);
+    });
 
   const handleGoBack = () => {
-    router.push('/home')
-  }
+    router.push('/home');
+  };
 
   const handleToggleFavorite = (wordId: string) => {
-    setWords((prev) =>
-      prev.map((word) =>
-        word.id === wordId ? { ...word, isFavorite: !word.isFavorite } : word,
-      ),
-    )
-  }
+    setWords(prev =>
+      prev.map(word =>
+        word.id === wordId ? { ...word, isFavorite: !word.isFavorite } : word
+      )
+    );
+  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'beginner':
-        return 'bg-green-100 text-green-800'
+        return 'bg-green-100 text-green-800';
       case 'intermediate':
-        return 'bg-yellow-100 text-yellow-800'
+        return 'bg-yellow-100 text-yellow-800';
       case 'advanced':
-        return 'bg-red-100 text-red-800'
+        return 'bg-red-100 text-red-800';
       default:
-        return 'bg-neutral-100 text-neutral-800'
+        return 'bg-neutral-100 text-neutral-800';
     }
-  }
+  };
 
   return (
     <Layout variant="home">
@@ -251,7 +251,7 @@ export default function DictionaryPage() {
 
             {/* Category Filters */}
             <div className="flex flex-wrap gap-2 md:gap-3">
-              {categories.map((category) => (
+              {categories.map(category => (
                 <Button
                   key={category.id}
                   variant={
@@ -363,5 +363,5 @@ export default function DictionaryPage() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }
