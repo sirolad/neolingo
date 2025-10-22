@@ -21,7 +21,7 @@ This is a Next.js 15 app using the App Router pattern with TypeScript and Tailwi
 
 **PWA Configuration**: The app is configured as a Progressive Web App using `next-pwa` with offline caching strategies. PWA config is in `next.config.ts` with NetworkFirst caching for HTTP requests.
 
-**Authentication System**: Uses a mock authentication system (`mockAuth.ts`) with localStorage persistence. The `AuthContext` provides authentication state management across the app with login/signup/logout functionality.
+**Authentication System**: Currently uses a mock authentication system (`mockAuth.ts`) with localStorage persistence. The `AuthContext` provides authentication state management across the app with login/signup/logout functionality. **PLANNED**: Migration to Supabase authentication for production-ready backend.
 
 **UI Framework**: Built with shadcn/ui components (configured in `components.json`) using Radix UI primitives and Tailwind CSS for styling. Components follow the "new-york" style variant.
 
@@ -73,3 +73,82 @@ The project uses ESLint with Next.js configuration. Always run `npm run lint` be
 
 ### PWA Development
 Icons are generated via scripts in the `/scripts` folder. The app includes comprehensive PWA metadata and offline support.
+
+## Supabase Authentication Implementation Plan
+
+### Overview
+Migrating from mock authentication to Supabase for production-ready backend authentication.
+
+### Implementation Steps
+
+#### 1. Setup & Dependencies
+```bash
+npm install @supabase/supabase-js @supabase/auth-helpers-nextjs
+```
+
+**Environment Variables** (`.env.local`):
+```
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+#### 2. File Structure Changes
+```
+src/
+├── lib/
+│   ├── supabase/
+│   │   ├── client.ts          # Supabase client config
+│   │   ├── server.ts          # Server-side Supabase client
+│   │   └── auth.ts            # Auth service layer (replaces mockAuth.ts)
+│   └── schemas/
+│       └── auth.ts            # Update for Supabase responses
+├── contexts/
+│   └── AuthContext.tsx        # Update for Supabase auth state
+└── middleware.ts              # Auth middleware for protected routes
+```
+
+#### 3. Key Components
+
+**Supabase Client Configuration**:
+- Client-side client for browser usage
+- Server-side client for API routes and SSR
+- Auth helpers for Next.js App Router integration
+
+**Authentication Service**:
+- Replace `mockAuth.ts` with Supabase auth functions
+- Maintain same interface for seamless migration
+- Handle auth state changes and session management
+
+**Social Authentication**:
+- Configure Google and Apple OAuth in Supabase dashboard
+- Set up redirect URLs for development and production
+- Update social login buttons to use Supabase providers
+
+#### 4. Migration Strategy
+
+**Phase 1**: Set up Supabase and install dependencies
+**Phase 2**: Create auth service layer with same interface as mockAuth
+**Phase 3**: Update AuthContext to use Supabase auth state
+**Phase 4**: Configure social providers and test flows
+**Phase 5**: Add middleware for protected routes
+**Phase 6**: Test all authentication flows thoroughly
+
+#### 5. Benefits of Supabase Integration
+
+- **Real-time authentication**: Proper session management
+- **Social providers**: Native Google/Apple OAuth integration
+- **Security**: Row Level Security (RLS) for data protection
+- **Scalability**: Production-ready backend infrastructure
+- **User management**: Built-in user profiles and metadata
+- **Password reset**: Email-based password recovery flows
+
+### Testing Requirements
+
+- Signup flow with email verification
+- Signin flow with proper error handling
+- Social authentication (Google/Apple)
+- Password reset functionality
+- Session persistence across browser refreshes
+- Protected route access control
+- Proper error states and user feedback
