@@ -39,7 +39,8 @@ function NavItem({ icon, label, active = false, onClick }: NavItemProps) {
 export function TopNavigation() {
   const router = useRouter();
   const pathname = usePathname();
-  const { user, logout } = useAuth();
+  const { appUser, logout } = useAuth();
+  const user = appUser;
 
   const navItems = [
     {
