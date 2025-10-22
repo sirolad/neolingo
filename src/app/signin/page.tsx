@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Mail, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -29,6 +29,18 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  // Check for auth callback errors
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+
+    if (error === 'auth_callback_failed') {
+      toast.error('Authentication failed. Please try again.');
+      // Clean up the URL
+      router.replace('/signin');
+    }
+  }, [router]);
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),

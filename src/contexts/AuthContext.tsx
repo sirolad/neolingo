@@ -29,7 +29,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { data, error } = await supabase.auth.getUser();
       if (error) {
-        console.warn('Supabase getUser error', error);
+        // AuthSessionMissingError is normal when no session exists
+        if (error.message?.includes('Auth session missing')) {
+          console.log('No active session found - user not authenticated');
+        } else {
+          console.warn('Supabase getUser error', error);
+        }
         setUser(null);
       } else {
         setUser(data?.user ?? null);
@@ -44,7 +49,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Initial auth check
     checkAuth();
-  }, [checkAuth]);
+
+    // Listen for auth state changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('🔄 Auth state changed:', event, session?.user?.email);
+
+      if (event === 'SIGNED_IN') {
+        setUser(session?.user ?? null);
+        setIsLoading(false);
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setIsLoading(false);
+      } else if (event === 'TOKEN_REFRESHED') {
+        setUser(session?.user ?? null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [checkAuth, supabase.auth]);
 
   const login = async (
     email: string,
