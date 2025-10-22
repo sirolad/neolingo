@@ -18,6 +18,7 @@ import {
 import { signUpSchema, type SignUpFormData } from '@/lib/schemas/auth';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { getCallbackUrl } from '@/lib/urls';
 
 export default function SignUpPage() {
   const { signup, socialLogin } = useAuth();
@@ -68,7 +69,7 @@ export default function SignUpPage() {
 
   const handleSocialLogin = async (provider: 'google' | 'apple') => {
     try {
-      const redirectTo = `${window.location.origin}/auth/callback`;
+      const redirectTo = getCallbackUrl();
       const result = await socialLogin(provider, redirectTo);
 
       if (result) {
