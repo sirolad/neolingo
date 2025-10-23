@@ -20,7 +20,10 @@ export async function GET(request: NextRequest) {
     }
 
     if (data?.user) {
-      console.log('✅ Auth callback successful for user:', data.user.email);
+      console.log(
+        `✅ Auth callback successful for user${process.env.NODE_ENV}:`,
+        data.user.email
+      );
     }
   }
 
