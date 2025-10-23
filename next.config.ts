@@ -31,19 +31,7 @@ const withPWAConfig = withPWA({
   ],
 });
 
-// Sentry configuration
-const sentryWebpackPluginOptions = {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
-  tunnelRoute: '/monitoring',
-  hideSourceMaps: true,
-  disableLogger: true,
-  automaticVercelMonitors: true,
-};
-
-export default withSentryConfig(withPWAConfig(nextConfig), {
+export default withSentryConfig(withPWAConfig(nextConfig) as NextConfig, {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 

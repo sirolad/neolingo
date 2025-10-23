@@ -7,7 +7,7 @@ import * as Sentry from '@sentry/nextjs';
 /**
  * Report an error to Sentry with additional context
  */
-export function reportError(error: Error, context?: Record<string, any>) {
+export function reportError(error: Error, context?: Record<string, unknown>) {
   Sentry.captureException(error, {
     extra: context,
   });
@@ -29,7 +29,7 @@ export function reportMessage(
 export function addBreadcrumb(
   message: string,
   category?: string,
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ) {
   Sentry.addBreadcrumb({
     message,
@@ -67,15 +67,19 @@ export function setTag(key: string, value: string) {
 /**
  * Set custom context for error tracking
  */
-export function setContext(key: string, context: Record<string, any>) {
+export function setContext(key: string, context: Record<string, unknown>) {
   Sentry.setContext(key, context);
 }
 
 /**
- * Create a transaction for performance monitoring
+ * Create a span for performance monitoring
  */
-export function startTransaction(name: string, op: string) {
-  return Sentry.startTransaction({ name, op });
+export function startSpan(
+  name: string,
+  op: string,
+  callback: (span: unknown) => void
+) {
+  return Sentry.startSpan({ name, op }, callback);
 }
 
 /**

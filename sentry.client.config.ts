@@ -33,7 +33,8 @@ Sentry.init({
   // Filter out common non-errors
   beforeSend(event, hint) {
     // Filter out AuthSessionMissingError as it's expected behavior
-    if (hint.originalException?.message?.includes('Auth session missing')) {
+    const exception = hint.originalException as Error | undefined;
+    if (exception?.message?.includes('Auth session missing')) {
       return null;
     }
 
