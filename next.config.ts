@@ -31,13 +31,13 @@ const withPWAConfig = withPWA({
   ],
 });
 
-export default withSentryConfig(withPWAConfig(nextConfig), {
+export default withSentryConfig(withPWAConfig(nextConfig) as any, {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
-  org: 'lucent-mz',
+  org: process.env.SENTRY_ORG,
 
-  project: 'neolingo',
+  project: process.env.SENTRY_PROJECT,
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
