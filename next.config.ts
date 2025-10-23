@@ -31,7 +31,7 @@ const withPWAConfig = withPWA({
   ],
 });
 
-export default withSentryConfig(withPWAConfig(nextConfig) as any, {
+export default withSentryConfig(withPWAConfig(nextConfig as any), {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
