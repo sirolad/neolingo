@@ -13,6 +13,7 @@ import type { User } from '@supabase/supabase-js';
 import createClient from '@/lib/supabase/client';
 import { normalizeUser } from '@/lib/user';
 import type { AuthContextType, SocialProvider } from '@/types';
+import * as Sentry from '@sentry/nextjs';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -83,6 +84,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
       if (error) {
         console.warn('Supabase signIn error', error);
+        Sentry.captureException(error, {
+          tags: { operation: 'signIn' },
+          extra: { email },
+        });
         setUser(null);
         return null;
       }
@@ -115,6 +120,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = await supabase.auth.signUp(signUpPayload);
       if (error) {
         console.warn('Supabase signUp error', error);
+        Sentry.captureException(error, {
+          tags: { operation: 'signUp' },
+          extra: { email },
+        });
         setUser(null);
         return null;
       }
@@ -141,6 +150,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (error) {
         console.warn('Supabase social login error', error);
+        Sentry.captureException(error, {
+          tags: { operation: 'socialLogin', provider },
+          extra: { redirectTo },
+        });
         return null;
       }
 

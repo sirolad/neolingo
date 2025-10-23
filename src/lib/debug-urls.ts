@@ -30,5 +30,5 @@ export function debugUrls() {
 
 // Make it available globally in development
 if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-  (window as any).debugUrls = debugUrls;
+  (window as unknown as Record<string, unknown>).debugUrls = debugUrls;
 }

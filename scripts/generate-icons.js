@@ -112,8 +112,6 @@ if (!fs.existsSync(iconsDir)) {
 // Generate PNG files for each size
 sizes.forEach(size => {
   const iconData = createPlaceholderIcon(size);
-  const filename = `icon-${size}x${size}.png`;
-  const filepath = path.join(iconsDir, filename);
 
   // For now, save as SVG (browsers can handle SVG in manifest)
   const svgFilename = `icon-${size}x${size}.svg`;
