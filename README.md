@@ -10,7 +10,7 @@ A modern language learning application built with Next.js 15, TypeScript, and Ta
 
 - 🚀 **Next.js 15** with App Router and Turbopack
 - 🎨 **Modern UI** with shadcn/ui components and Tailwind CSS
-- 🔐 **Authentication** with Supabase (planned migration from mock auth)
+- 🔐 **Authentication** with Supabase
 - 📱 **PWA Support** with offline capabilities
 - 🌍 **Multi-language** support for language learning
 - 📚 **Dictionary** and word suggestion system
