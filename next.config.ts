@@ -1,12 +1,13 @@
 import type { NextConfig } from 'next';
 import withPWA from 'next-pwa';
+import { withSentryConfig } from '@sentry/nextjs';
 
 const nextConfig: NextConfig = {
   /* config options here */
 };
 
 // PWA configuration
-export default withPWA({
+const withPWAConfig = withPWA({
   dest: 'public',
   disable: process.env.NODE_ENV === 'development',
   register: true,
@@ -28,4 +29,21 @@ export default withPWA({
       },
     },
   ],
-})(nextConfig as Record<string, unknown>);
+});
+
+// Sentry configuration
+const sentryWebpackPluginOptions = {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: '/monitoring',
+  hideSourceMaps: true,
+  disableLogger: true,
+  automaticVercelMonitors: true,
+};
+
+export default withSentryConfig(
+  withPWAConfig(nextConfig),
+  sentryWebpackPluginOptions
+);
