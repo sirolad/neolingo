@@ -72,7 +72,12 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
+    // Matcher explanation:
+    // This pattern matches all routes except:
+    //   - Next.js internals (e.g. "_next")
+    //   - Requests for static files (with extensions: html, htm, css, js (but not json), jpg, jpeg, webp, png, gif, svg, ttf, woff, woff2, ico, csv, doc, docx, xls, xlsx, zip, webmanifest)
+    // The negative lookahead ensures these are excluded unless found in search params.
+    // This helps prevent middleware from running on static assets and Next.js internals.
     '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
     // Always run for API routes
     '/(api|trpc)(.*)',
