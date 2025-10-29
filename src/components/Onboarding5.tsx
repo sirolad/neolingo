@@ -1,12 +1,25 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import { getOnboardingSeen, setOnboardingSeen } from '@/lib/onboarding';
 
 export default function Onboarding5() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    const seen = getOnboardingSeen();
+    if (seen) {
+      if (isAuthenticated) router.push('/home');
+      else router.push('/signin');
+    }
+  }, [isAuthenticated, router]);
 
   const handleContinue = () => {
+    setOnboardingSeen(true);
     router.push('/signup');
   };
 
@@ -100,7 +113,6 @@ export default function Onboarding5() {
 
                 {/* Decorative elements */}
                 <div className="absolute -bottom-4 md:-bottom-5 lg:-bottom-6 left-8 md:left-12 lg:left-16 w-4 md:w-5 lg:w-6 h-4 md:h-5 lg:h-6 bg-[#EBEBEB] rounded-full"></div>
-                <div className="absolute -top-2 md:-top-3 lg:-top-4 left-16 md:left-20 lg:left-24 w-3 md:w-4 lg:w-5 h-3 md:h-4 lg:h-5 bg-[#111111] rounded md:rounded-lg"></div>
               </div>
             </div>
           </div>

@@ -1,16 +1,29 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import { getOnboardingSeen, setOnboardingSeen } from '@/lib/onboarding';
 
 export default function Onboarding4() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    const seen = getOnboardingSeen();
+    if (seen) {
+      if (isAuthenticated) router.push('/home');
+      else router.push('/signin');
+    }
+  }, [isAuthenticated, router]);
 
   const handleNext = () => {
     router.push('/onboarding/5');
   };
 
   const handleSkip = () => {
+    setOnboardingSeen(true);
     router.push('/signup');
   };
 
@@ -65,7 +78,7 @@ export default function Onboarding4() {
                   </div>
 
                   {/* Mic icon */}
-                  <div className="absolute bottom-6 md:bottom-8 lg:bottom-10 right-6 md:right-8 lg:right-10 w-8 md:w-10 lg:w-12 h-8 md:h-10 lg:h-12 bg-[#111111] rounded-full flex items-center justify-center shadow-md">
+                  <div className="absolute bottom-6 md:bottom-8 lg:bottom-10 right-6 md:right-8 lg:right-10 w-8 md:w-10 lg:w-12 bg-[#111111] rounded-full flex items-center justify-center shadow-md">
                     <div className="w-3 md:w-4 lg:w-5 h-4 md:h-5 lg:h-6 bg-white rounded-sm"></div>
                   </div>
 
@@ -101,7 +114,7 @@ export default function Onboarding4() {
           </div>
 
           {/* Content Area */}
-          <div className="space-y-6 md:space-y-8 lg:space-y-10 lg:flex-shrink-0 lg:max-w-md xl:max-w-lg pt-16">
+          <div className="space-y-6 md:space-y-8 lg:space-y-10 pt-16">
             {/* Text Content */}
             <div className="text-center lg:text-left space-y-3 md:space-y-4 lg:space-y-5">
               <h1 className="text-[26px] md:text-[32px] lg:text-[38px] xl:text-[42px] font-medium leading-[36px] md:leading-[42px] lg:leading-[48px] xl:leading-[52px] tracking-[-0.5px] text-[#111111] font-[Parkinsans]">

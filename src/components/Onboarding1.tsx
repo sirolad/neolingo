@@ -1,16 +1,30 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import { getOnboardingSeen, setOnboardingSeen } from '@/lib/onboarding';
 
 export default function Onboarding1() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    const seen = getOnboardingSeen();
+    if (seen) {
+      // If user already saw onboarding, send them to home if authenticated, otherwise to signin
+      if (isAuthenticated) router.push('/home');
+      else router.push('/signin');
+    }
+  }, [isAuthenticated, router]);
 
   const handleNext = () => {
     router.push('/onboarding/4');
   };
 
   const handleSkip = () => {
+    setOnboardingSeen(true);
     router.push('/signup');
   };
   return (
