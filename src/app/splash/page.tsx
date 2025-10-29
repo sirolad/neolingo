@@ -3,18 +3,34 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/contexts/AuthContext';
+import { getOnboardingSeen } from '@/lib/onboarding';
 
 export default function SplashPage() {
   const router = useRouter();
+  const { isAuthenticated, isLoading } = useAuth();
 
   useEffect(() => {
-    // Auto-navigate to onboarding after 3 seconds
+    const seen = getOnboardingSeen();
+
+    // If user already saw onboarding, wait for auth hydration then redirect immediately
+    if (seen) {
+      if (isLoading) return; // wait until auth state is known
+      if (isAuthenticated) {
+        router.replace('/home');
+      } else {
+        router.replace('/signin');
+      }
+      return;
+    }
+
+    // Otherwise, show splash and navigate to onboarding after 3s
     const timer = setTimeout(() => {
       router.push('/onboarding/1');
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [router, isAuthenticated, isLoading]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
