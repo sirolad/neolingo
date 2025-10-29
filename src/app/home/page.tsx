@@ -2,12 +2,13 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, Vote, RefreshCcw } from 'lucide-react';
+import { Lightbulb, Vote, RefreshCcw, CircleUserRound } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import createClient from '@/lib/supabase/client';
+import Image from 'next/image';
 
 interface WordCard {
   id: string;
@@ -67,25 +68,26 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           {/* User Greeting Header */}
           <div className="flex items-center justify-between py-4 md:py-6 lg:py-8">
-            <div className="flex items-center space-x-3 md:space-x-4">
-              <div className="text-2xl md:text-3xl lg:text-4xl">
-                {user?.avatar}
-              </div>
+            <div className="flex items-center space-x-28 md:space-x-4">
               <div>
                 <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
-                  Welcome back, {user?.name}!
+                  Hi {user?.name}!
                 </h1>
-                <p className="text-sm md:text-base lg:text-lg text-neutral-600">
-                  Ready to learn today?
-                </p>
+              </div>
+              <div className="text-2xl md:text-3xl lg:text-4xl">
+                {user?.avatar ? (
+                  <Image
+                    src={user.avatar}
+                    alt={user?.name || 'Contributor'}
+                    width={40}
+                    height={40}
+                    className="rounded-full"
+                  />
+                ) : (
+                  <CircleUserRound className="w-10 h-10 text-neutral-400" />
+                )}
               </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="text-sm md:text-base text-neutral-500 hover:text-neutral-700 transition-colors px-3 py-2 rounded-lg hover:bg-neutral-100"
-            >
-              Logout
-            </button>
           </div>
 
           {/* Main Content */}
