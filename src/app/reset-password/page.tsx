@@ -452,7 +452,7 @@ export default function ResetPasswordPage({
                 className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
               >
                 <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-                  {loading ? 'Sending...' : 'Send Codes'}
+                  {loading ? 'Sending...' : 'Send Code'}
                 </span>
               </button>
             </form>
