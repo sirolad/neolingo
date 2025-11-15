@@ -1,12 +1,37 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Eye, EyeOff, Check } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+import { decodeEmail } from '@/lib/emailToken';
 
-export default function ResetPasswordPage() {
+interface ResetPasswordPageProps {
+  searchParams: Promise<Record<string, string | undefined>>;
+}
+
+export default function ResetPasswordPage({
+  searchParams,
+}: ResetPasswordPageProps) {
+  const { resetPassword, updatePassword } = useAuth();
+
+  useEffect(() => {
+    async function check() {
+      const code = (await searchParams)?.code;
+      if (code) {
+        try {
+          setStep('newPassword');
+        } catch {
+          setError('Invalid or expired reset link');
+        }
+      }
+    }
+    check();
+  }, [searchParams]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -78,11 +103,20 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
 
-    // Simulate API call for sending reset code
-    setTimeout(() => {
+    try {
+      const result = await resetPassword(email);
+      if (!result) {
+        toast.error('Reset password failed. Please check your credentials.');
+        return;
+      }
       setLoading(false);
       setSubmitted(true);
-    }, 2000);
+    } catch (err) {
+      console.error('the error', err);
+      toast.error('Login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -92,11 +126,20 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
 
-    // Simulate API call for password reset
-    setTimeout(() => {
+    try {
+      const result = await updatePassword(password);
+
+      if (!result) {
+        toast.error('Password update failed. Please check your credentials.');
+        return;
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error('Password update failed. Please try again.');
+    } finally {
       setLoading(false);
       setStep('success');
-    }, 2000);
+    }
   };
 
   const handleContinueToNewPassword = () => {
@@ -133,22 +176,24 @@ export default function ResetPasswordPage() {
               </p>
 
               <button
-                onClick={handleContinueToNewPassword}
+                // onClick={handleContinueToNewPassword}
+                onClick={() => setSubmitted(false)}
                 className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full mb-4 transition-colors"
               >
                 <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-                  Continue
+                  {/* Continue */}
+                  Try Another Email
                 </span>
               </button>
 
-              <button
+              {/* <button
                 onClick={() => setSubmitted(false)}
                 className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-white border border-[#111111] rounded-full mb-4 transition-colors hover:bg-gray-50"
               >
                 <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-[#111111] font-[Parkinsans]">
                   Try Another Email
                 </span>
-              </button>
+              </button> */}
 
               <div className="flex items-center justify-center gap-2">
                 <span className="text-[14px] text-[#656565] font-[Metropolis]">
@@ -407,7 +452,7 @@ export default function ResetPasswordPage() {
                 className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
               >
                 <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-                  {loading ? 'Sending...' : 'Send Code'}
+                  {loading ? 'Sending...' : 'Send Codes'}
                 </span>
               </button>
             </form>

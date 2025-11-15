@@ -9,11 +9,12 @@ import React, {
   useCallback,
 } from 'react';
 import { useRouter } from 'next/navigation';
-import type { User } from '@supabase/supabase-js';
+import type { AuthResponse, User } from '@supabase/supabase-js';
 import createClient from '@/lib/supabase/client';
 import { normalizeUser } from '@/lib/user';
 import type { AuthContextType, SocialProvider } from '@/types';
 import * as Sentry from '@sentry/nextjs';
+import { encodeEmail } from '@/lib/emailToken';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -97,6 +98,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.warn('login unexpected error', err);
       setUser(null);
+      return null;
+    }
+  };
+
+  const resetPassword = async (
+    email: string
+  ): Promise<AuthResponse | boolean> => {
+    try {
+      const token = await encodeEmail(email);
+      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password?code=${token}`,
+      });
+      if (error) {
+        console.warn('Supabase resetPassword error', error);
+        Sentry.captureException(error, {
+          tags: { operation: 'resetPassword' },
+        });
+        return false;
+      }
+
+      console.log('Password reset email sent to', email, data);
+      return true;
+    } catch (err) {
+      console.warn('resetPassword unexpected error', err);
+      return false;
+    }
+  };
+
+  const updatePassword = async (newPassword: string): Promise<User | null> => {
+    try {
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+      if (error) {
+        console.warn('1 Supabase updatePassword error', error);
+        Sentry.captureException(error, {
+          tags: { operation: 'updatePassword' },
+        });
+        return null;
+      }
+      const updatedUser = data.user ?? null;
+      setUser(updatedUser);
+      return updatedUser;
+    } catch (err) {
+      console.warn('updatePassword unexpected error', err);
       return null;
     }
   };
@@ -194,6 +240,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     checkAuth,
     socialLogin,
+    resetPassword,
+    updatePassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

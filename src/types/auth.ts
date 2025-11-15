@@ -26,6 +26,12 @@ export interface AuthContextType {
     provider: 'google' | 'apple',
     redirectTo?: string
   ) => Promise<import('@supabase/supabase-js').User | null>;
+  resetPassword: (
+    email: string
+  ) => Promise<import('@supabase/supabase-js').AuthResponse | boolean>;
+  updatePassword: (
+    newPassword: string
+  ) => Promise<import('@supabase/supabase-js').User | null>;
 }
 
 // Form data types (inferred from Zod schemas)
