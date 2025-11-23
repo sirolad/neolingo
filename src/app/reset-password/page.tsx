@@ -1,12 +1,31 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Eye, EyeOff, Check } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 export default function ResetPasswordPage() {
+  const { resetPassword, updatePassword, appUser } = useAuth();
+
+  useEffect(() => {
+    async function check() {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const step = params.get('step');
+
+      if (step === 'newPassword') {
+        setStep('newPassword');
+        const noHash = window.location.href.replace(/#.*$/, '');
+        window.history.replaceState(null, '', noHash);
+      }
+    }
+    check();
+  }, [appUser]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -78,11 +97,21 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
 
-    // Simulate API call for sending reset code
-    setTimeout(() => {
+    try {
+      const result = await resetPassword(email);
+      if (!result) {
+        setLoading(false);
+        toast.error('Reset password failed. Please check your credentials.');
+        return;
+      }
       setLoading(false);
       setSubmitted(true);
-    }, 2000);
+    } catch (err) {
+      console.error('the error', err);
+      toast.error('Reset password failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePasswordSubmit = async (e: React.FormEvent) => {
@@ -92,16 +121,23 @@ export default function ResetPasswordPage() {
 
     setLoading(true);
 
-    // Simulate API call for password reset
-    setTimeout(() => {
+    try {
+      const result = await updatePassword(password);
+      if (!result) {
+        toast.error('Password update failed. Please check your credentials.');
+        return;
+      }
+      console.log('Password updated successfully', result);
       setLoading(false);
       setStep('success');
-    }, 2000);
-  };
-
-  const handleContinueToNewPassword = () => {
-    setSubmitted(false);
-    setStep('newPassword');
+      console.log('Navigating to success step ', step);
+    } catch (err) {
+      console.error(err);
+      toast.error('Password update failed. Please try again.');
+    } finally {
+      setLoading(false);
+      console.log('Finalized password update process', step);
+    }
   };
 
   if (submitted) {
@@ -133,19 +169,10 @@ export default function ResetPasswordPage() {
               </p>
 
               <button
-                onClick={handleContinueToNewPassword}
+                onClick={() => setSubmitted(false)}
                 className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full mb-4 transition-colors"
               >
                 <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-                  Continue
-                </span>
-              </button>
-
-              <button
-                onClick={() => setSubmitted(false)}
-                className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-white border border-[#111111] rounded-full mb-4 transition-colors hover:bg-gray-50"
-              >
-                <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-[#111111] font-[Parkinsans]">
                   Try Another Email
                 </span>
               </button>
