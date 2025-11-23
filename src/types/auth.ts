@@ -26,9 +26,7 @@ export interface AuthContextType {
     provider: 'google' | 'apple',
     redirectTo?: string
   ) => Promise<import('@supabase/supabase-js').User | null>;
-  resetPassword: (
-    email: string
-  ) => Promise<import('@supabase/supabase-js').AuthResponse | boolean>;
+  resetPassword: (email: string) => Promise<boolean>;
   updatePassword: (
     newPassword: string
   ) => Promise<import('@supabase/supabase-js').User | null>;

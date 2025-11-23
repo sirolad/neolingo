@@ -100,6 +100,7 @@ export default function ResetPasswordPage() {
     try {
       const result = await resetPassword(email);
       if (!result) {
+        setLoading(false);
         toast.error('Reset password failed. Please check your credentials.');
         return;
       }
