@@ -14,7 +14,6 @@ import createClient from '@/lib/supabase/client';
 import { normalizeUser } from '@/lib/user';
 import type { AuthContextType, SocialProvider } from '@/types';
 import * as Sentry from '@sentry/nextjs';
-import { encodeEmail } from '@/lib/emailToken';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -102,13 +101,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const resetPassword = async (
-    email: string
-  ): Promise<AuthResponse | boolean> => {
+  const resetPassword = async (email: string): Promise<boolean> => {
     try {
-      const token = await encodeEmail(email);
       const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password?code=${token}`,
+        redirectTo: `${window.location.origin}/reset-password#step=newPassword`,
       });
       if (error) {
         console.warn('Supabase resetPassword error', error);

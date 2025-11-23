@@ -7,30 +7,24 @@ import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { decodeEmail } from '@/lib/emailToken';
 
-interface ResetPasswordPageProps {
-  searchParams: Promise<Record<string, string | undefined>>;
-}
-
-export default function ResetPasswordPage({
-  searchParams,
-}: ResetPasswordPageProps) {
-  const { resetPassword, updatePassword } = useAuth();
+export default function ResetPasswordPage() {
+  const { resetPassword, updatePassword, appUser } = useAuth();
 
   useEffect(() => {
     async function check() {
-      const code = (await searchParams)?.code;
-      if (code) {
-        try {
-          setStep('newPassword');
-        } catch {
-          setError('Invalid or expired reset link');
-        }
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const step = params.get('step');
+
+      if (step === 'newPassword') {
+        setStep('newPassword');
+        const noHash = window.location.href.replace(/#.*$/, '');
+        window.history.replaceState(null, '', noHash);
       }
     }
     check();
-  }, [searchParams]);
+  }, [appUser]);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -113,7 +107,7 @@ export default function ResetPasswordPage({
       setSubmitted(true);
     } catch (err) {
       console.error('the error', err);
-      toast.error('Login failed. Please try again.');
+      toast.error('Reset password failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -128,23 +122,21 @@ export default function ResetPasswordPage({
 
     try {
       const result = await updatePassword(password);
-
       if (!result) {
         toast.error('Password update failed. Please check your credentials.');
         return;
       }
+      console.log('Password updated successfully', result);
+      setLoading(false);
+      setStep('success');
+      console.log('Navigating to success step ', step);
     } catch (err) {
       console.error(err);
       toast.error('Password update failed. Please try again.');
     } finally {
       setLoading(false);
-      setStep('success');
+      console.log('Finalized password update process', step);
     }
-  };
-
-  const handleContinueToNewPassword = () => {
-    setSubmitted(false);
-    setStep('newPassword');
   };
 
   if (submitted) {
@@ -176,24 +168,13 @@ export default function ResetPasswordPage({
               </p>
 
               <button
-                // onClick={handleContinueToNewPassword}
                 onClick={() => setSubmitted(false)}
                 className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full mb-4 transition-colors"
               >
                 <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-                  {/* Continue */}
                   Try Another Email
                 </span>
               </button>
-
-              {/* <button
-                onClick={() => setSubmitted(false)}
-                className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-white border border-[#111111] rounded-full mb-4 transition-colors hover:bg-gray-50"
-              >
-                <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-[#111111] font-[Parkinsans]">
-                  Try Another Email
-                </span>
-              </button> */}
 
               <div className="flex items-center justify-center gap-2">
                 <span className="text-[14px] text-[#656565] font-[Metropolis]">
