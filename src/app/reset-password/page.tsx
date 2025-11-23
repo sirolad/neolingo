@@ -5,26 +5,40 @@ import Link from 'next/link';
 import { ArrowLeft, Mail, Eye, EyeOff, Check } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { resetPassword } from '@/actions/auth';
+import createClient from '@/lib/supabase/client';
 
 export default function ResetPasswordPage() {
-  const { resetPassword, updatePassword, appUser } = useAuth();
+  const [isRecoveryFlow, setIsRecoveryFlow] = useState(false);
+  const supabase = createClient();
 
   useEffect(() => {
     async function check() {
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      const step = params.get('step');
+      try {
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const type = params.get('type');
+        const step = params.get('step');
 
-      if (step === 'newPassword') {
-        setStep('newPassword');
-        const noHash = window.location.href.replace(/#.*$/, '');
-        window.history.replaceState(null, '', noHash);
+        // Check if this is a Supabase recovery flow or our custom step
+        if (type === 'recovery' || step === 'newPassword') {
+          setIsRecoveryFlow(true);
+          setStep('newPassword');
+          // Clean up the URL hash
+          // const noHash = window.location.href.replace(/#.*$/, '');
+          // window.history.replaceState(null, '', noHash);
+        }
+      } catch (error) {
+        console.error('Error in reset password check:', error);
+        toast.error('An error occurred while processing your request');
       }
     }
-    check();
-  }, [appUser]);
+
+    check().catch(error => {
+      console.error('Unhandled error in check:', error);
+    });
+  }, []);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -99,15 +113,15 @@ export default function ResetPasswordPage() {
 
     try {
       const result = await resetPassword(email);
-      if (!result) {
-        setLoading(false);
-        toast.error('Reset password failed. Please check your credentials.');
+      if (!result.success) {
+        toast.error(
+          result.error ||
+            'Reset password failed. Please check your credentials.'
+        );
         return;
       }
-      setLoading(false);
       setSubmitted(true);
     } catch (err) {
-      console.error('the error', err);
       toast.error('Reset password failed. Please try again.');
     } finally {
       setLoading(false);
@@ -122,21 +136,26 @@ export default function ResetPasswordPage() {
     setLoading(true);
 
     try {
-      const result = await updatePassword(password);
-      if (!result) {
-        toast.error('Password update failed. Please check your credentials.');
+      // Use client-side Supabase client which has the session from the URL hash
+      const { error } = await supabase.auth.updateUser({
+        password: password,
+      });
+
+      if (error) {
+        console.error('Password update failed:', error);
+        toast.error(
+          error.message || 'Password update failed. Please try again.'
+        );
         return;
       }
-      console.log('Password updated successfully', result);
-      setLoading(false);
+
+      toast.success('Password updated successfully!');
       setStep('success');
-      console.log('Navigating to success step ', step);
     } catch (err) {
-      console.error(err);
-      toast.error('Password update failed. Please try again.');
+      console.error('Password update error:', err);
+      toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
-      console.log('Finalized password update process', step);
     }
   };
 

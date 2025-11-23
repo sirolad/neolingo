@@ -101,48 +101,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const resetPassword = async (email: string): Promise<boolean> => {
-    try {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password#step=newPassword`,
-      });
-      if (error) {
-        console.warn('Supabase resetPassword error', error);
-        Sentry.captureException(error, {
-          tags: { operation: 'resetPassword' },
-        });
-        return false;
-      }
-
-      console.log('Password reset email sent to', email, data);
-      return true;
-    } catch (err) {
-      console.warn('resetPassword unexpected error', err);
-      return false;
-    }
-  };
-
-  const updatePassword = async (newPassword: string): Promise<User | null> => {
-    try {
-      const { data, error } = await supabase.auth.updateUser({
-        password: newPassword,
-      });
-      if (error) {
-        console.warn('1 Supabase updatePassword error', error);
-        Sentry.captureException(error, {
-          tags: { operation: 'updatePassword' },
-        });
-        return null;
-      }
-      const updatedUser = data.user ?? null;
-      setUser(updatedUser);
-      return updatedUser;
-    } catch (err) {
-      console.warn('updatePassword unexpected error', err);
-      return null;
-    }
-  };
-
   const signup = async (
     email: string,
     password: string,
@@ -236,8 +194,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     checkAuth,
     socialLogin,
-    resetPassword,
-    updatePassword,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
