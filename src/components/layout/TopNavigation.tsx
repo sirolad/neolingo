@@ -11,6 +11,7 @@ import {
   LogOut,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -134,7 +135,9 @@ export function TopNavigation() {
                   <div className="font-semibold text-neutral-950">
                     {user.name}
                   </div>
-                  <div className="text-neutral-600">Contributor</div>
+                  <Link href="/contributor" className="text-neutral-600">
+                    Contributor
+                  </Link>
                 </div>
               </div>
 
