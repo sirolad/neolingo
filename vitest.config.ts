@@ -15,11 +15,6 @@ export default defineConfig({
     teardownTimeout: 10000,
     isolate: true,
     pool: 'forks',
-    poolOptions: {
-      forks: {
-        singleFork: true,
-      },
-    },
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
