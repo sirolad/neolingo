@@ -76,7 +76,26 @@ The app uses a mock authentication system that simulates real backend behavior w
 
 ### Testing
 
-No test framework is currently configured. When adding tests, check package.json for any test scripts that may be added later.
+The project uses Vitest with React Testing Library for unit and component testing.
+
+**Test Commands**:
+- `npm test` - Run tests in watch mode
+- `npm run test:run` - Run tests once (for CI/CD)
+- `npm run test:ui` - Run tests with interactive UI
+- `npm run test:coverage` - Generate coverage report
+
+**Test Structure**:
+- Tests are located in `__tests__` directories next to the code they test
+- Test files use `.test.ts` or `.test.tsx` extension
+- Global mocks and setup in `src/test/setup.ts`
+- Test utilities and helpers in `src/test/utils.tsx`
+
+**Key Features**:
+- Mocked Next.js router, localStorage, Supabase client, and Sentry
+- `renderWithProviders` helper for testing components with context
+- Full TypeScript support in tests
+
+See `TESTING.md` for comprehensive testing guide and best practices.
 
 ### Linting
 
