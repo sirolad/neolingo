@@ -7,6 +7,7 @@ import React, {
   useEffect,
   useMemo,
   useCallback,
+  use,
 } from 'react';
 import { useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
@@ -21,13 +22,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [roleName, setRoleName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const userRole = useMemo(() => roleName || 'VISITOR', [roleName]);
   // Derive a normalized app-level user for UI components
-  const appUser = useMemo(() => {
-    const normalizedUser = normalizeUser(user);
-
-    const userWithRole = { ...normalizedUser, roleName: roleName || 'VISITOR' };
-    return userWithRole;
-  }, [user, roleName]);
+  const appUser = useMemo(() => normalizeUser(user), [user]);
   const router = useRouter();
 
   const supabase = useMemo(() => createClient(), []);
@@ -201,6 +198,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     appUser,
     isLoading,
     isAuthenticated: !!appUser,
+    userRole,
     login,
     signup,
     logout,
