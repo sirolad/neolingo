@@ -71,7 +71,7 @@ export default function HomePage() {
             <div className="flex items-center space-x-28 md:space-x-4">
               <div>
                 <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
-                  Hi {user?.name}!
+                  Hi {user?.name || 'User'}!
                 </h1>
               </div>
               <div className="text-2xl md:text-3xl lg:text-4xl">

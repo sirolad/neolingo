@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -39,7 +39,7 @@ function NavItem({ icon, label, active = false, onClick }: NavItemProps) {
 export function TopNavigation() {
   const router = useRouter();
   const pathname = usePathname();
-  const { appUser, logout } = useAuth();
+  const { appUser, logout, userRole } = useAuth();
   const user = appUser;
 
   const navItems = [
@@ -132,9 +132,9 @@ export function TopNavigation() {
                 <div className="text-lg">{user.avatar}</div>
                 <div className="text-sm">
                   <div className="font-semibold text-neutral-950">
-                    {user.name}
+                    {user.name || user.email}
                   </div>
-                  <div className="text-neutral-600">Contributor</div>
+                  <div className="text-neutral-600">{userRole}</div>
                 </div>
               </div>
 

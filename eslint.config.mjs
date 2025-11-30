@@ -13,6 +13,7 @@ const eslintConfig = [
       '.history/**',
       '*.config.js',
       '*.config.mjs',
+      'src/generated/**',
     ],
   },
   js.configs.recommended,
