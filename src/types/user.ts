@@ -10,6 +10,7 @@ export interface AppUser extends BaseEntity {
   name?: string | null;
   // keep raw for advanced uses when needed
   raw?: User;
+  roleName?: string | null;
 }
 
 // Mock user interface for development

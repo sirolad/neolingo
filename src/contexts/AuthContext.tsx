@@ -19,9 +19,15 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [roleName, setRoleName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   // Derive a normalized app-level user for UI components
-  const appUser = useMemo(() => normalizeUser(user), [user]);
+  const appUser = useMemo(() => {
+    const normalizedUser = normalizeUser(user);
+
+    const userWithRole = { ...normalizedUser, roleName: roleName || 'VISITOR' };
+    return userWithRole;
+  }, [user, roleName]);
   const router = useRouter();
 
   const supabase = useMemo(() => createClient(), []);
@@ -38,6 +44,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setUser(null);
       } else {
+        fetch('/api/get-extra')
+          .then(res => res.json())
+          .then(data => setRoleName(data.extra?.role || null));
         setUser(data?.user ?? null);
       }
     } catch (err) {
@@ -58,6 +67,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('🔄 Auth state changed:', event, session?.user?.email);
 
       if (event === 'SIGNED_IN') {
+        fetch('/api/get-extra')
+          .then(res => res.json())
+          .then(data => setRoleName(data.extra?.role || null));
         setUser(session?.user ?? null);
         setIsLoading(false);
       } else if (event === 'SIGNED_OUT') {

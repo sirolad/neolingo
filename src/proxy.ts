@@ -23,6 +23,7 @@ const roleAccess: Record<string, string[]> = {
   '/admin': ['ADMIN'],
   '/suggest': ['CONTRIBUTOR', 'ADMIN', 'JURY'],
   '/vote': ['JURY', 'ADMIN'],
+  '/requests': ['CONTRIBUTOR', 'ADMIN', 'JURY', 'USER'],
 };
 
 function isPublicRoute(pathname: string): boolean {
@@ -62,6 +63,14 @@ export async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const userRole = await prisma.userRole.findFirst({
+    where: { userId: user?.id },
+    include: { role: true },
+  });
+  const roleName = userRole?.role?.name;
+  response.cookies.set('extra', JSON.stringify({ role: roleName }), {
+    httpOnly: true,
+  });
   const { pathname } = request.nextUrl;
   const authHeader = request.headers.get('authorization');
 
@@ -93,11 +102,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  const userRoles = await prisma.userRole.findMany({
+  const userRoles = await prisma.userRole.findFirst({
     where: { userId: user?.id },
     include: { role: true },
   });
-  const userRoleNames = userRoles.map(ur => ur.role.name.toUpperCase());
+  const userRoleName = userRoles?.role?.name;
   // Check if the route requires a role
   const allowedRoles = Object.entries(roleAccess).find(([route]) =>
     pathname.startsWith(route)
@@ -105,7 +114,7 @@ export async function proxy(request: NextRequest) {
 
   if (allowedRoles) {
     // Check if user role is allowed
-    if (!allowedRoles.some(role => userRoleNames.includes(role))) {
+    if (!allowedRoles.some(role => userRoleName === role)) {
       if (pathname.startsWith('/api/')) {
         return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
       }

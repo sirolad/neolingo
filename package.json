@@ -13,7 +13,8 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "pre-commit": "lint-staged",
-    "pre-push": "npm run type-check && npm run build"
+    "pre-push": "npm run type-check && npm run build",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
