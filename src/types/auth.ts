@@ -9,6 +9,8 @@ export interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   userRole: string;
+  userLanguageId: number | null;
+  userNeoCommunityId: number | null;
   // Methods return Supabase User on success (or null)
   login: (
     email: string,

@@ -29,10 +29,15 @@ export default function SignInPage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [urlParameter, setUrlParameter] = useState<string | null>(null);
 
   // Check for auth callback errors
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.toString() !== '') {
+      const redirectpage = urlParams.get('redirectTo');
+      setUrlParameter(redirectpage);
+    }
     const error = urlParams.get('error');
 
     if (error === 'auth_callback_failed') {
@@ -61,7 +66,10 @@ export default function SignInPage() {
         return;
       }
 
-      // Success - redirect to home
+      if (urlParameter) {
+        router.push(urlParameter);
+        return;
+      }
       router.push('/home');
     } catch (err) {
       console.error(err);
