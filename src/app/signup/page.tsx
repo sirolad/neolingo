@@ -56,9 +56,9 @@ export default function SignUpPage() {
 
       // On success, inform the user and navigate to email verification
       toast.success(
-        'Sign up successful! Check your email for the confirmation link!'
+        'Sign up successful!, please set up your profile to continue.'
       );
-      router.push('/email-verification/1');
+      router.push('/language-setup');
     } catch {
       console.error('Registration failed. Please try again.');
       toast.error('Registration failed. Please try again.');

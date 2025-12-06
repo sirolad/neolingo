@@ -1,84 +1,75 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ReactCountryFlag from 'react-country-flag';
+import { toast } from 'sonner';
+import createClient from '@/lib/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LanguageOption {
-  id: string;
+  id: number;
   name: string;
   flag: React.ReactNode;
+  icon: string;
 }
 
 export default function UserLanguage() {
   const router = useRouter();
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('english');
+  const { userLanguageId } = useAuth();
+  const [selectedLanguage, setSelectedLanguage] = useState<number | null>(
+    userLanguageId
+  );
+  const [languages, setLanguages] = useState<LanguageOption[]>([]);
+
+  const supabase = createClient();
+
+  useEffect(() => {
+    // Fetch available languages from the backend API
+    fetch('/api/languages')
+      .then(res => res.json())
+      .then(data => setLanguages(data.languages || []));
+  }, []);
 
   const handleBack = () => {
     router.back();
   };
 
   const handleNext = () => {
-    // Store selected language in localStorage or state management
-    localStorage.setItem('selectedLanguage', selectedLanguage);
-    router.push('/neo-language-setup');
-  };
+    const englishLanguage = languages.find(lang => lang.name === 'English');
+    if (!selectedLanguage) {
+      toast.error('Please select a Language to proceed.');
+      return;
+    } else if (selectedLanguage !== englishLanguage?.id) {
+      toast.error('Language must be English to proceed.');
+      return;
+    }
 
-  const languages: LanguageOption[] = [
-    {
-      id: 'english',
-      name: 'English',
-      flag: (
-        <div className="w-6 h-[18px] relative bg-white rounded-sm border border-neutral-200 overflow-hidden">
-          {/* UK Flag simplified representation */}
-          <div className="absolute inset-0 bg-[#012169]"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full h-[2px] bg-white"></div>
-          </div>
-          <div className="absolute inset-0 flex justify-center">
-            <div className="w-[2px] h-full bg-white"></div>
-          </div>
-          <div className="absolute inset-0 bg-[#C8102E] opacity-60"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-full h-[1px] bg-[#C8102E]"></div>
-          </div>
-          <div className="absolute inset-0 flex justify-center">
-            <div className="w-[1px] h-full bg-[#C8102E]"></div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: 'french',
-      name: 'French',
-      flag: (
-        <div className="w-6 h-[18px] relative rounded-sm border border-neutral-200 overflow-hidden">
-          {/* French Flag */}
-          <div className="absolute inset-0 flex">
-            <div className="w-1/3 h-full bg-[#002654]"></div>
-            <div className="w-1/3 h-full bg-white"></div>
-            <div className="w-1/3 h-full bg-[#CE1126]"></div>
-          </div>
-        </div>
-      ),
-    },
-    {
-      id: 'spanish',
-      name: 'Spanish',
-      flag: (
-        <div className="w-6 h-[18px] relative rounded-sm border border-neutral-200 overflow-hidden">
-          {/* Spanish Flag simplified */}
-          <div className="absolute inset-0 flex flex-col">
-            <div className="flex-1 bg-[#C60B1E]"></div>
-            <div className="flex-[2] bg-[#FFC400] flex items-center justify-center">
-              {/* Coat of arms simplified */}
-              <div className="w-3 h-2 bg-[#C60B1E] rounded-sm"></div>
-            </div>
-            <div className="flex-1 bg-[#C60B1E]"></div>
-          </div>
-        </div>
-      ),
-    },
-  ];
+    const selected = languages.find(lang => lang.id === selectedLanguage);
+    fetch('/api/set-my-language', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${supabase.auth.getSession().then(({ data }) => data.session?.access_token)}`,
+      },
+      body: JSON.stringify({ languageId: selectedLanguage }),
+    })
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to set Language');
+        }
+        return res.json();
+      })
+      .then(() => {
+        toast.success(`Language set to ${selected?.name}`);
+        router.push('/neo-language-setup');
+      })
+      .catch(err => {
+        console.error(err);
+        toast.error('An error occurred while setting Language.');
+      });
+    // Store selected language in localStorage or state management
+  };
 
   return (
     <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
@@ -128,14 +119,18 @@ export default function UserLanguage() {
                 <button
                   key={language.id}
                   onClick={() => setSelectedLanguage(language.id)}
-                  className={`w-full p-4 rounded-xl border flex items-center justify-between transition-colors ${
+                  className={`w-full p-4 rounded-lg border flex items-center justify-between transition-colors ${
                     selectedLanguage === language.id
                       ? 'bg-white border-[rgba(17,17,17,0.15)]'
                       : 'bg-white border-[rgba(17,17,17,0.15)]'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    {language.flag}
+                    <ReactCountryFlag
+                      countryCode={language.icon}
+                      svg
+                      className="w-6 h-6"
+                    />
                     <span className="text-[14px] font-normal leading-[20px] text-[#111111] font-[Parkinsans]">
                       {language.name}
                     </span>
@@ -162,10 +157,10 @@ export default function UserLanguage() {
         </div>
 
         {/* Next Button */}
-        <div className="pt-8">
+        <div className="pt-8 flex justify-center">
           <button
             onClick={handleNext}
-            className="w-full h-[58px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]"
+            className="w-full max-w-md h-[58px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]"
           >
             <span className="text-[16px] font-semibold leading-[22px] text-white font-[Parkinsans]">
               Next
