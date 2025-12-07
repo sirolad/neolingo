@@ -102,7 +102,6 @@ export default function UserLanguage() {
               <div className="flex justify-center items-center space-x-2 mb-6">
                 <div className="w-16 h-1 bg-[#111111] rounded-full"></div>
                 <div className="w-16 h-1 bg-[#D9D9D9] rounded-full"></div>
-                <div className="w-16 h-1 bg-[#D9D9D9] rounded-full"></div>
               </div>
 
               <h1 className="text-[24px] font-medium leading-[29px] text-[#292929] font-[Parkinsans] mb-2">

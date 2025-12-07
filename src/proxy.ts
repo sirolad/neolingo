@@ -119,7 +119,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/home', request.url));
   }
 
-  if (!user && !isPublicRoute(pathname)) {
+  if (!user && isAuthRoute(pathname)) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
@@ -129,7 +129,13 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && pathname === '/home') {
-    if (!languageId) {
+    if (user?.confirmed_at == null) {
+      const redirectUrl = new URL(
+        '/email-verification/1?initiate=true',
+        request.url
+      );
+      return NextResponse.redirect(redirectUrl);
+    } else if (!languageId) {
       const redirectUrl = new URL('/language-setup', request.url);
       return NextResponse.redirect(redirectUrl);
     } else if (!neoCommunityId) {

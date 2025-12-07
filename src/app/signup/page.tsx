@@ -56,9 +56,9 @@ export default function SignUpPage() {
 
       // On success, inform the user and navigate to email verification
       toast.success(
-        'Sign up successful!, please set up your profile to continue.'
+        'Sign up successful!, please check your email to verify your account.'
       );
-      router.push('/language-setup');
+      router.push('/email-verification/1');
     } catch {
       console.error('Registration failed. Please try again.');
       toast.error('Registration failed. Please try again.');
@@ -74,7 +74,7 @@ export default function SignUpPage() {
       const result = await socialLogin(provider, redirectTo);
 
       if (result) {
-        router.push('/home');
+        router.push('/language-setup');
       }
     } catch (error) {
       console.error(error);

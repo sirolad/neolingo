@@ -40,9 +40,13 @@ export default function NeoLanguage() {
   };
 
   const handleNext = () => {
-    const selectedLanguage = neoLanguages.find(
-      lang => lang.id === selectedNeoLanguage
-    );
+    const selectedLanguage = neoLanguages
+      .find(lang =>
+        lang.neoCommunities.some(
+          community => community.id === selectedNeoLanguage
+        )
+      )
+      ?.neoCommunities.find(community => community.id === selectedNeoLanguage);
     fetch('/api/set-my-neo-community', {
       method: 'POST',
       headers: {
@@ -59,7 +63,7 @@ export default function NeoLanguage() {
       })
       .then(() => {
         toast.success(`Neo Community set to ${selectedLanguage?.name}`);
-        router.push('/email-verification/1');
+        router.push('/home');
       })
       .catch(err => {
         console.error(err);
@@ -98,7 +102,6 @@ export default function NeoLanguage() {
               <div className="flex justify-center items-center space-x-2 mb-6">
                 <div className="w-16 h-1 bg-[#D9D9D9] rounded-full"></div>
                 <div className="w-16 h-1 bg-[#111111] rounded-full"></div>
-                <div className="w-16 h-1 bg-[#D9D9D9] rounded-full"></div>
               </div>
 
               <h1 className="text-[24px] font-medium leading-[29px] text-[#292929] font-[Parkinsans] mb-2">
@@ -174,7 +177,7 @@ export default function NeoLanguage() {
             className="w-full max-w-md h-[58px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]"
           >
             <span className="text-[16px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-              Next
+              Complete Profile
             </span>
           </button>
         </div>
