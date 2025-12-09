@@ -77,7 +77,6 @@ async function main() {
   }
   console.log('Languages seeded successfully!');
 
-  await prisma.neoCommunities.deleteMany({});
   for (const country of countries) {
     const createdCountry = await prisma.country.upsert({
       where: { name: country.name },
