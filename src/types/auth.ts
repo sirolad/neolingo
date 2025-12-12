@@ -8,6 +8,7 @@ export interface AuthContextType {
   appUser: AppUser | null;
   isLoading: boolean;
   isAuthenticated: boolean;
+  userRole: string;
   // Methods return Supabase User on success (or null)
   login: (
     email: string,

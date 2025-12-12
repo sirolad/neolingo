@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { prisma } from '@/lib/prisma';
 
 const PUBLIC_ROUTES = [
   '/signin',
@@ -17,6 +18,13 @@ const PUBLIC_ROUTES = [
 ];
 
 const AUTH_ROUTES = ['/signin', '/signup'];
+
+const roleAccess: Record<string, string[]> = {
+  '/admin': ['ADMIN'],
+  '/suggest': ['CONTRIBUTOR', 'ADMIN', 'JURY'],
+  '/vote': ['JURY', 'ADMIN'],
+  '/requests': ['CONTRIBUTOR', 'ADMIN', 'JURY', 'USER'],
+};
 
 function isPublicRoute(pathname: string): boolean {
   return PUBLIC_ROUTES.some(
@@ -55,18 +63,64 @@ export async function proxy(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const userRole = await prisma.userRole.findFirst({
+    where: { userId: user?.id },
+    include: { role: true },
+  });
+  const roleName = userRole?.role?.name;
+  response.cookies.set('extra', JSON.stringify({ role: roleName }), {
+    httpOnly: true,
+  });
   const { pathname } = request.nextUrl;
+  const authHeader = request.headers.get('authorization');
+
+  if (!user && authHeader) {
+    const token = authHeader.replace('Bearer ', '');
+    const {
+      data: { user: tokenUser },
+    } = await supabase.auth.getUser(token);
+
+    if (tokenUser) {
+      await supabase.auth.setSession({
+        access_token: token,
+        refresh_token: '',
+      });
+      return response;
+    }
+  }
 
   if ((user && isAuthRoute(pathname)) || (user && isPublicRoute(pathname))) {
     return NextResponse.redirect(new URL('/home', request.url));
   }
 
   if (!user && !isPublicRoute(pathname)) {
+    if (pathname.startsWith('/api/')) {
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+    }
     const redirectUrl = new URL('/signin', request.url);
     redirectUrl.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(redirectUrl);
   }
 
+  const userRoles = await prisma.userRole.findFirst({
+    where: { userId: user?.id },
+    include: { role: true },
+  });
+  const userRoleName = userRoles?.role?.name;
+  // Check if the route requires a role
+  const allowedRoles = Object.entries(roleAccess).find(([route]) =>
+    pathname.startsWith(route)
+  )?.[1];
+
+  if (allowedRoles) {
+    // Check if user role is allowed
+    if (!allowedRoles.some(role => userRoleName === role)) {
+      if (pathname.startsWith('/api/')) {
+        return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+      }
+      return NextResponse.redirect(new URL('/unauthorized', request.url));
+    }
+  }
   return response;
 }
 

@@ -18,7 +18,8 @@
     "test:watch": "vitest watch",
     "prepare": "husky",
     "pre-commit": "lint-staged",
-    "pre-push": "npm run type-check && npm run build"
+    "pre-push": "npm run type-check && npm run build",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -40,7 +41,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.555.0",
-    "next": "16.0.4",
+    "next": "16.0.7",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.4.6",
     "pg": "^8.16.3",
@@ -60,7 +61,7 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/next-pwa": "^5.6.9",
-    "@types/node": "^20",
+    "@types/node": "^20.19.25",
     "@types/pg": "^8.15.6",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
@@ -76,10 +77,14 @@
     "prisma": "^6.19.0",
     "server-only": "^0.0.1",
     "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
     "typescript": "^5",
     "typescript-eslint": "^8.48.0",
     "vitest": "^4.0.14"
+  },
+  "prisma": {
+    "seed": "npx tsx prisma/seed.ts"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -92,6 +97,7 @@
   },
   "overrides": {
     "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2"
+    "@types/react-dom": "19.2.2",
+    "next": "$next"
   }
 }
