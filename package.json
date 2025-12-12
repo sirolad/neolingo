@@ -73,7 +73,7 @@
     "eslint-config-next": "16.0.0",
     "husky": "^9.1.7",
     "jsdom": "^27.2.0",
-    "lint-staged": "^16.2.6",
+    "lint-staged": "^16.2.7",
     "prisma": "^6.19.0",
     "server-only": "^0.0.1",
     "tailwindcss": "^4",
