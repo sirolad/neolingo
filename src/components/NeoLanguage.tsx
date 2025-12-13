@@ -20,6 +20,7 @@ interface NeoLanguageOption {
 export default function NeoLanguage() {
   const router = useRouter();
   const { userNeoCommunityId } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [selectedNeoLanguage, setSelectedNeoLanguage] = useState<number | null>(
     userNeoCommunityId
   );
@@ -40,6 +41,12 @@ export default function NeoLanguage() {
   };
 
   const handleNext = () => {
+    setLoading(true);
+    if (!selectedNeoLanguage) {
+      toast.error('Please select a Neo Community to proceed.');
+      setLoading(false);
+      return;
+    }
     const selectedLanguage = neoLanguages
       .find(lang =>
         lang.neoCommunities.some(
@@ -57,15 +64,18 @@ export default function NeoLanguage() {
     })
       .then(res => {
         if (!res.ok) {
+          setLoading(false);
           throw new Error('Failed to set Language');
         }
         return res.json();
       })
       .then(() => {
+        setLoading(false);
         toast.success(`Neo Community set to ${selectedLanguage?.name}`);
         router.push('/home');
       })
       .catch(err => {
+        setLoading(false);
         console.error(err);
         toast.error('An error occurred while setting Neo Community.');
       });
@@ -174,10 +184,15 @@ export default function NeoLanguage() {
         <div className="pt-8 flex justify-center">
           <button
             onClick={handleNext}
-            className="w-full max-w-md h-[58px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]"
+            disabled={loading}
+            className={
+              loading
+                ? 'w-full max-w-md h-[58px] flex items-center justify-center bg-[#888888] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]'
+                : 'w-full max-w-md h-[58px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]'
+            }
           >
             <span className="text-[16px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-              Complete Profile
+              {loading ? 'Completing Profile...' : 'Complete Profile'}
             </span>
           </button>
         </div>

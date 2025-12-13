@@ -6,6 +6,7 @@ import ReactCountryFlag from 'react-country-flag';
 import { toast } from 'sonner';
 import createClient from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { set } from 'zod';
 
 interface LanguageOption {
   id: number;
@@ -17,6 +18,7 @@ interface LanguageOption {
 export default function UserLanguage() {
   const router = useRouter();
   const { userLanguageId } = useAuth();
+  const [loading, setLoading] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<number | null>(
     userLanguageId
   );
@@ -36,11 +38,14 @@ export default function UserLanguage() {
   };
 
   const handleNext = () => {
+    setLoading(true);
     const englishLanguage = languages.find(lang => lang.name === 'English');
     if (!selectedLanguage) {
+      setLoading(false);
       toast.error('Please select a Language to proceed.');
       return;
     } else if (selectedLanguage !== englishLanguage?.id) {
+      setLoading(false);
       toast.error('Language must be English to proceed.');
       return;
     }
@@ -62,9 +67,11 @@ export default function UserLanguage() {
       })
       .then(() => {
         toast.success(`Language set to ${selected?.name}`);
+        setLoading(false);
         router.push('/neo-language-setup');
       })
       .catch(err => {
+        setLoading(false);
         console.error(err);
         toast.error('An error occurred while setting Language.');
       });
@@ -159,10 +166,15 @@ export default function UserLanguage() {
         <div className="pt-8 flex justify-center">
           <button
             onClick={handleNext}
-            className="w-full max-w-md h-[58px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]"
+            disabled={loading}
+            className={
+              loading
+                ? 'w-full max-w-md h-[58px] flex items-center justify-center bg-[#888888] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]'
+                : 'w-full max-w-md h-[58px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]'
+            }
           >
             <span className="text-[16px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-              Next
+              {loading ? 'Setting Language...' : 'Next'}
             </span>
           </button>
         </div>

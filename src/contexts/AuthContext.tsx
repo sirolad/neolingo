@@ -15,7 +15,6 @@ import createClient from '@/lib/supabase/client';
 import { normalizeUser } from '@/lib/user';
 import type { AuthContextType, SocialProvider } from '@/types';
 import * as Sentry from '@sentry/nextjs';
-import prisma from '@/lib/prisma';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
