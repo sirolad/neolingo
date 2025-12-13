@@ -10,11 +10,10 @@ datasource db {
 
 model UserProfile {
   userId     String   @id @db.Uuid
-  firstName String
-  lastName  String
+  name       String?
   phone     String?
-  language   Language @relation(fields: [languageId], references: [id])
-  languageId Int
+  language   Language? @relation(fields: [languageId], references: [id])
+  languageId Int?
   onboardingCompleted Boolean  @default(false)
 
   @@map("user_profile")

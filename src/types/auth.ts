@@ -20,7 +20,7 @@ export interface AuthContextType {
   signup: (
     email: string,
     password: string,
-    name?: string,
+    name: string,
     redirectTo?: string
   ) => Promise<import('@supabase/supabase-js').User | null>;
   logout: () => void;

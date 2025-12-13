@@ -32,6 +32,7 @@ export default function SignUpPage() {
     defaultValues: {
       email: '',
       password: '',
+      name: '',
       confirmPassword: '',
     },
   });
@@ -44,7 +45,7 @@ export default function SignUpPage() {
       const created = await signup(
         data.email,
         data.password,
-        undefined,
+        data.name,
         redirectTo
       );
 
@@ -164,6 +165,28 @@ export default function SignUpPage() {
                 onSubmit={form.handleSubmit(handleSubmit)}
                 className="space-y-2"
               >
+                {/* Name Input */}
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-medium text-primary font-[Parkinsans]">
+                        Full Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          placeholder="Enter Full Name"
+                          disabled={loading}
+                          className="h-[52px] border-border rounded-xl font-[Metropolis] text-[14px] placeholder:text-muted-foreground focus:border-primary"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-[12px] font-[Metropolis]" />
+                    </FormItem>
+                  )}
+                />
                 {/* Email Input */}
                 <FormField
                   control={form.control}

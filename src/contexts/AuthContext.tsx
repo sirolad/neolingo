@@ -15,6 +15,7 @@ import createClient from '@/lib/supabase/client';
 import { normalizeUser } from '@/lib/user';
 import type { AuthContextType, SocialProvider } from '@/types';
 import * as Sentry from '@sentry/nextjs';
+import prisma from '@/lib/prisma';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -128,17 +129,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (
     email: string,
     password: string,
-    name?: string,
+    name: string,
     redirectTo?: string
   ): Promise<User | null> => {
     try {
       const signUpPayload: {
         email: string;
         password: string;
-        options?: { emailRedirectTo?: string };
-      } = { email, password };
+        options: {
+          emailRedirectTo?: string;
+          data: { name: string; display_name: string };
+        };
+      } = { email, password, options: { data: { name, display_name: name } } };
       if (redirectTo) {
-        signUpPayload.options = { emailRedirectTo: redirectTo };
+        signUpPayload.options = {
+          emailRedirectTo: redirectTo,
+          data: { name, display_name: name },
+        };
       }
 
       const { data, error } = await supabase.auth.signUp(signUpPayload);
@@ -152,6 +159,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return null;
       }
       const createdUser = data.user ?? null;
+      console.log('User signed up:', createdUser);
       setUser(createdUser);
       return createdUser;
     } catch (err) {

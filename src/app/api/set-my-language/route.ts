@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     const dbUser = await prisma.userProfile.upsert({
       where: { userId: user.id },
       update: { languageId },
-      create: { userId: user.id, languageId, firstName: '', lastName: '' },
+      create: { userId: user.id, languageId },
     });
 
     return NextResponse.json({ success: true, user: dbUser });

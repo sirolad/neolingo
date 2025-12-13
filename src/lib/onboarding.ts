@@ -26,8 +26,6 @@ export async function completeOnboardingForUser(
     create: {
       userId,
       languageId,
-      firstName: '',
-      lastName: '',
       onboardingCompleted: true,
     },
   });

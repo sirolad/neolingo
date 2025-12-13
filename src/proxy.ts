@@ -132,7 +132,12 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (user && !pathname.startsWith('/api/')) {
+  if (
+    user &&
+    !pathname.startsWith('/api/') &&
+    pathname !== '/language-setup' &&
+    pathname !== '/neo-language-setup'
+  ) {
     const onboardingCompleted = await isOnboardingCompleted(user.id);
     if (!onboardingCompleted) {
       if (!languageId) {
