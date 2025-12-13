@@ -1,6 +1,10 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { prisma } from '@/lib/prisma';
+import {
+  completeOnboardingForUser,
+  isOnboardingCompleted,
+} from '@/lib/onboarding';
 
 const PUBLIC_ROUTES = [
   '/signin',
@@ -128,19 +132,18 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  if (user && pathname === '/home') {
-    if (user?.confirmed_at == null) {
-      const redirectUrl = new URL(
-        '/email-verification/1?initiate=true',
-        request.url
-      );
-      return NextResponse.redirect(redirectUrl);
-    } else if (!languageId) {
-      const redirectUrl = new URL('/language-setup', request.url);
-      return NextResponse.redirect(redirectUrl);
-    } else if (!neoCommunityId) {
-      const redirectUrl = new URL('/neo-language-setup', request.url);
-      return NextResponse.redirect(redirectUrl);
+  if (user && !pathname.startsWith('/api/')) {
+    const onboardingCompleted = await isOnboardingCompleted(user.id);
+    if (!onboardingCompleted) {
+      if (!languageId) {
+        const redirectUrl = new URL('/language-setup', request.url);
+        return NextResponse.redirect(redirectUrl);
+      } else if (!neoCommunityId) {
+        const redirectUrl = new URL('/neo-language-setup', request.url);
+        return NextResponse.redirect(redirectUrl);
+      } else if (languageId && neoCommunityId) {
+        await completeOnboardingForUser(user.id, languageId);
+      }
     }
   }
 

@@ -15,6 +15,7 @@ model UserProfile {
   phone     String?
   language   Language @relation(fields: [languageId], references: [id])
   languageId Int
+  onboardingCompleted Boolean  @default(false)
 
   @@map("user_profile")
 }
