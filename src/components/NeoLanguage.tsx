@@ -6,6 +6,12 @@ import ReactCountryFlag from 'react-country-flag';
 import { toast } from 'sonner';
 import createClient from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import {
+  getUserLanguageAndCommunity,
+  listCountries,
+  setMyCommunity,
+} from '@/actions/language';
+import { get } from 'http';
 
 interface NeoLanguageOption {
   id: number;
@@ -25,26 +31,27 @@ export default function NeoLanguage() {
   );
   const [neoLanguages, setNeoLanguages] = useState<NeoLanguageOption[]>([]);
   const supabase = createClient();
+  const { user } = useAuth();
 
   useEffect(() => {
-    // Fetch available languages from the backend API
-    fetch('/api/countries')
-      .then(res => res.json())
-      .then(data => {
-        console.log('countries call ', data);
-        setNeoLanguages(data.languages || []);
+    const getCountries = async () => {
+      await listCountries().then(({ data }) => {
+        setNeoLanguages(data || []);
       });
-    fetch('/api/get-extra')
-      .then(res => res.json())
-      .then(data => {
-        setSelectedNeoLanguage(data.extra?.neoCommunityId || null);
+    };
+    getCountries();
+    const fetchSelectedNeoLanguage = async () => {
+      await getUserLanguageAndCommunity(user?.id || '').then(({ extra }) => {
+        setSelectedNeoLanguage(extra?.neoCommunityId || null);
       });
-  }, []);
+    };
+    fetchSelectedNeoLanguage();
+  }, [user]);
   const handleBack = () => {
     router.back();
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setLoading(true);
     if (!selectedNeoLanguage) {
       toast.error('Please select a Neo Community to proceed.');
@@ -58,21 +65,7 @@ export default function NeoLanguage() {
         )
       )
       ?.neoCommunities.find(community => community.id === selectedNeoLanguage);
-    fetch('/api/set-my-neo-community', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${supabase.auth.getSession().then(({ data }) => data.session?.access_token)}`,
-      },
-      body: JSON.stringify({ neoCommunityId: selectedNeoLanguage }),
-    })
-      .then(res => {
-        if (!res.ok) {
-          setLoading(false);
-          throw new Error('Failed to set Language');
-        }
-        return res.json();
-      })
+    await setMyCommunity(selectedNeoLanguage)
       .then(() => {
         setLoading(false);
         toast.success(`Neo Community set to ${selectedLanguage?.name}`);

@@ -7,6 +7,11 @@ import { toast } from 'sonner';
 import createClient from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { set } from 'zod';
+import {
+  getUserLanguageAndCommunity,
+  listLanguages,
+  setMyLanguage,
+} from '@/actions/language';
 
 interface LanguageOption {
   id: number;
@@ -20,26 +25,31 @@ export default function UserLanguage() {
   const [loading, setLoading] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState<number | null>(null);
   const [languages, setLanguages] = useState<LanguageOption[]>([]);
+  const { user } = useAuth();
 
   const supabase = createClient();
 
   useEffect(() => {
     // Fetch available languages from the backend API
-    fetch('/api/languages')
-      .then(res => res.json())
-      .then(data => setLanguages(data.languages || []));
-    fetch('/api/get-extra')
-      .then(res => res.json())
-      .then(data => {
-        setSelectedLanguage(data.extra?.languageId || null);
+    const fetchLanguages = async () => {
+      await listLanguages().then(({ data }) => {
+        setLanguages(data || []);
       });
-  }, []);
+    };
+    fetchLanguages();
+    const fetchSelectedLanguage = async () => {
+      await getUserLanguageAndCommunity(user?.id || '').then(({ extra }) => {
+        setSelectedLanguage(extra?.languageId || null);
+      });
+    };
+    fetchSelectedLanguage();
+  }, [user]);
 
   const handleBack = () => {
     router.back();
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setLoading(true);
     const englishLanguage = languages.find(lang => lang.name === 'English');
     if (!selectedLanguage) {
@@ -53,20 +63,7 @@ export default function UserLanguage() {
     }
 
     const selected = languages.find(lang => lang.id === selectedLanguage);
-    fetch('/api/set-my-language', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${supabase.auth.getSession().then(({ data }) => data.session?.access_token)}`,
-      },
-      body: JSON.stringify({ languageId: selectedLanguage }),
-    })
-      .then(res => {
-        if (!res.ok) {
-          throw new Error('Failed to set Language');
-        }
-        return res.json();
-      })
+    await setMyLanguage(selectedLanguage)
       .then(() => {
         toast.success(`Language set to ${selected?.name}`);
         setLoading(false);
