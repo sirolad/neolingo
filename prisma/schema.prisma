@@ -9,12 +9,15 @@ datasource db {
 }
 
 model UserProfile {
-  userId     String   @id @db.Uuid
+  id         Int    @id @default(autoincrement())
+  userId     String @db.Uuid
   name       String?
-  phone     String?
+  phone      String?
   language   Language? @relation(fields: [languageId], references: [id])
   languageId Int?
   onboardingCompleted Boolean  @default(false)
+
+  @@unique([userId])
 
   @@map("user_profile")
 }

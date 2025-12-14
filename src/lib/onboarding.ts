@@ -33,7 +33,7 @@ export async function completeOnboardingForUser(
 }
 
 export async function isOnboardingCompleted(userId: string): Promise<boolean> {
-  const profile = await prisma.userProfile.findUnique({
+  const profile = await prisma.userProfile.findFirst({
     where: { userId },
     select: { onboardingCompleted: true },
   });

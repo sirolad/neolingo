@@ -85,7 +85,7 @@ export async function proxy(request: NextRequest) {
       })
     : null;
   const userProfile = user
-    ? await prisma.userProfile.findUnique({
+    ? await prisma.userProfile.findFirst({
         where: { userId: user?.id },
         include: { language: true },
       })

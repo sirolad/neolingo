@@ -98,18 +98,20 @@ export async function setMyCommunity(
   return { success: true };
 }
 
-export async function getUserLanguageAndCommunity(
-  userId: string
-): Promise<{
+export async function getUserLanguageAndCommunity(userId: string): Promise<{
   success: boolean;
   extra: { languageId: number | null; neoCommunityId: number | null };
 }> {
-  const userProfile = await prisma.userProfile.findUnique({
-    where: { userId },
-  });
-  const userNeoCommunity = await prisma.userNeoCommunity.findFirst({
-    where: { userId },
-  });
+  const userProfile = userId
+    ? await prisma.userProfile.findFirst({
+        where: { userId },
+      })
+    : null;
+  const userNeoCommunity = userId
+    ? await prisma.userNeoCommunity.findFirst({
+        where: { userId },
+      })
+    : null;
   return {
     success: true,
     extra: {
