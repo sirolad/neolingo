@@ -17,11 +17,8 @@ interface LanguageOption {
 
 export default function UserLanguage() {
   const router = useRouter();
-  const { userLanguageId } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState<number | null>(
-    userLanguageId
-  );
+  const [selectedLanguage, setSelectedLanguage] = useState<number | null>(null);
   const [languages, setLanguages] = useState<LanguageOption[]>([]);
 
   const supabase = createClient();
@@ -31,6 +28,11 @@ export default function UserLanguage() {
     fetch('/api/languages')
       .then(res => res.json())
       .then(data => setLanguages(data.languages || []));
+    fetch('/api/get-extra')
+      .then(res => res.json())
+      .then(data => {
+        setSelectedLanguage(data.extra?.languageId || null);
+      });
   }, []);
 
   const handleBack = () => {

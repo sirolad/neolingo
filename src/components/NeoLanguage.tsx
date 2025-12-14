@@ -19,10 +19,9 @@ interface NeoLanguageOption {
 
 export default function NeoLanguage() {
   const router = useRouter();
-  const { userNeoCommunityId } = useAuth();
   const [loading, setLoading] = useState(false);
   const [selectedNeoLanguage, setSelectedNeoLanguage] = useState<number | null>(
-    userNeoCommunityId
+    null
   );
   const [neoLanguages, setNeoLanguages] = useState<NeoLanguageOption[]>([]);
   const supabase = createClient();
@@ -34,6 +33,11 @@ export default function NeoLanguage() {
       .then(data => {
         console.log('countries call ', data);
         setNeoLanguages(data.languages || []);
+      });
+    fetch('/api/get-extra')
+      .then(res => res.json())
+      .then(data => {
+        setSelectedNeoLanguage(data.extra?.neoCommunityId || null);
       });
   }, []);
   const handleBack = () => {
@@ -128,8 +132,7 @@ export default function NeoLanguage() {
                 <div
                   key={neoLanguage.id}
                   className={`flex flex-col w-[47%]  p-4 rounded-xl border  justify-between transition-colors ${
-                    selectedNeoLanguage === neoLanguage.id ||
-                    userNeoCommunityId === neoLanguage.id
+                    selectedNeoLanguage === neoLanguage.id
                       ? 'bg-white border-[rgba(17,17,17,0.15)]'
                       : 'bg-white border-[rgba(17,17,17,0.15)]'
                   }`}
