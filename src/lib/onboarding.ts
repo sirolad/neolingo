@@ -1,3 +1,5 @@
+import prisma from './prisma';
+
 export function getOnboardingSeen(): boolean {
   try {
     return localStorage.getItem('onboardingSeen') === 'true';
@@ -12,4 +14,28 @@ export function setOnboardingSeen(value = true): void {
   } catch {
     // ignore localStorage errors (e.g., SSR or privacy settings)
   }
+}
+
+export async function completeOnboardingForUser(
+  userId: string,
+  languageId: number
+): Promise<void> {
+  await prisma.userProfile.upsert({
+    where: { userId },
+    update: { onboardingCompleted: true },
+    create: {
+      userId,
+      languageId,
+      onboardingCompleted: true,
+    },
+  });
+  return;
+}
+
+export async function isOnboardingCompleted(userId: string): Promise<boolean> {
+  const profile = await prisma.userProfile.findFirst({
+    where: { userId },
+    select: { onboardingCompleted: true },
+  });
+  return profile?.onboardingCompleted ?? false;
 }
