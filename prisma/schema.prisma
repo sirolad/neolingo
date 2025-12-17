@@ -8,16 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model UserProfile {
-  id         Int    @id @default(autoincrement())
-  userId     String @db.Uuid
-  name       String?
-  phone      String?
-  language   Language? @relation(fields: [languageId], references: [id])
-  languageId Int?
-  onboardingCompleted Boolean  @default(false)
 
-  @@unique([userId])
+model UserProfile {
+  userId    String     @id @db.Uuid
+  firstName String
+  lastName  String
+  phone     String?
 
   @@map("user_profile")
 }
@@ -39,45 +35,4 @@ model UserRole {
 
   @@unique([userId, roleId])
   @@map("user_roles")
-}
-
-model Language {
-  id           Int           @id @default(autoincrement())
-  name         String        @unique
-  icon         String?
-  userProfiles UserProfile[]
-
-  @@map("language")
-}
-
-model Country {
-  id              Int           @id @default(autoincrement())
-  name            String        @unique
-  icon            String?
-  neoCommunities  NeoCommunities[]
-
-  @@map("countries")
-}
-
-
-model NeoCommunities {
-  id             Int           @id @default(autoincrement())
-  name           String
-  countryId      Int
-  country        Country       @relation(fields: [countryId], references: [id])
-  users          UserNeoCommunity[]
-
-  @@unique([name, countryId])
-  @@map("neo_communities")
-}
-
-model UserNeoCommunity {
-  id             Int    @id @default(autoincrement())
-  userId         String @db.Uuid
-  neoCommunityId Int
-
-  neoCommunity NeoCommunities @relation(fields: [neoCommunityId], references: [id])
-
-  @@unique([userId, neoCommunityId])
-  @@map("user_neo_communities")
 }
