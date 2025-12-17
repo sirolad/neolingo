@@ -2,23 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/contexts/AuthContext';
-import { use, useEffect, useState } from 'react';
 
 export default function EmailVerification1() {
   const router = useRouter();
-  const { user } = useAuth();
-  const [initiateVerification, setInitiateVerification] = useState(false);
 
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.toString() !== '') {
-      const redirectpage = urlParams.get('initiate');
-      if (redirectpage && redirectpage === 'true') {
-        setInitiateVerification(true);
-      }
-    }
-  }, [router]);
   const handleBack = () => {
     router.back();
   };
@@ -56,8 +43,9 @@ export default function EmailVerification1() {
       {/* Progress Indicators */}
       <div className="absolute top-[90px] md:top-[103px] lg:top-[123px] left-1/2 transform -translate-x-1/2 z-10">
         <div className="flex items-center gap-2 md:gap-3">
-          <div className="w-16 md:w-20 lg:w-24 h-[3px] md:h-[4px] lg:h-[5px] bg-[#D9D9D9] rounded-full"></div>
           <div className="w-16 md:w-20 lg:w-24 h-[3px] md:h-[4px] lg:h-[5px] bg-[#111111] rounded-full"></div>
+          <div className="w-16 md:w-20 lg:w-24 h-[3px] md:h-[4px] lg:h-[5px] bg-[#D9D9D9] rounded-full"></div>
+          <div className="w-16 md:w-20 lg:w-24 h-[3px] md:h-[4px] lg:h-[5px] bg-[#D9D9D9] rounded-full"></div>
         </div>
       </div>
 
@@ -129,25 +117,20 @@ export default function EmailVerification1() {
               Account Created!
             </h1>
             <p className="text-[15px] md:text-[17px] lg:text-[19px] font-normal leading-[21px] md:leading-[25px] lg:leading-[28px] text-[rgba(17,17,17,0.8)] font-[Metropolis] max-w-md md:max-w-lg lg:max-w-xl mx-auto">
-              Your Neolingo account have successfully created! Verify your email
-              address to proceed.
+              You have successfully created your account, The next step requires
+              you to verify your email address
             </p>
           </div>
 
           {/* Action Button */}
-          {((user &&
-            user?.confirmation_sent_at == null &&
-            user?.confirmed_at == null) ||
-            initiateVerification) && (
-            <Button
-              onClick={handleContinue}
-              className="w-full btn-big md:h-[64px] lg:h-[70px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] hover:bg-[#333333] active:scale-[0.98] transition-all"
-            >
-              <span className="text-[16px] md:text-[18px] lg:text-[20px] font-semibold leading-[22px] md:leading-[24px] lg:leading-[26px] text-white font-[Parkinsans]">
-                Verify Email Address
-              </span>
-            </Button>
-          )}
+          <Button
+            onClick={handleContinue}
+            className="w-full btn-big md:h-[64px] lg:h-[70px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] hover:bg-[#333333] active:scale-[0.98] transition-all"
+          >
+            <span className="text-[16px] md:text-[18px] lg:text-[20px] font-semibold leading-[22px] md:leading-[24px] lg:leading-[26px] text-white font-[Parkinsans]">
+              Verify Email Address
+            </span>
+          </Button>
         </div>
       </div>
     </div>

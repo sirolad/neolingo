@@ -66,13 +66,3 @@ export interface NeoLanguageOption {
   description: string;
   color: string;
 }
-export interface NeoLanguage {
-  id: number;
-  name: string;
-  countryId: number;
-  country: {
-    id: number;
-    name: string;
-    icon: string | null;
-  };
-}

@@ -1,16 +1,13 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { prisma } from '@/lib/prisma';
-import {
-  completeOnboardingForUser,
-  isOnboardingCompleted,
-} from '@/lib/onboarding';
 
 const PUBLIC_ROUTES = [
   '/signin',
   '/signup',
   '/reset-password',
   '/auth/callback',
+  '/email-verification',
   '/splash',
   '/',
   '/onboarding/1',
@@ -20,13 +17,7 @@ const PUBLIC_ROUTES = [
   '/onboarding/5',
 ];
 
-const AUTH_ROUTES = [
-  '/api/set-my-language',
-  '/api/admin/assign-role',
-  '/language-setup',
-  '/neo-language-setup',
-  '/home',
-];
+const AUTH_ROUTES = ['/signin', '/signup'];
 
 const roleAccess: Record<string, string[]> = {
   '/admin': ['ADMIN'],
@@ -69,37 +60,17 @@ export async function proxy(request: NextRequest) {
     }
   );
 
-  let {
+  const {
     data: { user },
   } = await supabase.auth.getUser();
-  const userRole = user
-    ? await prisma.userRole.findFirst({
-        where: { userId: user?.id },
-        include: { role: true },
-      })
-    : null;
-  const userNeoCommunity = user
-    ? await prisma.userNeoCommunity.findFirst({
-        where: { userId: user?.id },
-        include: { neoCommunity: true },
-      })
-    : null;
-  const userProfile = user
-    ? await prisma.userProfile.findFirst({
-        where: { userId: user?.id },
-        include: { language: true },
-      })
-    : null;
+  const userRole = await prisma.userRole.findFirst({
+    where: { userId: user?.id },
+    include: { role: true },
+  });
   const roleName = userRole?.role?.name;
-  const languageId = userProfile?.languageId;
-  const neoCommunityId = userNeoCommunity?.neoCommunity?.id;
-  response.cookies.set(
-    'extra',
-    JSON.stringify({ role: roleName, languageId, neoCommunityId }),
-    {
-      httpOnly: true,
-    }
-  );
+  response.cookies.set('extra', JSON.stringify({ role: roleName }), {
+    httpOnly: true,
+  });
   const { pathname } = request.nextUrl;
   const authHeader = request.headers.get('authorization');
 
@@ -108,7 +79,6 @@ export async function proxy(request: NextRequest) {
     const {
       data: { user: tokenUser },
     } = await supabase.auth.getUser(token);
-    user = tokenUser;
 
     if (tokenUser) {
       await supabase.auth.setSession({
@@ -119,37 +89,17 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  if (user && isPublicRoute(pathname)) {
+  if ((user && isAuthRoute(pathname)) || (user && isPublicRoute(pathname))) {
     return NextResponse.redirect(new URL('/home', request.url));
   }
 
-  if (!user && isAuthRoute(pathname)) {
+  if (!user && !isPublicRoute(pathname)) {
     if (pathname.startsWith('/api/')) {
       return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
     }
     const redirectUrl = new URL('/signin', request.url);
     redirectUrl.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(redirectUrl);
-  }
-
-  if (
-    user &&
-    !pathname.startsWith('/api/') &&
-    pathname !== '/language-setup' &&
-    pathname !== '/neo-language-setup'
-  ) {
-    const onboardingCompleted = await isOnboardingCompleted(user.id);
-    if (!onboardingCompleted) {
-      if (!languageId) {
-        const redirectUrl = new URL('/language-setup', request.url);
-        return NextResponse.redirect(redirectUrl);
-      } else if (!neoCommunityId) {
-        const redirectUrl = new URL('/neo-language-setup', request.url);
-        return NextResponse.redirect(redirectUrl);
-      } else if (languageId && neoCommunityId) {
-        await completeOnboardingForUser(user.id, languageId);
-      }
-    }
   }
 
   const userRoles = await prisma.userRole.findFirst({
