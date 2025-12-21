@@ -8,7 +8,7 @@ import createClient from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getUserLanguageAndCommunity,
-  listCountries,
+  getCommunities,
   setMyCommunity,
 } from '@/actions/language';
 import { get } from 'http';
@@ -16,11 +16,6 @@ import { get } from 'http';
 interface NeoLanguageOption {
   id: number;
   name: string;
-  icon: string;
-  neoCommunities: {
-    id: number;
-    name: string;
-  }[];
 }
 
 export default function NeoLanguage() {
@@ -35,7 +30,7 @@ export default function NeoLanguage() {
 
   useEffect(() => {
     const getCountries = async () => {
-      await listCountries().then(({ data }) => {
+      await getCommunities().then(({ data }) => {
         setNeoLanguages(data || []);
       });
     };
@@ -58,13 +53,9 @@ export default function NeoLanguage() {
       setLoading(false);
       return;
     }
-    const selectedLanguage = neoLanguages
-      .find(lang =>
-        lang.neoCommunities.some(
-          community => community.id === selectedNeoLanguage
-        )
-      )
-      ?.neoCommunities.find(community => community.id === selectedNeoLanguage);
+    const selectedLanguage = neoLanguages.find(
+      lang => lang.id === selectedNeoLanguage
+    );
     await setMyCommunity(selectedNeoLanguage)
       .then(() => {
         setLoading(false);
@@ -119,58 +110,43 @@ export default function NeoLanguage() {
               </p>
             </div>
 
-            {/* Neo Language Options */}
-            <div className="flex flex-wrap gap-4 space-y-4 mb-8 justify-center">
-              {neoLanguages.map(neoLanguage => (
-                <div
-                  key={neoLanguage.id}
-                  className={`flex flex-col w-[47%]  p-4 rounded-xl border  justify-between transition-colors ${
-                    selectedNeoLanguage === neoLanguage.id
+            <div className="space-y-4 mb-8">
+              {neoLanguages.map(language => (
+                <button
+                  key={language.id}
+                  onClick={() => setSelectedNeoLanguage(language.id)}
+                  className={`w-full p-4 rounded-lg border flex items-center justify-between transition-colors ${
+                    selectedNeoLanguage === language.id
                       ? 'bg-white border-[rgba(17,17,17,0.15)]'
                       : 'bg-white border-[rgba(17,17,17,0.15)]'
                   }`}
                 >
-                  <div className="flex items-center space-x-3 mb-4">
-                    <ReactCountryFlag
-                      countryCode={neoLanguage.icon}
+                  <div className="flex items-center space-x-3">
+                    {/* <ReactCountryFlag
+                      countryCode={'NG'}
                       svg
                       className="w-6 h-6"
-                    />
-                    <div className="text-left">
-                      <div className="text-[14px] font-medium leading-[20px] text-[#111111] font-[Parkinsans]">
-                        {neoLanguage.name}
-                      </div>
-                    </div>
+                    /> */}
+                    <span className="text-[14px] font-normal leading-[20px] text-[#111111] font-[Parkinsans]">
+                      {language.name[0].toUpperCase() + language.name.slice(1)}
+                    </span>
                   </div>
 
                   {/* Radio Button */}
-                  {neoLanguage.neoCommunities.map(community => (
+                  <div className="flex items-center">
                     <div
-                      key={community.id}
-                      className="flex items-center mb-2 justify-between"
+                      className={`w-[22px] h-[22px] rounded-full border-[1.5px] flex items-center justify-center ${
+                        selectedNeoLanguage === language.id
+                          ? 'border-[#111111]'
+                          : 'border-[rgba(17,17,17,0.3)]'
+                      }`}
                     >
-                      <div className="text-[14px] font-normal leading-[20px] text-[#111111] font-[Metropolis]">
-                        {community.name}
-                      </div>
-                      <div
-                        onClick={() => setSelectedNeoLanguage(community.id)}
-                        className="flex items-center"
-                      >
-                        <div
-                          className={`w-[22px] h-[22px] rounded-full border-[1.5px] flex items-center justify-center ${
-                            selectedNeoLanguage === community.id
-                              ? 'border-[#111111]'
-                              : 'border-[rgba(17,17,17,0.3)]'
-                          }`}
-                        >
-                          {selectedNeoLanguage === community.id && (
-                            <div className="w-[10px] h-[10px] bg-[#111111] rounded-full"></div>
-                          )}
-                        </div>
-                      </div>
+                      {selectedNeoLanguage === language.id && (
+                        <div className="w-[10px] h-[10px] bg-[#111111] rounded-full"></div>
+                      )}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                </button>
               ))}
             </div>
           </div>

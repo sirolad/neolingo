@@ -41,24 +41,17 @@ export async function setMyLanguage(
   }
 }
 
-export async function listCountries(): Promise<{
+export async function getCommunities(): Promise<{
   success: boolean;
   data: any[];
 }> {
-  const languages = await prisma.country.findMany({
+  const communities = await prisma.neoCommunities.findMany({
     select: {
       id: true,
       name: true,
-      icon: true,
-      neoCommunities: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
     },
   });
-  return { success: true, data: languages };
+  return { success: true, data: communities };
 }
 
 export async function listLanguages(): Promise<{
@@ -69,6 +62,7 @@ export async function listLanguages(): Promise<{
     select: {
       id: true,
       name: true,
+      is_supported: true,
       icon: true,
     },
   });
@@ -90,6 +84,7 @@ export async function setMyCommunity(
     console.error('Supabase getUser error:', userError);
     return { success: false, error: 'Unauthorized' };
   }
+  //First delete any existing community for the user then create a new one
   await prisma.userNeoCommunity.deleteMany({ where: { userId: user.id } });
   const dbUser = await prisma.userNeoCommunity.create({
     data: { userId: user.id, neoCommunityId },

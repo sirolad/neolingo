@@ -16,6 +16,7 @@ import {
 interface LanguageOption {
   id: number;
   name: string;
+  is_supported: boolean;
   flag: React.ReactNode;
   icon: string;
 }
@@ -51,14 +52,14 @@ export default function UserLanguage() {
 
   const handleNext = async () => {
     setLoading(true);
-    const englishLanguage = languages.find(lang => lang.name === 'English');
+    const supportedLanguages = languages.filter(lang => lang.is_supported);
     if (!selectedLanguage) {
       setLoading(false);
       toast.error('Please select a Language to proceed.');
       return;
-    } else if (selectedLanguage !== englishLanguage?.id) {
+    } else if (!supportedLanguages.some(lang => lang.id == selectedLanguage)) {
       setLoading(false);
-      toast.error('Language must be English to proceed.');
+      toast.error('Oops! Selected language is not supported yet.');
       return;
     }
 

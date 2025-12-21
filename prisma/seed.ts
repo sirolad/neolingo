@@ -8,14 +8,17 @@ async function main() {
   const languages = [
     {
       name: 'English',
+      is_supported: true,
       icon: 'GB',
     },
     {
       name: 'French',
+      is_supported: false,
       icon: 'FR',
     },
     {
       name: 'Spanish',
+      is_supported: false,
       icon: 'ES',
     },
   ];
@@ -58,6 +61,19 @@ async function main() {
     },
   ];
 
+  const neoCommunities = [
+    'Yoruba',
+    'Igbo',
+    'Hausa',
+    'twi',
+    'Ewe',
+    'Swahili',
+    'Kikuyu',
+    'Fon',
+    'Fula',
+    'Bulu',
+  ];
+
   for (const name of roles) {
     await prisma.role.upsert({
       where: { name },
@@ -71,36 +87,24 @@ async function main() {
   for (const language of languages) {
     await prisma.language.upsert({
       where: { name: language.name },
-      update: {},
-      create: { name: language.name, icon: language.icon },
+      update: { icon: language.icon, is_supported: language.is_supported },
+      create: {
+        name: language.name,
+        icon: language.icon,
+        is_supported: language.is_supported,
+      },
     });
   }
   console.log('Languages seeded successfully!');
 
-  for (const country of countries) {
-    const createdCountry = await prisma.country.upsert({
-      where: { name: country.name },
+  for (const communityName of neoCommunities) {
+    await prisma.neoCommunities.upsert({
+      where: { name: communityName },
       update: {},
-      create: { name: country.name, icon: country.icon },
+      create: { name: communityName },
     });
-
-    for (const neoCommunityName of country.neoCommunities) {
-      await prisma.neoCommunities.upsert({
-        where: {
-          name_countryId: {
-            name: neoCommunityName,
-            countryId: createdCountry.id,
-          },
-        },
-        update: {},
-        create: {
-          name: neoCommunityName,
-          countryId: createdCountry.id,
-        },
-      });
-    }
   }
-  console.log('Countries and NeoCommunities seeded successfully!');
+  console.log('NeoCommunities seeded successfully!');
 }
 
 main()

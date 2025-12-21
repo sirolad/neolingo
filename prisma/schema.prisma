@@ -16,6 +16,7 @@ model UserProfile {
   language   Language? @relation(fields: [languageId], references: [id])
   languageId Int?
   onboardingCompleted Boolean  @default(false)
+  neoCommunities UserNeoCommunity[]
 
   @@unique([userId])
 
@@ -44,30 +45,19 @@ model UserRole {
 model Language {
   id           Int           @id @default(autoincrement())
   name         String        @unique
+  is_supported Boolean  @default(false)
   icon         String?
   userProfiles UserProfile[]
 
   @@map("language")
 }
 
-model Country {
-  id              Int           @id @default(autoincrement())
-  name            String        @unique
-  icon            String?
-  neoCommunities  NeoCommunities[]
-
-  @@map("countries")
-}
-
-
 model NeoCommunities {
   id             Int           @id @default(autoincrement())
   name           String
-  countryId      Int
-  country        Country       @relation(fields: [countryId], references: [id])
   users          UserNeoCommunity[]
 
-  @@unique([name, countryId])
+  @@unique([name])
   @@map("neo_communities")
 }
 
@@ -76,7 +66,8 @@ model UserNeoCommunity {
   userId         String @db.Uuid
   neoCommunityId Int
 
-  neoCommunity NeoCommunities @relation(fields: [neoCommunityId], references: [id])
+  userProfile  UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  neoCommunity NeoCommunities @relation(fields: [neoCommunityId], references: [id], onDelete: Cascade)
 
   @@unique([userId, neoCommunityId])
   @@map("user_neo_communities")
