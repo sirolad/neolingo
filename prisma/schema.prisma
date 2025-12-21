@@ -18,6 +18,7 @@ model UserProfile {
   onboardingCompleted Boolean  @default(false)
   neoCommunities UserNeoCommunity[]
 
+  @@unique([userId])
   @@map("user_profile")
 }
 
