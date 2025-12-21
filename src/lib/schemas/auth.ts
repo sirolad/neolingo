@@ -3,7 +3,6 @@ import * as z from 'zod';
 // Sign up form schema
 export const signUpSchema = z
   .object({
-    name: z.string().min(1, 'Name is required'),
     email: z.email('Please enter a valid email address'),
     password: z
       .string()

@@ -23,44 +23,6 @@ async function main() {
     },
   ];
 
-  const countries = [
-    {
-      name: 'Nigeria',
-      icon: 'NG',
-      neoCommunities: ['Yoruba', 'Igbo', 'Hausa'],
-    },
-    {
-      name: 'Ghana',
-      icon: 'GH',
-      neoCommunities: [
-        'twi',
-        'Ewe',
-        // 'Ga',
-        // 'Dagbani',
-      ],
-    },
-    {
-      name: 'Kenya',
-      icon: 'KE',
-      neoCommunities: [
-        'Swahili',
-        'Kikuyu',
-        // 'Maasai',
-        // 'Meru',
-      ],
-    },
-    {
-      name: 'Benin',
-      icon: 'BJ',
-      neoCommunities: ['Fon', 'Yoruba'],
-    },
-    {
-      name: 'Cameroon',
-      icon: 'CM',
-      neoCommunities: ['Fula', 'Bulu'],
-    },
-  ];
-
   const neoCommunities = [
     'Yoruba',
     'Igbo',
