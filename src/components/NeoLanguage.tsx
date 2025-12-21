@@ -2,7 +2,6 @@
 
 import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import ReactCountryFlag from 'react-country-flag';
 import { toast } from 'sonner';
 import createClient from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -122,11 +121,6 @@ export default function NeoLanguage() {
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    {/* <ReactCountryFlag
-                      countryCode={'NG'}
-                      svg
-                      className="w-6 h-6"
-                    /> */}
                     <span className="text-[14px] font-normal leading-[20px] text-[#111111] font-[Parkinsans]">
                       {language.name[0].toUpperCase() + language.name.slice(1)}
                     </span>
