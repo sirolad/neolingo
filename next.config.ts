@@ -62,12 +62,13 @@ export default withSentryConfig(withPWAConfig(nextConfig as any), {
   // side errors will fail.
   // tunnelRoute: "/monitoring",
 
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
-
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-  // See the following for more information:
-  // https://docs.sentry.io/product/crons/
-  // https://vercel.com/docs/cron-jobs
-  automaticVercelMonitors: true,
+  // Webpack-specific configuration
+  webpack: {
+    // Automatically tree-shake Sentry logger statements to reduce bundle size
+    treeshake: {
+      removeDebugLogging: true,
+    },
+    // Enables automatic instrumentation of Vercel Cron Monitors
+    automaticVercelMonitors: true,
+  },
 });

@@ -5,6 +5,8 @@ import { prisma } from '@/lib/prisma';
 import { assignRole } from '@/lib/roles';
 import z from 'zod';
 
+export const dynamic = 'force-dynamic';
+
 const BodySchema = z.object({
   userId: z.string(),
   role: z.enum(['ADMIN', 'CONTRIBUTOR', 'JURY']),

@@ -1,0 +1,52 @@
+name: Dependabot Lockfile Fix
+
+on:
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+
+jobs:
+  fix-lockfile:
+    # Only run on Dependabot PRs
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Check lockfile sync
+        id: check
+        run: |
+          if npm ci --dry-run 2>&1 | grep -q "in sync"; then
+            echo "needs_fix=true" >> $GITHUB_OUTPUT
+          else
+            echo "needs_fix=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Fix lockfile
+        if: steps.check.outputs.needs_fix == 'true'
+        run: |
+          npm install --package-lock-only
+
+      - name: Commit changes
+        if: steps.check.outputs.needs_fix == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add package-lock.json
+          git commit -m "chore: sync package-lock.json" || exit 0
+          git push
