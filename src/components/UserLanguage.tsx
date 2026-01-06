@@ -28,21 +28,28 @@ export default function UserLanguage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    // Fetch available languages from the backend API
-    const fetchLanguages = async () => {
-      await listLanguages().then(({ data }) => {
-        setLanguages(data || []);
-      });
-    };
-    fetchLanguages();
-    const fetchSelectedLanguage = async () => {
-      await getUserLanguageAndCommunity(user?.id || '').then(({ extra }) => {
-        setSelectedLanguage(extra?.languageId || null);
-      });
-    };
-    fetchSelectedLanguage();
-  }, [user]);
+    if (!user?.id) {
+      setLanguages([]);
+      setSelectedLanguage(null);
+      return;
+    }
 
+   const fetchData = async () => {
+      try {
+        const [languagesResult, userLanguageResult] = await Promise.all([
+          listLanguages(),
+          getUserLanguageAndCommunity(user.id),
+        ]);
+
+        setLanguages(languagesResult?.data || []);
+        setSelectedLanguage(userLanguageResult?.extra?.languageId ?? null);
+      } catch (error) {
+        console.error('Failed to fetch languages or user language:', error);
+      }
+    };
+
+    fetchData();
+  }, [user?.id]);
   const handleBack = () => {
     router.back();
   };
