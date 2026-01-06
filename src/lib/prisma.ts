@@ -21,12 +21,7 @@ function getPrismaClient(): PrismaClient {
 
   let client: PrismaClient;
 
-  if (!process.env.DATABASE_URL) {
-    // During build time when DATABASE_URL might not be available
-    client = new PrismaClient({
-      log: ['error'],
-    });
-  } else {
+  if (process.env.DATABASE_URL) {
     const pool =
       globalForPrisma.pool ??
       new Pool({ connectionString: process.env.DATABASE_URL });
@@ -36,6 +31,14 @@ function getPrismaClient(): PrismaClient {
 
     client = new PrismaClient({
       adapter,
+      log:
+        process.env.NODE_ENV === 'development'
+          ? ['query', 'error', 'warn']
+          : ['error'],
+    });
+  } else {
+    // Fallback without adapter when DATABASE_URL is not available
+    client = new PrismaClient({
       log: ['error'],
     });
   }

@@ -74,7 +74,7 @@ export default function HomePage() {
                   Hi {user?.name || 'User'}!
                 </h1>
               </div>
-              <div className="text-2xl md:text-3xl lg:text-4xl">
+              <div className="text-2xl md:text-3xl lg:text-4xl lg:hidden">
                 {user?.avatar ? (
                   <Image
                     src={user.avatar}

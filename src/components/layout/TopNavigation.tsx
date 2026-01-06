@@ -9,8 +9,10 @@ import {
   User,
   Settings,
   LogOut,
+  CircleUserRound,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import Image from 'next/image';
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -129,7 +131,19 @@ export function TopNavigation() {
             <>
               {/* User Info */}
               <div className="hidden lg:flex items-center gap-3 px-4 py-2 bg-neutral-50 rounded-lg">
-                <div className="text-lg">{user.avatar}</div>
+                <div className="text-lg">
+                  {user?.avatar ? (
+                    <Image
+                      src={user.avatar}
+                      alt={user?.name || 'Contributor'}
+                      width={40}
+                      height={40}
+                      className="rounded-full"
+                    />
+                  ) : (
+                    <CircleUserRound className="w-10 h-10 text-neutral-400" />
+                  )}
+                </div>
                 <div className="text-sm">
                   <div className="font-semibold text-neutral-950">
                     {user.name || user.email}

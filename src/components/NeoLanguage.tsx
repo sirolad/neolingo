@@ -1,56 +1,69 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  getUserLanguageAndCommunity,
+  getCommunities,
+  setMyCommunity,
+} from '@/actions/language';
 
 interface NeoLanguageOption {
-  id: string;
+  id: number;
   name: string;
-  description: string;
-  color: string;
 }
 
 export default function NeoLanguage() {
   const router = useRouter();
-  const [selectedNeoLanguage, setSelectedNeoLanguage] =
-    useState<string>('gen-z');
+  const [loading, setLoading] = useState(false);
+  const [selectedNeoLanguage, setSelectedNeoLanguage] = useState<number | null>(
+    null
+  );
+  const [neoLanguages, setNeoLanguages] = useState<NeoLanguageOption[]>([]);
+  const { user } = useAuth();
 
+  useEffect(() => {
+    const getCountries = async () => {
+      await getCommunities().then(({ data }) => {
+        setNeoLanguages(data || []);
+      });
+    };
+    getCountries();
+    const fetchSelectedNeoLanguage = async () => {
+      await getUserLanguageAndCommunity(user?.id || '').then(({ extra }) => {
+        setSelectedNeoLanguage(extra?.neoCommunityId || null);
+      });
+    };
+    fetchSelectedNeoLanguage();
+  }, [user]);
   const handleBack = () => {
     router.back();
   };
 
-  const handleNext = () => {
-    // Store selected neo language in localStorage or state management
-    localStorage.setItem('selectedNeoLanguage', selectedNeoLanguage);
-    router.push('/home');
+  const handleNext = async () => {
+    setLoading(true);
+    if (!selectedNeoLanguage) {
+      toast.error('Please select a Neo Community to proceed.');
+      setLoading(false);
+      return;
+    }
+    const selectedLanguage = neoLanguages.find(
+      lang => lang.id === selectedNeoLanguage
+    );
+    await setMyCommunity(selectedNeoLanguage)
+      .then(() => {
+        setLoading(false);
+        toast.success(`Neo Community set to ${selectedLanguage?.name}`);
+        router.push('/home');
+      })
+      .catch(err => {
+        setLoading(false);
+        console.error(err);
+        toast.error('An error occurred while setting Neo Community.');
+      });
   };
-
-  const neoLanguages: NeoLanguageOption[] = [
-    {
-      id: 'gen-z',
-      name: 'Gen Z',
-      description: 'Modern slang and internet culture',
-      color: '#FF6B6B',
-    },
-    {
-      id: 'urban',
-      name: 'Urban',
-      description: 'Street culture and contemporary expressions',
-      color: '#4ECDC4',
-    },
-    {
-      id: 'professional',
-      name: 'Professional',
-      description: 'Business and corporate terminology',
-      color: '#45B7D1',
-    },
-    {
-      id: 'gaming',
-      name: 'Gaming',
-      description: 'Video game culture and esports',
-      color: '#96CEB4',
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
@@ -73,7 +86,7 @@ export default function NeoLanguage() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-6 pt-16 pb-6">
+      <div className="flex-1 flex flex-col px-6 pt-16 pb-6 ">
         <div className="flex-1 flex flex-col justify-center">
           {/* Content Card */}
           <div className="bg-white rounded-3xl border border-[#EFEFEF] p-6 mx-auto w-full max-w-md">
@@ -81,56 +94,45 @@ export default function NeoLanguage() {
             <div className="text-center mb-8">
               {/* Progress Indicators */}
               <div className="flex justify-center items-center space-x-2 mb-6">
-                <div className="w-16 h-1 bg-[#111111] rounded-full"></div>
-                <div className="w-16 h-1 bg-[#111111] rounded-full"></div>
                 <div className="w-16 h-1 bg-[#D9D9D9] rounded-full"></div>
+                <div className="w-16 h-1 bg-[#111111] rounded-full"></div>
               </div>
 
               <h1 className="text-[24px] font-medium leading-[29px] text-[#292929] font-[Parkinsans] mb-2">
-                Choose Your Neo Language
+                Choose Your NeoLingo Community
               </h1>
               <p className="text-[14px] font-normal leading-[14px] text-[#656565] font-[Metropolis]">
-                Select the style of language you want to learn
+                Rep your mother tongue.
               </p>
             </div>
 
-            {/* Neo Language Options */}
             <div className="space-y-4 mb-8">
-              {neoLanguages.map(neoLanguage => (
+              {neoLanguages.map(language => (
                 <button
-                  key={neoLanguage.id}
-                  onClick={() => setSelectedNeoLanguage(neoLanguage.id)}
-                  className={`w-full p-4 rounded-xl border flex items-center justify-between transition-colors ${
-                    selectedNeoLanguage === neoLanguage.id
+                  key={language.id}
+                  onClick={() => setSelectedNeoLanguage(language.id)}
+                  className={`w-full p-4 rounded-lg border flex items-center justify-between transition-colors ${
+                    selectedNeoLanguage === language.id
                       ? 'bg-white border-[rgba(17,17,17,0.15)]'
                       : 'bg-white border-[rgba(17,17,17,0.15)]'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    <div
-                      className="w-6 h-6 rounded-full"
-                      style={{ backgroundColor: neoLanguage.color }}
-                    ></div>
-                    <div className="text-left">
-                      <div className="text-[14px] font-medium leading-[20px] text-[#111111] font-[Parkinsans]">
-                        {neoLanguage.name}
-                      </div>
-                      <div className="text-[12px] font-normal leading-[16px] text-[#656565] font-[Metropolis]">
-                        {neoLanguage.description}
-                      </div>
-                    </div>
+                    <span className="text-[14px] font-normal leading-[20px] text-[#111111] font-[Parkinsans]">
+                      {language.name.charAt(0).toUpperCase() + language.name.slice(1).toLowerCase()}
+                    </span>
                   </div>
 
                   {/* Radio Button */}
                   <div className="flex items-center">
                     <div
                       className={`w-[22px] h-[22px] rounded-full border-[1.5px] flex items-center justify-center ${
-                        selectedNeoLanguage === neoLanguage.id
+                        selectedNeoLanguage === language.id
                           ? 'border-[#111111]'
                           : 'border-[rgba(17,17,17,0.3)]'
                       }`}
                     >
-                      {selectedNeoLanguage === neoLanguage.id && (
+                      {selectedNeoLanguage === language.id && (
                         <div className="w-[10px] h-[10px] bg-[#111111] rounded-full"></div>
                       )}
                     </div>
@@ -142,13 +144,18 @@ export default function NeoLanguage() {
         </div>
 
         {/* Next Button */}
-        <div className="pt-8">
+        <div className="pt-8 flex justify-center">
           <button
             onClick={handleNext}
-            className="w-full h-[58px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]"
+            disabled={loading}
+            className={
+              loading
+                ? 'w-full max-w-md h-[58px] flex items-center justify-center bg-[#888888] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]'
+                : 'w-full max-w-md h-[58px] flex items-center justify-center bg-[#111111] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)]'
+            }
           >
             <span className="text-[16px] font-semibold leading-[22px] text-white font-[Parkinsans]">
-              Next
+              {loading ? 'Completing Profile...' : 'Complete Profile'}
             </span>
           </button>
         </div>
