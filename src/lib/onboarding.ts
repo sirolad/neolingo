@@ -1,4 +1,7 @@
-import { prisma } from '@/lib/prisma';
+import {
+  setCompleteOnboardingForUser,
+  isUserOnboardingCompleted,
+} from '@/actions/auth';
 
 export function getOnboardingSeen(): boolean {
   try {
@@ -20,21 +23,9 @@ export async function completeOnboardingForUser(
   userId: string,
   languageId: number
 ): Promise<void> {
-  await prisma.userProfile.upsert({
-    where: { userId },
-    update: { onboardingCompleted: true },
-    create: {
-      userId,
-      languageId,
-      onboardingCompleted: true,
-    },
-  });
+  await setCompleteOnboardingForUser(userId, languageId);
 }
 
 export async function isOnboardingCompleted(userId: string): Promise<boolean> {
-  const profile = await prisma.userProfile.findFirst({
-    where: { userId },
-    select: { onboardingCompleted: true },
-  });
-  return profile?.onboardingCompleted ?? false;
+  return await isUserOnboardingCompleted(userId);
 }
