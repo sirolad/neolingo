@@ -88,25 +88,34 @@ export async function listLanguages(): Promise<{
 export async function setMyCommunity(
   neoCommunityId: number
 ): Promise<{ success: boolean; error?: string }> {
-  // Placeholder function for setting user's community
-  const supabase = await createClient();
+  try {
+    // Placeholder function for setting user's community
+    const supabase = await createClient();
 
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-  if (userError || !user) {
-    console.error('Supabase getUser error:', userError);
-    return { success: false, error: 'Unauthorized' };
+    if (userError || !user) {
+      console.error('Supabase getUser error:', userError);
+      return { success: false, error: 'Unauthorized' };
+    }
+    //First delete any existing community for the user then create a new one
+    await prisma.userNeoCommunity.deleteMany({ where: { userId: user.id } });
+    const dbUser = await prisma.userNeoCommunity.create({
+      data: { userId: user.id, neoCommunityId },
+    });
+
+    return { success: true };
+  } catch (err) {
+    console.error('setMyCommunity unexpected error:', err);
+    Sentry.captureException(err, {
+      tags: { operation: 'setMyCommunity' },
+      extra: { neoCommunityId },
+    });
+    return { success: false, error: 'An unexpected error occurred' };
   }
-  //First delete any existing community for the user then create a new one
-  await prisma.userNeoCommunity.deleteMany({ where: { userId: user.id } });
-  const dbUser = await prisma.userNeoCommunity.create({
-    data: { userId: user.id, neoCommunityId },
-  });
-
-  return { success: true };
 }
 
 export async function getUserLanguageAndCommunity(userId: string): Promise<{
