@@ -119,7 +119,7 @@ export default function NeoLanguage() {
                 >
                   <div className="flex items-center space-x-3">
                     <span className="text-[14px] font-normal leading-[20px] text-[#111111] font-[Parkinsans]">
-                      {language.name[0].toUpperCase() + language.name.slice(1)}
+                      {language.name.charAt(0).toUpperCase() + language.name.slice(1).toLowerCase()}
                     </span>
                   </div>
 
