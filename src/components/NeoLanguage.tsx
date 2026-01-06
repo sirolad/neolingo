@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import createClient from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getUserLanguageAndCommunity,
@@ -23,7 +22,6 @@ export default function NeoLanguage() {
     null
   );
   const [neoLanguages, setNeoLanguages] = useState<NeoLanguageOption[]>([]);
-  const supabase = createClient();
   const { user } = useAuth();
 
   useEffect(() => {
