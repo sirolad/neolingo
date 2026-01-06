@@ -16,7 +16,6 @@ interface LanguageOption {
   id: number;
   name: string;
   is_supported: boolean;
-  flag: React.ReactNode;
   icon: string;
 }
 
