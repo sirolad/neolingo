@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import ReactCountryFlag from 'react-country-flag';
 import { toast } from 'sonner';
-import createClient from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getUserLanguageAndCommunity,
@@ -33,7 +32,7 @@ export default function UserLanguage() {
       return;
     }
 
-   const fetchData = async () => {
+    const fetchData = async () => {
       try {
         const [languagesResult, userLanguageResult] = await Promise.all([
           listLanguages(),
