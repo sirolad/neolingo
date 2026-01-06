@@ -6,7 +6,6 @@ import ReactCountryFlag from 'react-country-flag';
 import { toast } from 'sonner';
 import createClient from '@/lib/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
-import { set } from 'zod';
 import {
   getUserLanguageAndCommunity,
   listLanguages,
