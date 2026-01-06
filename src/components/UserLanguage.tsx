@@ -27,8 +27,6 @@ export default function UserLanguage() {
   const [languages, setLanguages] = useState<LanguageOption[]>([]);
   const { user } = useAuth();
 
-  const supabase = createClient();
-
   useEffect(() => {
     // Fetch available languages from the backend API
     const fetchLanguages = async () => {

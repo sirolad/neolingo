@@ -20,7 +20,7 @@ export async function setMyLanguage(
       return { success: false, error: 'Unauthorized' };
     }
 
-    const dbUser = await prisma.userProfile.upsert({
+    await prisma.userProfile.upsert({
       where: { userId: user.id },
       update: { languageId },
       create: {
