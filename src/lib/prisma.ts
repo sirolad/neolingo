@@ -1,4 +1,3 @@
-export const runtime = 'nodejs';
 import { PrismaClient } from '@/generated/prisma';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
