@@ -1,4 +1,6 @@
-import prisma from '@lib/prisma';
+import { PrismaClient } from '../src/generated/prisma';
+
+const prisma = new PrismaClient();
 
 export function getOnboardingSeen(): boolean {
   try {
