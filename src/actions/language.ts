@@ -45,28 +45,44 @@ export async function getCommunities(): Promise<{
   success: boolean;
   data: any[];
 }> {
-  const communities = await prisma.neoCommunities.findMany({
-    select: {
-      id: true,
-      name: true,
-    },
-  });
-  return { success: true, data: communities };
+  try {
+    const communities = await prisma.neoCommunities.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+    return { success: true, data: communities };
+  } catch (err) {
+    console.error('getCommunities unexpected error:', err);
+    Sentry.captureException(err, {
+      tags: { operation: 'getCommunities' },
+    });
+    return { success: false, data: [] };
+  }
 }
 
 export async function listLanguages(): Promise<{
   success: boolean;
   data: any[];
 }> {
-  const languages = await prisma.language.findMany({
-    select: {
-      id: true,
-      name: true,
-      is_supported: true,
-      icon: true,
-    },
-  });
-  return { success: true, data: languages };
+  try {
+    const languages = await prisma.language.findMany({
+      select: {
+        id: true,
+        name: true,
+        is_supported: true,
+        icon: true,
+      },
+    });
+    return { success: true, data: languages };
+  } catch (err) {
+    console.error('listLanguages unexpected error:', err);
+    Sentry.captureException(err, {
+      tags: { operation: 'listLanguages' },
+    });
+    return { success: false, data: [] };
+  }
 }
 
 export async function setMyCommunity(
