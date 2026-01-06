@@ -59,7 +59,7 @@ export default function UserLanguage() {
       setLoading(false);
       toast.error('Please select a Language to proceed.');
       return;
-    } else if (!supportedLanguages.some(lang => lang.id == selectedLanguage)) {
+    } else if (!supportedLanguages.some(lang => lang.id === selectedLanguage)) {
       setLoading(false);
       toast.error('Oops! Selected language is not supported yet.');
       return;
