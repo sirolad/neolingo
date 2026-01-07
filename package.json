@@ -19,7 +19,7 @@
     "prepare": "husky",
     "pre-commit": "lint-staged",
     "pre-push": "npm run type-check && npm run build",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate && prisma db push && prisma db seed"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
