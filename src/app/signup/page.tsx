@@ -172,12 +172,12 @@ export default function SignUpPage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-xs font-medium text-primary font-[Parkinsans]">
-                        Full Name
+                        Username
                       </FormLabel>
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="Enter Full Name"
+                          placeholder="Enter Username"
                           disabled={loading}
                           className="h-[52px] border-border rounded-xl font-[Metropolis] text-[14px] placeholder:text-muted-foreground focus:border-primary"
                           {...field}
