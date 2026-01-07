@@ -27,7 +27,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userNeoCommunityId, setUserNeoCommunityId] = useState<number | null>(
     null
   );
-  // const userNeoCommunityId = useMemo(() => neoCommunityId, [neoCommunityId]);
   // Derive a normalized app-level user for UI components
   const appUser = useMemo(() => normalizeUser(user), [user]);
   const router = useRouter();
@@ -40,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         // AuthSessionMissingError is normal when no session exists
         if (error.message?.includes('Auth session missing')) {
-          console.log('No active session found - user not authenticated');
+          // No active session found - user not authenticated
         } else {
           console.warn('Supabase getUser error', error);
         }
@@ -70,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('🔄 Auth state changed:', event, session?.user?.email);
+      // console.log('🔄 Auth state changed:', event, session?.user?.email);
 
       if (event === 'SIGNED_IN') {
         fetch('/api/get-extra?from=onAuthStateChange-SIGNED_IN')
