@@ -24,7 +24,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const userRole = useMemo(() => roleName || 'VISITOR', [roleName]);
   const [languageId, setLanguageId] = useState<number | null>(null);
   const userLanguageId = useMemo(() => languageId, [languageId]);
-  const [userNeoCommunityId, setNeoCommunityId] = useState<number | null>(null);
+  const [userNeoCommunityId, setUserNeoCommunityId] = useState<number | null>(
+    null
+  );
   // const userNeoCommunityId = useMemo(() => neoCommunityId, [neoCommunityId]);
   // Derive a normalized app-level user for UI components
   const appUser = useMemo(() => normalizeUser(user), [user]);
@@ -49,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .then(data => {
             setRoleName(data.extra?.role || null);
             setLanguageId(data.extra?.languageId || null);
-            setNeoCommunityId(data.extra?.neoCommunityId || 38);
+            setUserNeoCommunityId(data.extra?.neoCommunityId || 38);
           });
         setUser(data?.user ?? null);
       }
@@ -80,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               'data.extra?.neoCommunityId',
               data.extra?.neoCommunityId
             );
-            setNeoCommunityId(data.extra?.neoCommunityId || 28);
+            setUserNeoCommunityId(data.extra?.neoCommunityId || 28);
           });
         setUser(session?.user ?? null);
         setIsLoading(false);
