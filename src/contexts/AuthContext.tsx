@@ -7,7 +7,6 @@ import React, {
   useEffect,
   useMemo,
   useCallback,
-  use,
 } from 'react';
 import { useRouter } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
@@ -23,6 +22,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [roleName, setRoleName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const userRole = useMemo(() => roleName || 'VISITOR', [roleName]);
+  const [languageId, setLanguageId] = useState<number | null>(null);
+  const userLanguageId = useMemo(() => languageId, [languageId]);
+  const [userNeoCommunityId, setUserNeoCommunityId] = useState<number | null>(
+    null
+  );
   // Derive a normalized app-level user for UI components
   const appUser = useMemo(() => normalizeUser(user), [user]);
   const router = useRouter();
@@ -35,15 +39,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) {
         // AuthSessionMissingError is normal when no session exists
         if (error.message?.includes('Auth session missing')) {
-          console.log('No active session found - user not authenticated');
+          // No active session found - user not authenticated
         } else {
           console.warn('Supabase getUser error', error);
         }
         setUser(null);
       } else {
-        fetch('/api/get-extra')
+        fetch('/api/get-extra?from=checkAuth')
           .then(res => res.json())
-          .then(data => setRoleName(data.extra?.role || null));
+          .then(data => {
+            setRoleName(data.extra?.role || null);
+            setLanguageId(data.extra?.languageId || null);
+            setUserNeoCommunityId(data.extra?.neoCommunityId);
+          });
         setUser(data?.user ?? null);
       }
     } catch (err) {
@@ -61,12 +69,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('🔄 Auth state changed:', event, session?.user?.email);
+      // console.log('🔄 Auth state changed:', event, session?.user?.email);
 
       if (event === 'SIGNED_IN') {
-        fetch('/api/get-extra')
+        fetch('/api/get-extra?from=onAuthStateChange-SIGNED_IN')
           .then(res => res.json())
-          .then(data => setRoleName(data.extra?.role || null));
+          .then(data => {
+            setRoleName(data.extra?.role || null);
+            setLanguageId(data.extra?.languageId || null);
+            setUserNeoCommunityId(data.extra?.neoCommunityId);
+          });
         setUser(session?.user ?? null);
         setIsLoading(false);
       } else if (event === 'SIGNED_OUT') {
@@ -113,17 +125,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (
     email: string,
     password: string,
-    name?: string,
+    name: string,
     redirectTo?: string
   ): Promise<User | null> => {
     try {
       const signUpPayload: {
         email: string;
         password: string;
-        options?: { emailRedirectTo?: string };
-      } = { email, password };
+        options: {
+          emailRedirectTo?: string;
+          data: { name: string; display_name: string };
+        };
+      } = { email, password, options: { data: { name, display_name: name } } };
       if (redirectTo) {
-        signUpPayload.options = { emailRedirectTo: redirectTo };
+        signUpPayload.options = {
+          emailRedirectTo: redirectTo,
+          data: { name, display_name: name },
+        };
       }
 
       const { data, error } = await supabase.auth.signUp(signUpPayload);
@@ -199,6 +217,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     isAuthenticated: !!appUser,
     userRole,
+    userLanguageId,
+    userNeoCommunityId,
     login,
     signup,
     logout,

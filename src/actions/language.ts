@@ -43,7 +43,7 @@ export async function setMyLanguage(
 
 export async function getCommunities(): Promise<{
   success: boolean;
-  data: any[];
+  data: { id: number; name: string }[];
 }> {
   try {
     const communities = await prisma.neoCommunities.findMany({
@@ -64,7 +64,7 @@ export async function getCommunities(): Promise<{
 
 export async function listLanguages(): Promise<{
   success: boolean;
-  data: any[];
+  data: { id: number; name: string; is_supported: boolean; icon: string }[];
 }> {
   try {
     const languages = await prisma.language.findMany({
@@ -75,7 +75,10 @@ export async function listLanguages(): Promise<{
         icon: true,
       },
     });
-    return { success: true, data: languages };
+    return {
+      success: true,
+      data: languages.map(l => ({ ...l, icon: l.icon || '' })),
+    };
   } catch (err) {
     console.error('listLanguages unexpected error:', err);
     Sentry.captureException(err, {
@@ -103,7 +106,7 @@ export async function setMyCommunity(
     }
     //First delete any existing community for the user then create a new one
     await prisma.userNeoCommunity.deleteMany({ where: { userId: user.id } });
-    const dbUser = await prisma.userNeoCommunity.create({
+    await prisma.userNeoCommunity.create({
       data: { userId: user.id, neoCommunityId },
     });
 

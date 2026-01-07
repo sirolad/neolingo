@@ -2,6 +2,7 @@
 
 import createClient from '@/lib/supabase/server';
 import * as Sentry from '@sentry/nextjs';
+import prisma from '@/lib/prisma';
 
 /**
  * Send a password reset email to the user
@@ -36,4 +37,29 @@ export async function resetPassword(
     });
     return { success: false, error: 'An unexpected error occurred' };
   }
+}
+
+export async function setCompleteOnboardingForUser(
+  userId: string,
+  languageId: number
+): Promise<void> {
+  await prisma.userProfile.upsert({
+    where: { userId },
+    update: { onboardingCompleted: true },
+    create: {
+      userId,
+      languageId,
+      onboardingCompleted: true,
+    },
+  });
+}
+
+export async function isUserOnboardingCompleted(
+  userId: string
+): Promise<boolean> {
+  const profile = await prisma.userProfile.findFirst({
+    where: { userId },
+    select: { onboardingCompleted: true },
+  });
+  return profile?.onboardingCompleted ?? false;
 }

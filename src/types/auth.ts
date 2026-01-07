@@ -9,6 +9,8 @@ export interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   userRole: string;
+  userLanguageId: number | null;
+  userNeoCommunityId: number | null;
   // Methods return Supabase User on success (or null)
   login: (
     email: string,
@@ -18,7 +20,7 @@ export interface AuthContextType {
   signup: (
     email: string,
     password: string,
-    name?: string,
+    name: string,
     redirectTo?: string
   ) => Promise<import('@supabase/supabase-js').User | null>;
   logout: () => void;
