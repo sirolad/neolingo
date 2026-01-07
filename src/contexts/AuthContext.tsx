@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           .then(data => {
             setRoleName(data.extra?.role || null);
             setLanguageId(data.extra?.languageId || null);
-            setUserNeoCommunityId(data.extra?.neoCommunityId || 38);
+            setUserNeoCommunityId(data.extra?.neoCommunityId);
           });
         setUser(data?.user ?? null);
       }
@@ -82,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               'data.extra?.neoCommunityId',
               data.extra?.neoCommunityId
             );
-            setUserNeoCommunityId(data.extra?.neoCommunityId || 28);
+            setUserNeoCommunityId(data.extra?.neoCommunityId);
           });
         setUser(session?.user ?? null);
         setIsLoading(false);
