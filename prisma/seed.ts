@@ -1,6 +1,12 @@
 import { PrismaClient } from '../src/generated/prisma';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
+import 'dotenv/config';
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Predefined roles
@@ -67,6 +73,46 @@ async function main() {
     });
   }
   console.log('NeoCommunities seeded successfully!');
+
+  const partsOfSpeech = [
+    { name: 'Noun', code: 'N' },
+    { name: 'Verb', code: 'V' },
+    { name: 'Adjective', code: 'ADJ' },
+    { name: 'Adverb', code: 'ADV' },
+    { name: 'Pronoun', code: 'PRO' },
+    { name: 'Preposition', code: 'PREP' },
+    { name: 'Conjunction', code: 'CONJ' },
+    { name: 'Interjection', code: 'INT' },
+  ];
+
+  for (const pos of partsOfSpeech) {
+    await prisma.partOfSpeech.upsert({
+      where: { code: pos.code },
+      update: {},
+      create: pos,
+    });
+  }
+  console.log('Parts of Speech seeded successfully!');
+
+  const domains = [
+    'General',
+    'Technology',
+    'Medicine',
+    'Law',
+    'Agriculture',
+    'Education',
+    'Business',
+    'Science',
+  ];
+
+  for (const domainName of domains) {
+    await prisma.domain.upsert({
+      where: { name: domainName },
+      update: {},
+      create: { name: domainName },
+    });
+  }
+  console.log('Domains seeded successfully!');
 }
 
 main()
