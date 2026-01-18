@@ -1,7 +1,9 @@
 /*
   Warnings:
+
   - You are about to drop the column `firstName` on the `user_profile` table. All the data in the column will be lost.
   - You are about to drop the column `lastName` on the `user_profile` table. All the data in the column will be lost.
+
 */
 -- DropForeignKey
 ALTER TABLE "user_profile" DROP CONSTRAINT "user_profile_languageId_fkey";

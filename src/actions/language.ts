@@ -104,6 +104,21 @@ export async function setMyCommunity(
       console.error('Supabase getUser error:', userError);
       return { success: false, error: 'Unauthorized' };
     }
+    const supported_languages = await prisma.language.findMany({
+      where: { is_supported: true },
+      select: { id: true },
+    });
+    const languageId =
+      supported_languages.length > 0 ? supported_languages[0].id : 1;
+    await prisma.userProfile.upsert({
+      where: { userId: user.id },
+      update: { languageId },
+      create: {
+        userId: user.id,
+        languageId,
+        name: user.user_metadata?.name || '',
+      },
+    });
     //First delete any existing community for the user then create a new one
     await prisma.userNeoCommunity.deleteMany({ where: { userId: user.id } });
     await prisma.userNeoCommunity.create({

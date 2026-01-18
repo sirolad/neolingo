@@ -9,6 +9,7 @@ import { SearchBar } from '@/components/ui/SearchBar';
 import { WordCard } from '@/components/ui/WordCard';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/contexts/AuthContext';
+import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 
 interface DictionaryWord {
   id: string;
@@ -24,7 +25,7 @@ interface DictionaryWord {
 
 export default function DictionaryPage() {
   const router = useRouter();
-  const { appUser, isLoading: authLoading } = useAuth();
+  const { appUser, isLoading: authLoading, userNeoCommunity } = useAuth();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -213,7 +214,13 @@ export default function DictionaryPage() {
           <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
             Dictionary
           </h1>
-          <div className="w-16 md:w-20"></div> {/* Spacer for centering */}
+          <div className="md:w-20">
+            <MyCommunityTag
+              userNeoCommunity={userNeoCommunity}
+              user={appUser}
+            />
+          </div>{' '}
+          {/* Spacer for centering */}
         </div>
 
         {/* Main Content */}

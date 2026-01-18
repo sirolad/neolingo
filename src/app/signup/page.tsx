@@ -76,7 +76,7 @@ export default function SignUpPage() {
       const result = await socialLogin(provider, redirectTo);
 
       if (result) {
-        router.push('/language-setup');
+        router.push('/neo-language-setup');
       }
     } catch (error) {
       console.error(error);

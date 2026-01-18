@@ -3,31 +3,43 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Lightbulb, ArrowLeft, Check } from 'lucide-react';
+import { ArrowLeft, Check, Info, RefreshCcwDot } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
+import { WordOfTheDay } from '@/components/ui/WordOfTheDay';
+import AudioRecorder from '@/components/AudioRecorder';
+import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 
 interface SuggestionForm {
-  englishWord: string;
-  yorubaWord: string;
-  definition: string;
-  context: string;
+  existingWord: string;
+  adoptiveWord: string;
+  functionalWord: string;
+  rootWord: string;
+  nonConformingWord?: string;
 }
 
 export default function SuggestPage() {
   const router = useRouter();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { user } = useAuth();
+
+  const { userNeoCommunity, appUser } = useAuth();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState<SuggestionForm>({
-    englishWord: '',
-    yorubaWord: '',
-    definition: '',
-    context: '',
+    existingWord: '',
+    adoptiveWord: '',
+    functionalWord: '',
+    rootWord: '',
+    nonConformingWord: '',
+  });
+  const [formDataAudio, setFormDataAudio] = useState<SuggestionForm>({
+    existingWord: '',
+    adoptiveWord: '',
+    functionalWord: '',
+    rootWord: '',
+    nonConformingWord: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -41,17 +53,46 @@ export default function SuggestPage() {
     }
   };
 
+  const handleAudioUrl = (field: string, url: string) => {
+    switch (field) {
+      case 'existingWord':
+        setFormDataAudio(prev => ({ ...prev, existingWord: url }));
+        break;
+      case 'adoptiveWord':
+        setFormDataAudio(prev => ({ ...prev, adoptiveWord: url }));
+        break;
+      case 'functionalWord':
+        setFormDataAudio(prev => ({ ...prev, functionalWord: url }));
+        break;
+      case 'rootWord':
+        setFormDataAudio(prev => ({ ...prev, rootWord: url }));
+        break;
+      case 'nonConformingWord':
+        setFormDataAudio(prev => ({ ...prev, nonConformingWord: url }));
+        break;
+
+      default:
+        break;
+    }
+  };
+
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.englishWord.trim()) {
-      newErrors.englishWord = 'English word is required';
+    if (!formData.existingWord.trim()) {
+      newErrors.existingWord = 'Existing word is required';
     }
-    if (!formData.yorubaWord.trim()) {
-      newErrors.yorubaWord = 'Yoruba translation is required';
+    if (!formData.adoptiveWord.trim()) {
+      newErrors.adoptiveWord = 'Adoptive word is required';
     }
-    if (!formData.definition.trim()) {
-      newErrors.definition = 'Definition is required';
+    if (!formData.functionalWord.trim()) {
+      newErrors.functionalWord = 'Functional word is required';
+    }
+    if (!formData.rootWord.trim()) {
+      newErrors.rootWord = 'Root word is required';
+    }
+    if (!formData.nonConformingWord?.trim()) {
+      newErrors.nonConformingWord = 'Non Conforming word is required';
     }
 
     setErrors(newErrors);
@@ -62,7 +103,8 @@ export default function SuggestPage() {
     e.preventDefault();
 
     if (!validateForm()) return;
-
+    console.log('Form Data:', formData);
+    console.log('Audio Data:', formDataAudio);
     setSubmitting(true);
 
     // Simulate API call
@@ -79,10 +121,11 @@ export default function SuggestPage() {
   const handleSubmitAnother = () => {
     setSubmitted(false);
     setFormData({
-      englishWord: '',
-      yorubaWord: '',
-      definition: '',
-      context: '',
+      existingWord: '',
+      adoptiveWord: '',
+      functionalWord: '',
+      rootWord: '',
+      nonConformingWord: '',
     });
   };
 
@@ -153,36 +196,30 @@ export default function SuggestPage() {
               <span className="font-medium text-sm md:text-base">Back</span>
             </button>
             <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
-              Make Suggestion
+              Curation Lounge
             </h1>
-            <div className="w-16 md:w-20"></div> {/* Spacer for centering */}
+            <div className="md:w-20">
+              <MyCommunityTag
+                userNeoCommunity={userNeoCommunity}
+                user={appUser}
+              />
+            </div>{' '}
+            {/* Spacer for centering */}
           </div>
 
           {/* Main Content */}
           <div className="flex-1 pb-20 md:pb-8">
+            <WordOfTheDay
+              word="Hydrogen"
+              definition="A colorless, odorless, highly flammable gas that is the lightest and most abundant element in the universe."
+              partOfSpeech="noun"
+            />
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
               className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
             >
-              {/* Card Header */}
-              <div className="p-6 md:p-8 lg:p-10 pb-4 md:pb-6 lg:pb-8 border-b border-neutral-100">
-                <div className="flex items-center gap-3 md:gap-4 lg:gap-5 mb-3 md:mb-4">
-                  <div className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-orange-100 rounded-full md:rounded-2xl lg:rounded-3xl flex items-center justify-center">
-                    <Lightbulb className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-orange-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-neutral-950">
-                      Suggest a New Word
-                    </h2>
-                    <p className="text-neutral-600 text-sm md:text-base lg:text-lg">
-                      Help expand our Yoruba dictionary
-                    </p>
-                  </div>
-                </div>
-              </div>
-
               {/* Form */}
               <form
                 onSubmit={handleSubmit}
@@ -192,87 +229,180 @@ export default function SuggestPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
                   <div className="space-y-2 md:space-y-3">
                     <label
-                      htmlFor="englishWord"
+                      htmlFor="existingWord"
                       className="block text-sm md:text-base lg:text-lg font-medium text-neutral-950"
                     >
-                      English Word
+                      Existing / Polular{' '}
+                      <Info className="inline-block w-4 h-4 ml-1 text-red-600" />
                     </label>
-                    <Input
-                      id="englishWord"
-                      name="englishWord"
-                      type="text"
-                      placeholder="Enter the English word"
-                      value={formData.englishWord}
-                      onChange={handleInputChange}
-                      disabled={submitting}
-                      className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
-                    />
-                    {errors.englishWord && (
-                      <p className="text-sm md:text-base text-error-600">
-                        {errors.englishWord}
-                      </p>
-                    )}
+                    <div className="flex flex-row">
+                      <div className="w-50">
+                        <Input
+                          id="existingWord"
+                          name="existingWord"
+                          type="text"
+                          placeholder="Type here"
+                          value={formData.existingWord}
+                          onChange={handleInputChange}
+                          disabled={submitting}
+                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
+                        />
+                        {errors.existingWord && (
+                          <p className="text-sm md:text-base text-error-600">
+                            {errors.existingWord}
+                          </p>
+                        )}
+                      </div>
+                      <div className="w-50 ml-4 flex items-center">
+                        <AudioRecorder
+                          onRecord={url => handleAudioUrl('existingWord', url)}
+                        />
+                      </div>
+                    </div>
                   </div>
 
                   <div className="space-y-2 md:space-y-3">
                     <label
-                      htmlFor="yorubaWord"
+                      htmlFor="adoptiveWord"
                       className="block text-sm md:text-base lg:text-lg font-medium text-neutral-950"
                     >
-                      Yoruba Translation
+                      Adoptive{' '}
+                      <Info className="inline-block w-4 h-4 ml-1 text-red-600" />
                     </label>
-                    <Input
-                      id="yorubaWord"
-                      name="yorubaWord"
-                      type="text"
-                      placeholder="Enter the Yoruba translation"
-                      value={formData.yorubaWord}
-                      onChange={handleInputChange}
-                      disabled={submitting}
-                      className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
-                    />
-                    {errors.yorubaWord && (
-                      <p className="text-sm md:text-base text-error-600">
-                        {errors.yorubaWord}
-                      </p>
-                    )}
+                    <div className="flex flex-row">
+                      <div className="w-50">
+                        <Input
+                          id="adoptiveWord"
+                          name="adoptiveWord"
+                          type="text"
+                          placeholder="Type here"
+                          value={formData.adoptiveWord}
+                          onChange={handleInputChange}
+                          disabled={submitting}
+                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
+                        />
+                        {errors.adoptiveWord && (
+                          <p className="text-sm md:text-base text-error-600">
+                            {errors.adoptiveWord}
+                          </p>
+                        )}
+                      </div>
+                      <div className="w-50 ml-4 flex items-center">
+                        <AudioRecorder
+                          onRecord={url => handleAudioUrl('adoptiveWord', url)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                  <div className="space-y-2 md:space-y-3">
+                    <label
+                      htmlFor="functionalWord"
+                      className="block text-sm md:text-base lg:text-lg font-medium text-neutral-950"
+                    >
+                      Functional{' '}
+                      <Info className="inline-block w-4 h-4 ml-1 text-red-600" />
+                    </label>
+                    <div className="flex flex-row">
+                      <div className="w-50">
+                        <Input
+                          id="functionalWord"
+                          name="functionalWord"
+                          type="text"
+                          placeholder="Type here"
+                          value={formData.functionalWord}
+                          onChange={handleInputChange}
+                          disabled={submitting}
+                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
+                        />
+                        {errors.functionalWord && (
+                          <p className="text-sm md:text-base text-error-600">
+                            {errors.functionalWord}
+                          </p>
+                        )}
+                      </div>
+                      <div className="w-50 ml-4 flex items-center">
+                        <AudioRecorder
+                          onRecord={url =>
+                            handleAudioUrl('functionalWord', url)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2 md:space-y-3">
+                    <label
+                      htmlFor="rootWord"
+                      className="block text-sm md:text-base lg:text-lg font-medium text-neutral-950"
+                    >
+                      Root{' '}
+                      <Info className="inline-block w-4 h-4 ml-1 text-red-600" />
+                    </label>
+                    <div className="flex flex-row">
+                      <div className="w-50">
+                        <Input
+                          id="rootWord"
+                          name="rootWord"
+                          type="text"
+                          placeholder="Type here"
+                          value={formData.rootWord}
+                          onChange={handleInputChange}
+                          disabled={submitting}
+                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
+                        />
+                        {errors.rootWord && (
+                          <p className="text-sm md:text-base text-error-600">
+                            {errors.rootWord}
+                          </p>
+                        )}
+                      </div>
+                      <div className="w-50 ml-4 flex items-center">
+                        <AudioRecorder
+                          onRecord={url => handleAudioUrl('rootWord', url)}
+                        />
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="space-y-2 md:space-y-3">
-                  <label className="block text-sm md:text-base lg:text-lg font-medium text-neutral-950">
-                    Definition
-                  </label>
-                  <textarea
-                    name="definition"
-                    rows={3}
-                    className="block w-full px-4 md:px-5 lg:px-6 py-3 md:py-4 lg:py-5 border border-neutral-200 rounded-2xl md:rounded-3xl bg-white text-neutral-950 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none text-base md:text-lg transition-all hover:border-neutral-300 focus:scale-[1.02]"
-                    placeholder="Provide a clear definition or meaning"
-                    value={formData.definition}
-                    onChange={handleInputChange}
-                    disabled={submitting}
-                  />
-                  {errors.definition && (
-                    <p className="text-sm md:text-base text-error-600">
-                      {errors.definition}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2 md:space-y-3">
-                  <label className="block text-sm md:text-base lg:text-lg font-medium text-neutral-950">
-                    Context / Usage Example{' '}
-                    <span className="text-neutral-500">(Optional)</span>
-                  </label>
-                  <textarea
-                    name="context"
-                    rows={3}
-                    className="block w-full px-4 md:px-5 lg:px-6 py-3 md:py-4 lg:py-5 border border-neutral-200 rounded-2xl md:rounded-3xl bg-white text-neutral-950 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none text-base md:text-lg transition-all hover:border-neutral-300 focus:scale-[1.02]"
-                    placeholder="Provide an example sentence or context of usage"
-                    value={formData.context}
-                    onChange={handleInputChange}
-                    disabled={submitting}
-                  />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                  <div className="space-y-2 md:space-y-3">
+                    <label
+                      htmlFor="nonConformingWord"
+                      className="block text-sm md:text-base lg:text-lg font-medium text-neutral-950"
+                    >
+                      Non Conforming{' '}
+                      <Info className="inline-block w-4 h-4 ml-1 text-red-600" />
+                    </label>
+                    <div className="flex flex-row">
+                      <div className="w-50">
+                        <Input
+                          id="nonConformingWord"
+                          name="nonConformingWord"
+                          type="text"
+                          placeholder="Type here"
+                          value={formData.nonConformingWord}
+                          onChange={handleInputChange}
+                          disabled={submitting}
+                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
+                        />
+                        {errors.nonConformingWord && (
+                          <p className="text-sm md:text-base text-error-600">
+                            {errors.nonConformingWord}
+                          </p>
+                        )}
+                      </div>
+                      <div className="w-50 ml-4 flex items-center">
+                        <AudioRecorder
+                          onRecord={url =>
+                            handleAudioUrl('nonConformingWord', url)
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="pt-4 md:pt-6">
@@ -282,13 +412,41 @@ export default function SuggestPage() {
                     size="lg"
                     fullWidth
                     loading={submitting}
-                    className="h-12 md:h-14 lg:h-16 rounded-2xl md:rounded-3xl font-medium text-base md:text-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    disabled={
+                      formData.existingWord === '' ||
+                      formData.adoptiveWord === '' ||
+                      formData.functionalWord === '' ||
+                      formData.rootWord === '' ||
+                      formData.nonConformingWord === ''
+                    }
+                    className="h-12 md:h-14 lg:h-16 rounded-full md:rounded-full font-medium text-base md:text-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
                   >
-                    Submit Suggestion
+                    Submit
                   </Button>
                 </div>
               </form>
             </motion.div>
+
+            <div className="flex flex-row w-90 justify-center">
+              <Button
+                variant="outline"
+                size="md"
+                onClick={handleGoBack}
+                className="mt-6 md:mt-8 lg:mt-10 h-12 md:h-14 lg:h-16 text-base md:text-lg font-medium rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all w-50"
+              >
+                Load More{' '}
+                <RefreshCcwDot className="ml-2 w-5 h-5 md:w-6 md:h-6" />
+              </Button>
+              <Button
+                variant="outline"
+                size="md"
+                onClick={handleSubmitAnother}
+                className="mt-6 md:mt-8 lg:mt-10 ml-4 h-12 md:h-14 lg:h-16 text-base md:text-lg font-medium rounded-full md:rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all w-50"
+              >
+                Next Word{' '}
+                <ArrowLeft className="rotate-180 ml-2 w-5 h-5 md:w-6 md:h-6" />
+              </Button>
+            </div>
           </div>
         </div>
       </Layout>
