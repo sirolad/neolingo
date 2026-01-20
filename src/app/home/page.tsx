@@ -6,7 +6,6 @@ import { RefreshCcw } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
-import createClient from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 import { CtaCard } from '@/components/ui/WordCtaCard';
 import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
