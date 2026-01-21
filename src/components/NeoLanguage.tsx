@@ -6,8 +6,8 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getUserLanguageAndCommunity,
-  getCommunities,
-  setMyCommunity,
+  getTargetLanguages,
+  setMyTargetLanguage,
 } from '@/actions/language';
 
 interface NeoLanguageOption {
@@ -25,6 +25,7 @@ export default function NeoLanguage() {
   const { user } = useAuth();
 
   useEffect(() => {
+<<<<<<< HEAD
     if (!user?.id) return;
 
     const getCountries = async () => {
@@ -40,6 +41,21 @@ export default function NeoLanguage() {
     };
     fetchSelectedNeoLanguage();
   }, [user?.id]);
+=======
+    const getLanguages = async () => {
+      await getTargetLanguages().then(({ data }) => {
+        setNeoLanguages(data || []);
+      });
+    };
+    getLanguages();
+    const fetchSelectedTargetLanguage = async () => {
+      await getUserLanguageAndCommunity(user?.id || '').then(({ extra }) => {
+        setSelectedNeoLanguage(extra?.targetLanguageId || null);
+      });
+    };
+    fetchSelectedTargetLanguage();
+  }, [user]);
+>>>>>>> d7c48f0 (refactor: implement language schema restructuring)
   const handleBack = () => {
     router.back();
   };
@@ -54,16 +70,16 @@ export default function NeoLanguage() {
     const selectedLanguage = neoLanguages.find(
       lang => lang.id === selectedNeoLanguage
     );
-    await setMyCommunity(selectedNeoLanguage)
+    await setMyTargetLanguage(selectedNeoLanguage)
       .then(() => {
         setLoading(false);
-        toast.success(`Neo Community set to ${selectedLanguage?.name}`);
+        toast.success(`Target Language set to ${selectedLanguage?.name}`);
         router.push('/home');
       })
       .catch(err => {
         setLoading(false);
         console.error(err);
-        toast.error('An error occurred while setting Neo Community.');
+        toast.error('An error occurred while setting Target Language.');
       });
   };
 

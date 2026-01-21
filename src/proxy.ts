@@ -78,50 +78,23 @@ export async function proxy(request: NextRequest) {
         include: { role: true },
       })
     : null;
-  const userNeoCommunity = user
-    ? await prisma.userNeoCommunity.findFirst({
+  const userTargetLanguage = user
+    ? await prisma.userTargetLanguage.findFirst({
         where: { userId: user?.id },
-        include: { neoCommunity: true },
       })
     : null;
   const userProfile = user
     ? await prisma.userProfile.findFirst({
         where: { userId: user?.id },
-        include: { language: true },
+        include: { uiLanguage: true },
       })
     : null;
   const roleName = userRole?.role?.name;
-  const languageId = userProfile?.languageId;
-  const neoCommunityId = userNeoCommunity?.neoCommunity?.id;
-  const neoCommunityName = userNeoCommunity?.neoCommunity?.name;
-  const neoCommunity = userNeoCommunity?.neoCommunity;
-  const isUserOnboardingCompleted = userProfile?.onboardingCompleted || false;
-  let roleCopy = 'Explorer';
-  switch (roleName) {
-    case 'ADMIN':
-      roleCopy = 'Admin';
-      break;
-    case 'CONTRIBUTOR':
-      roleCopy = 'Curator';
-      break;
-    case 'JURY':
-      roleCopy = 'Jury';
-      break;
-    case 'USER':
-      roleCopy = 'Explorer';
-      break;
-    default:
-      roleCopy = 'Explorer';
-  }
+  const uiLanguageId = userProfile?.uiLanguageId;
+  const targetLanguageId = userTargetLanguage?.languageId;
   response.cookies.set(
     'extra',
-    JSON.stringify({
-      role: roleCopy,
-      languageId,
-      neoCommunityId,
-      neoCommunityName,
-      neoCommunity,
-    }),
+    JSON.stringify({ role: roleName, uiLanguageId, targetLanguageId }),
     {
       httpOnly: true,
     }
@@ -166,15 +139,14 @@ export async function proxy(request: NextRequest) {
   ) {
     const onboardingCompleted = await isOnboardingCompleted(user.id);
     if (!onboardingCompleted) {
-      // if (!languageId) {
-      //   const redirectUrl = new URL('/language-setup', request.url);
-      //   return NextResponse.redirect(redirectUrl);
-      // } else
-      if (!neoCommunityId) {
+      if (!uiLanguageId) {
+        const redirectUrl = new URL('/language-setup', request.url);
+        return NextResponse.redirect(redirectUrl);
+      } else if (!targetLanguageId) {
         const redirectUrl = new URL('/neo-language-setup', request.url);
         return NextResponse.redirect(redirectUrl);
-      } else if (neoCommunityId && !isUserOnboardingCompleted) {
-        await completeOnboardingForUser(user.id);
+      } else if (uiLanguageId && targetLanguageId) {
+        await completeOnboardingForUser(user.id, uiLanguageId);
       }
     }
   }

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Book, ArrowLeft, Star } from 'lucide-react';
+import { Book, ArrowLeft, Star, BookPlus } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { WordCard } from '@/components/ui/WordCard';
@@ -367,6 +367,18 @@ export default function DictionaryPage() {
               )}
             </motion.div>
           )}
+          {/* Request Neo Floating Button */}
+          <motion.button
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => router.push('/dictionary/request')}
+            className="fixed bottom-24 right-4 md:right-8 z-50 bg-neutral-950 text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 font-medium hover:bg-neutral-900 transition-colors"
+          >
+            <BookPlus className="w-5 h-5" />
+            <span>Request Neo</span>
+          </motion.button>
         </div>
       </div>
     </Layout>

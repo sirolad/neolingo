@@ -92,12 +92,30 @@ async function main() {
 
   console.log('Roles seeded successfully!');
 
+  // Seed UI Languages
+  const uiLanguages = [
+    { name: 'English', code: 'en', icon: 'GB' },
+    { name: 'French', code: 'fr', icon: 'FR' },
+    { name: 'Spanish', code: 'es', icon: 'ES' },
+  ];
+  for (const uiLang of uiLanguages) {
+    await prisma.uILanguage.upsert({
+      where: { code: uiLang.code },
+      update: { icon: uiLang.icon },
+      create: uiLang,
+    });
+  }
+  console.log('UI Languages seeded successfully!');
+
+  // Seed HRL Languages (like English)
   for (const language of languages) {
     await prisma.language.upsert({
       where: { name: language.name },
       update: { icon: language.icon, is_supported: language.is_supported },
       create: {
         name: language.name,
+        code: language.name.toLowerCase().substring(0, 3),
+        type: 'HRL',
         icon: language.icon,
         is_supported: language.is_supported,
       },
@@ -105,18 +123,20 @@ async function main() {
   }
   console.log('Languages seeded successfully!');
 
-  for (const community of neoCommunities) {
-    await prisma.neoCommunities.upsert({
-      where: { name: community.name },
-      update: { short: community.short, flagIcon: community.flagIcon },
+  // Seed LRL Languages (Neo Communities)
+  for (const communityName of neoCommunities) {
+    await prisma.language.upsert({
+      where: { name: communityName },
+      update: {},
       create: {
-        name: community.name,
-        short: community.short,
-        flagIcon: community.flagIcon,
+        name: communityName,
+        code: communityName.toLowerCase().substring(0, 3),
+        type: 'LRL',
+        is_supported: true,
       },
     });
   }
-  console.log('NeoCommunities seeded successfully!');
+  console.log('LRL Languages seeded successfully!');
 
   const partsOfSpeech = [
     { name: 'Noun', code: 'N' },
