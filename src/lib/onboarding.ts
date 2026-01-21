@@ -19,11 +19,8 @@ export function setOnboardingSeen(value = true): void {
   }
 }
 
-export async function completeOnboardingForUser(
-  userId: string,
-  languageId: number
-): Promise<void> {
-  await setCompleteOnboardingForUser(userId, languageId);
+export async function completeOnboardingForUser(userId: string): Promise<void> {
+  await setCompleteOnboardingForUser(userId);
 }
 
 export async function isOnboardingCompleted(userId: string): Promise<boolean> {

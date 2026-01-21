@@ -25,6 +25,8 @@ export default function NeoLanguage() {
   const { user } = useAuth();
 
   useEffect(() => {
+    if (!user?.id) return;
+
     const getCountries = async () => {
       await getCommunities().then(({ data }) => {
         setNeoLanguages(data || []);
@@ -32,12 +34,12 @@ export default function NeoLanguage() {
     };
     getCountries();
     const fetchSelectedNeoLanguage = async () => {
-      await getUserLanguageAndCommunity(user?.id || '').then(({ extra }) => {
+      await getUserLanguageAndCommunity(user.id || '').then(({ extra }) => {
         setSelectedNeoLanguage(extra?.neoCommunityId || null);
       });
     };
     fetchSelectedNeoLanguage();
-  }, [user]);
+  }, [user?.id]);
   const handleBack = () => {
     router.back();
   };
@@ -106,7 +108,7 @@ export default function NeoLanguage() {
               </p>
             </div>
 
-            <div className="space-y-4 mb-8">
+            <div className="space-y-4 mb-8 h-[50vh] overflow-y-auto">
               {neoLanguages.map(language => (
                 <button
                   key={language.id}
@@ -119,7 +121,8 @@ export default function NeoLanguage() {
                 >
                   <div className="flex items-center space-x-3">
                     <span className="text-[14px] font-normal leading-[20px] text-[#111111] font-[Parkinsans]">
-                      {language.name.charAt(0).toUpperCase() + language.name.slice(1).toLowerCase()}
+                      {language.name.charAt(0).toUpperCase() +
+                        language.name.slice(1).toLowerCase()}
                     </span>
                   </div>
 

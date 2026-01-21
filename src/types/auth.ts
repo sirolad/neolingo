@@ -11,6 +11,7 @@ export interface AuthContextType {
   userRole: string;
   userLanguageId: number | null;
   userNeoCommunityId: number | null;
+  userNeoCommunity: import('./neocommunity').NeoCommunity | null;
   // Methods return Supabase User on success (or null)
   login: (
     email: string,
