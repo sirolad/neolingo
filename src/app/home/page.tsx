@@ -49,10 +49,6 @@ export default function HomePage() {
     setTimeout(() => setRefreshing(false), 1000);
   };
 
-  // const handleLogout = () => {
-  //   logout();
-  // };
-
   const handleCta = (route: string) => {
     router.push(route);
   };
