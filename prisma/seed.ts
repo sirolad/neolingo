@@ -126,11 +126,11 @@ async function main() {
   // Seed LRL Languages (Neo Communities)
   for (const communityName of neoCommunities) {
     await prisma.language.upsert({
-      where: { name: communityName },
+      where: { name: communityName.name },
       update: {},
       create: {
-        name: communityName,
-        code: communityName.toLowerCase().substring(0, 3),
+        name: communityName.name,
+        code: communityName.name.toLowerCase().substring(0, 3),
         type: 'LRL',
         is_supported: true,
       },
