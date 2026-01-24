@@ -84,6 +84,32 @@ bun dev
 - `npm start` - Start production server
 - `npm run lint` - Run ESLint for code quality checks
 
+## Prisma
+
+1. Generate Prisma Client:
+
+```bash
+npx prisma generate
+```
+
+2. Run Prisma Migrations:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+Select to run prisma with specific env file
+
+```bash
+npx prisma migrate dev --name init --env-file .env.local
+```
+
+or
+
+```bash
+npx dotenv -e .env.local -- npx prisma migrate dev
+```
+
 ## Project Structure
 
 ```
