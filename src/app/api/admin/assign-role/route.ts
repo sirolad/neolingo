@@ -1,9 +1,8 @@
 import createClient from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { prisma } from '@/lib/prisma';
 import { assignRole } from '@/lib/roles';
-import z from 'zod';
+import z, { ZodError } from 'zod';
 
 export const dynamic = 'force-dynamic';
 
@@ -44,16 +43,13 @@ export async function POST(req: Request) {
     const result = await assignRole(userId, role);
 
     return NextResponse.json({ success: true, result });
-  } catch (err: any) {
+  } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json(
         { error: err.message || 'Validation error' },
         { status: 400 }
       );
     }
-    return NextResponse.json(
-      { error: err.message || 'Server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

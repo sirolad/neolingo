@@ -30,16 +30,56 @@ async function main() {
   ];
 
   const neoCommunities = [
-    'Yoruba',
-    'Igbo',
-    'Hausa',
-    'twi',
-    'Ewe',
-    'Swahili',
-    'Kikuyu',
-    'Fon',
-    'Fula',
-    'Bulu',
+    {
+      name: 'Yoruba',
+      short: 'YR',
+      flagIcon: 'NG',
+    },
+    {
+      name: 'Igbo',
+      short: 'IG',
+      flagIcon: 'NG',
+    },
+    {
+      name: 'Hausa',
+      short: 'HA',
+      flagIcon: 'NG',
+    },
+    {
+      name: 'twi',
+      short: 'TW',
+      flagIcon: 'GH',
+    },
+    {
+      name: 'Ewe',
+      short: 'EW',
+      flagIcon: 'GH',
+    },
+    {
+      name: 'Swahili',
+      short: 'SW',
+      flagIcon: 'KE',
+    },
+    {
+      name: 'Kikuyu',
+      short: 'KK',
+      flagIcon: 'KE',
+    },
+    {
+      name: 'Fon',
+      short: 'FO',
+      flagIcon: 'BJ',
+    },
+    {
+      name: 'Fula',
+      short: 'FU',
+      flagIcon: 'SN',
+    },
+    {
+      name: 'Bulu ',
+      short: 'BU',
+      flagIcon: 'CM',
+    },
   ];
 
   for (const name of roles) {
@@ -65,11 +105,15 @@ async function main() {
   }
   console.log('Languages seeded successfully!');
 
-  for (const communityName of neoCommunities) {
+  for (const community of neoCommunities) {
     await prisma.neoCommunities.upsert({
-      where: { name: communityName },
-      update: {},
-      create: { name: communityName },
+      where: { name: community.name },
+      update: { short: community.short, flagIcon: community.flagIcon },
+      create: {
+        name: community.name,
+        short: community.short,
+        flagIcon: community.flagIcon,
+      },
     });
   }
   console.log('NeoCommunities seeded successfully!');

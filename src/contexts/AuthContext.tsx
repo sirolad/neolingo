@@ -14,6 +14,7 @@ import createClient from '@/lib/supabase/client';
 import { normalizeUser } from '@/lib/user';
 import type { AuthContextType, SocialProvider } from '@/types';
 import * as Sentry from '@sentry/nextjs';
+import { NeoCommunity } from '@/types/neocommunity';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -25,6 +26,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [languageId, setLanguageId] = useState<number | null>(null);
   const userLanguageId = useMemo(() => languageId, [languageId]);
   const [userNeoCommunityId, setUserNeoCommunityId] = useState<number | null>(
+    null
+  );
+  const [userNeoCommunity, setUserNeoCommunity] = useState<NeoCommunity | null>(
     null
   );
   // Derive a normalized app-level user for UI components
@@ -51,6 +55,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setRoleName(data.extra?.role || null);
             setLanguageId(data.extra?.languageId || null);
             setUserNeoCommunityId(data.extra?.neoCommunityId);
+            setUserNeoCommunity(data.extra?.neoCommunity || null);
           });
         setUser(data?.user ?? null);
       }
@@ -78,6 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setRoleName(data.extra?.role || null);
             setLanguageId(data.extra?.languageId || null);
             setUserNeoCommunityId(data.extra?.neoCommunityId);
+            setUserNeoCommunity(data.extra?.neoCommunity || null);
           });
         setUser(session?.user ?? null);
         setIsLoading(false);
@@ -219,6 +225,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     userRole,
     userLanguageId,
     userNeoCommunityId,
+    userNeoCommunity,
     login,
     signup,
     logout,

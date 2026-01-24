@@ -10,7 +10,6 @@ import { resetPassword } from '@/actions/auth';
 import createClient from '@/lib/supabase/client';
 
 export default function ResetPasswordPage() {
-  const [isRecoveryFlow, setIsRecoveryFlow] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -23,7 +22,6 @@ export default function ResetPasswordPage() {
 
         // Check if this is a Supabase recovery flow or our custom step
         if (type === 'recovery' || step === 'newPassword') {
-          setIsRecoveryFlow(true);
           setStep('newPassword');
           // Clean up the URL hash
           // const noHash = window.location.href.replace(/#.*$/, '');
@@ -122,6 +120,7 @@ export default function ResetPasswordPage() {
       }
       setSubmitted(true);
     } catch (err) {
+      console.error('Reset password error:', err);
       toast.error('Reset password failed. Please try again.');
     } finally {
       setLoading(false);

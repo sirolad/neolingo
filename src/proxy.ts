@@ -31,7 +31,7 @@ const AUTH_ROUTES = [
 const roleAccess: Record<string, string[]> = {
   '/admin': ['ADMIN'],
   '/suggest': ['CONTRIBUTOR', 'ADMIN', 'JURY'],
-  '/vote': ['JURY', 'ADMIN'],
+  '/vote': ['JURY', 'ADMIN', 'CONTRIBUTOR'],
   '/requests': ['CONTRIBUTOR', 'ADMIN', 'JURY', 'USER'],
 };
 
@@ -93,9 +93,35 @@ export async function proxy(request: NextRequest) {
   const roleName = userRole?.role?.name;
   const languageId = userProfile?.languageId;
   const neoCommunityId = userNeoCommunity?.neoCommunity?.id;
+  const neoCommunityName = userNeoCommunity?.neoCommunity?.name;
+  const neoCommunity = userNeoCommunity?.neoCommunity;
+  const isUserOnboardingCompleted = userProfile?.onboardingCompleted || false;
+  let roleCopy = 'Explorer';
+  switch (roleName) {
+    case 'ADMIN':
+      roleCopy = 'Admin';
+      break;
+    case 'CONTRIBUTOR':
+      roleCopy = 'Curator';
+      break;
+    case 'JURY':
+      roleCopy = 'Jury';
+      break;
+    case 'USER':
+      roleCopy = 'Explorer';
+      break;
+    default:
+      roleCopy = 'Explorer';
+  }
   response.cookies.set(
     'extra',
-    JSON.stringify({ role: roleName, languageId, neoCommunityId }),
+    JSON.stringify({
+      role: roleCopy,
+      languageId,
+      neoCommunityId,
+      neoCommunityName,
+      neoCommunity,
+    }),
     {
       httpOnly: true,
     }
@@ -140,14 +166,15 @@ export async function proxy(request: NextRequest) {
   ) {
     const onboardingCompleted = await isOnboardingCompleted(user.id);
     if (!onboardingCompleted) {
-      if (!languageId) {
-        const redirectUrl = new URL('/language-setup', request.url);
-        return NextResponse.redirect(redirectUrl);
-      } else if (!neoCommunityId) {
+      // if (!languageId) {
+      //   const redirectUrl = new URL('/language-setup', request.url);
+      //   return NextResponse.redirect(redirectUrl);
+      // } else
+      if (!neoCommunityId) {
         const redirectUrl = new URL('/neo-language-setup', request.url);
         return NextResponse.redirect(redirectUrl);
-      } else if (languageId && neoCommunityId) {
-        await completeOnboardingForUser(user.id, languageId);
+      } else if (neoCommunityId && !isUserOnboardingCompleted) {
+        await completeOnboardingForUser(user.id);
       }
     }
   }
