@@ -64,6 +64,7 @@ model Language {
   id              Int                  @id @default(autoincrement())
   name            String               @unique  // "English", "Yoruba", "Hausa"
   code            String               @unique  // ISO 639-3: "eng", "yor", "hau"
+  short           String?              // Short name or abbreviation
   type            LanguageType                  // HRL or LRL
   description     String?
   icon            String?
