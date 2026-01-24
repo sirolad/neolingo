@@ -132,6 +132,7 @@ async function main() {
         name: communityName.name,
         code: communityName.name.toLowerCase().substring(0, 3),
         type: 'LRL',
+        short: communityName.short,
         icon: communityName.flagIcon,
         is_supported: true,
       },
