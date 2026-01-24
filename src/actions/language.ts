@@ -52,7 +52,7 @@ export async function getTargetLanguages(): Promise<{
         id: true,
         name: true,
       },
-      orderBy: { name: 'asc' },
+      orderBy: { name: 'desc' },
     });
     return { success: true, data: languages };
   } catch (err) {

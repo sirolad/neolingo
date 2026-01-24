@@ -25,23 +25,6 @@ export default function NeoLanguage() {
   const { user } = useAuth();
 
   useEffect(() => {
-<<<<<<< HEAD
-    if (!user?.id) return;
-
-    const getCountries = async () => {
-      await getCommunities().then(({ data }) => {
-        setNeoLanguages(data || []);
-      });
-    };
-    getCountries();
-    const fetchSelectedNeoLanguage = async () => {
-      await getUserLanguageAndCommunity(user.id || '').then(({ extra }) => {
-        setSelectedNeoLanguage(extra?.neoCommunityId || null);
-      });
-    };
-    fetchSelectedNeoLanguage();
-  }, [user?.id]);
-=======
     const getLanguages = async () => {
       await getTargetLanguages().then(({ data }) => {
         setNeoLanguages(data || []);
@@ -55,7 +38,7 @@ export default function NeoLanguage() {
     };
     fetchSelectedTargetLanguage();
   }, [user]);
->>>>>>> d7c48f0 (refactor: implement language schema restructuring)
+
   const handleBack = () => {
     router.back();
   };

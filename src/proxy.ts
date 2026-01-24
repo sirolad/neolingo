@@ -92,9 +92,26 @@ export async function proxy(request: NextRequest) {
   const roleName = userRole?.role?.name;
   const uiLanguageId = userProfile?.uiLanguageId;
   const targetLanguageId = userTargetLanguage?.languageId;
+  let roleCopy = 'Explorer';
+  switch (roleName) {
+    case 'ADMIN':
+      roleCopy = 'Admin';
+      break;
+    case 'CONTRIBUTOR':
+      roleCopy = 'Curator';
+      break;
+    case 'JURY':
+      roleCopy = 'Jury';
+      break;
+    case 'USER':
+      roleCopy = 'Explorer';
+      break;
+    default:
+      roleCopy = 'Explorer';
+  }
   response.cookies.set(
     'extra',
-    JSON.stringify({ role: roleName, uiLanguageId, targetLanguageId }),
+    JSON.stringify({ role: roleCopy, uiLanguageId, targetLanguageId }),
     {
       httpOnly: true,
     }
