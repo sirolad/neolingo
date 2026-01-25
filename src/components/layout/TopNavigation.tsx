@@ -1,4 +1,4 @@
-import React, { use } from 'react';
+import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
@@ -10,6 +10,7 @@ import {
   Settings,
   LogOut,
   CircleUserRound,
+  BookPlus,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import Image from 'next/image';
@@ -64,6 +65,11 @@ export function TopNavigation() {
       icon: <Book className="w-5 h-5" />,
       label: 'Dictionary',
       href: '/dictionary',
+    },
+    {
+      icon: <BookPlus className="w-5 h-5" />,
+      label: 'Request',
+      href: '/dictionary/request',
     },
   ];
 
@@ -158,7 +164,19 @@ export function TopNavigation() {
                   onClick={handleProfile}
                   className="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-50 transition-colors"
                 >
-                  <div className="text-lg">{user.avatar}</div>
+                  <div className="text-lg">
+                    {user?.avatar ? (
+                      <Image
+                        src={user.avatar}
+                        alt={user?.name || 'User'}
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <CircleUserRound className="w-8 h-8 text-neutral-400" />
+                    )}
+                  </div>
                   <User className="w-4 h-4 text-neutral-600" />
                 </button>
               </div>

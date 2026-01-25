@@ -47,7 +47,7 @@ describe('auth actions', () => {
       const mockError = { message: 'User not found' };
       mockResetPasswordForEmail.mockResolvedValue({
         data: {},
-        error: mockError as any,
+        error: mockError,
       });
 
       const result = await resetPassword('nonexistent@example.com');
@@ -69,7 +69,7 @@ describe('auth actions', () => {
       const mockError = { message: 'Database error' };
       mockResetPasswordForEmail.mockResolvedValue({
         data: {},
-        error: mockError as any,
+        error: mockError,
       });
 
       await resetPassword('test@example.com');

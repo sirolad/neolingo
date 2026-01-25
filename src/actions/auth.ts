@@ -40,17 +40,44 @@ export async function resetPassword(
 }
 
 export async function setCompleteOnboardingForUser(
-  userId: string,
-  languageId: number
+  userId: string
 ): Promise<void> {
-  await prisma.userProfile.upsert({
-    where: { userId },
-    update: { onboardingCompleted: true },
-    create: {
-      userId,
-      languageId,
-      onboardingCompleted: true,
-    },
+  await prisma.$transaction(async tx => {
+    // 1. Ensure Profile Exists & Mark Onboarding Complete
+    const uiLanguages = await tx.uILanguage.findMany({
+      where: { is_supported: true },
+      take: 1,
+    });
+    const languageId = uiLanguages.length > 0 ? uiLanguages[0].id : 1;
+    await tx.userProfile.upsert({
+      where: { userId },
+      update: { onboardingCompleted: true },
+      create: {
+        userId,
+        uiLanguageId: languageId,
+        onboardingCompleted: true,
+      },
+    });
+
+    // 2. Assign Default Role if missing
+    const existingRole = await tx.userRole.findFirst({
+      where: { userId },
+    });
+
+    if (!existingRole) {
+      const userRoleDef = await tx.role.findUnique({
+        where: { name: 'USER' },
+      });
+
+      if (userRoleDef) {
+        await tx.userRole.create({
+          data: {
+            userId,
+            roleId: userRoleDef.id,
+          },
+        });
+      }
+    }
   });
 }
 
@@ -62,4 +89,27 @@ export async function isUserOnboardingCompleted(
     select: { onboardingCompleted: true },
   });
   return profile?.onboardingCompleted ?? false;
+}
+
+export async function getUserContext(userId: string) {
+  const [userRole, userTargetLanguage, userProfile] = await Promise.all([
+    prisma.userRole.findFirst({
+      where: { userId },
+      include: { role: true },
+    }),
+    prisma.userTargetLanguage.findFirst({
+      where: { userId },
+      include: { language: true },
+    }),
+    prisma.userProfile.findFirst({
+      where: { userId },
+      include: { uiLanguage: true },
+    }),
+  ]);
+
+  return {
+    userRole,
+    userTargetLanguage,
+    userProfile,
+  };
 }

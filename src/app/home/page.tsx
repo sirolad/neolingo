@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, Vote, RefreshCcw, CircleUserRound } from 'lucide-react';
+import { RefreshCcw } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
-import { Button } from '@/components/ui/Button';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
-import createClient from '@/lib/supabase/client';
-import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { CtaCard } from '@/components/ui/WordCtaCard';
+import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 
 interface WordCard {
   id: string;
@@ -20,11 +20,10 @@ interface WordCard {
 }
 
 export default function HomePage() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const supabase = createClient();
-  const { appUser, logout } = useAuth();
+  const { appUser, userRole, userNeoCommunity } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
   const user = appUser;
+  const router = useRouter();
 
   const wordCards: WordCard[] = [
     {
@@ -45,21 +44,13 @@ export default function HomePage() {
     },
   ];
 
-  const handleSuggest = (wordId: string) => {
-    console.log('Suggest word:', wordId);
-  };
-
-  const handleVote = (wordId: string) => {
-    console.log('Vote for word:', wordId);
-  };
-
   const handleRefresh = () => {
     setRefreshing(true);
     setTimeout(() => setRefreshing(false), 1000);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleCta = (route: string) => {
+    router.push(route);
   };
 
   return (
@@ -67,26 +58,24 @@ export default function HomePage() {
       <Layout variant="home">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
           {/* User Greeting Header */}
-          <div className="flex items-center justify-between py-4 md:py-6 lg:py-8">
+          <div className="flex items-center justify-between py-4 md:py-6 lg:py-8 align-middle">
             <div className="flex items-center space-x-28 md:space-x-4">
-              <div>
-                <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
+              <div className="hidden lg:block">
+                <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950 hidden lg:block">
                   Hi {user?.name || 'User'}!
                 </h1>
               </div>
-              <div className="text-2xl md:text-3xl lg:text-4xl lg:hidden">
-                {user?.avatar ? (
-                  <Image
-                    src={user.avatar}
-                    alt={user?.name || 'Contributor'}
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                ) : (
-                  <CircleUserRound className="w-10 h-10 text-neutral-400" />
-                )}
+            </div>
+            <div className="flex items-center space-x-4 lg:hidden justify-between w-full">
+              <div className="">
+                <span className="text-lg btn-sm">
+                  Hi, {user?.name || 'User'}
+                </span>
+                <button className="px-1.5 py-0.5 text-[10px] rounded-[0.25rem] bg-[#9c62d9] border border-neutral-200 ml-2 text-neutral-50">
+                  {userRole}
+                </button>
               </div>
+              <MyCommunityTag userNeoCommunity={userNeoCommunity} user={user} />
             </div>
           </div>
 
@@ -96,95 +85,33 @@ export default function HomePage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10">
               {/* Left Column - Main Cards */}
               <div className="space-y-6 md:space-y-8">
-                {/* Word Suggestion Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  {/* Card Header */}
-                  <div className="p-6 md:p-8 lg:p-10 pb-4 md:pb-6 lg:pb-8">
-                    <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-neutral-950 mb-1 md:mb-2">
-                      Make Your Suggestion
-                    </h2>
-                    <p className="text-neutral-600 text-sm md:text-base lg:text-lg">
-                      Suggest a yoruba word for the word of the day!
-                    </p>
-                  </div>
-
-                  {/* Word Display */}
-                  <div
-                    className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 ${wordCards[0].bgColor} ${wordCards[0].borderColor} border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
-                  >
-                    <div className="flex items-center justify-between mb-3 md:mb-4 lg:mb-6">
-                      <div
-                        className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full text-xs md:text-sm lg:text-base font-medium ${wordCards[0].tagColor}`}
-                      >
-                        Word of the day
-                      </div>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => handleSuggest(wordCards[0].id)}
-                        leftIcon={
-                          <Lightbulb className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
-                        }
-                        className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl text-xs md:text-sm lg:text-base font-medium hover:scale-105 active:scale-95 transition-transform"
-                      >
-                        Suggest
-                      </Button>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-neutral-950">
-                      {wordCards[0].word}
-                    </h3>
-                  </div>
-                </motion.div>
-
+                {/* Request Card */}
+                <CtaCard
+                  title="Request a Neo"
+                  subTitle="Got a word in your mind?"
+                  word="Ask the community to mine Neos"
+                  ctatext="Word on your mind"
+                  variant="request"
+                  onHandleClick={() => handleCta('/dictionary/request')}
+                />
+                {/* Suggestion Card */}
+                <CtaCard
+                  title="Make Your Suggestion"
+                  subTitle="Suggest a yoruba word for the word of the day!"
+                  word={wordCards[0].word}
+                  ctatext="Word of the day"
+                  variant="suggest"
+                  onHandleClick={() => handleCta('/suggest')}
+                />
                 {/* Voting Card */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: 0.1 }}
-                  className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  {/* Card Header */}
-                  <div className="p-6 md:p-8 lg:p-10 pb-4 md:pb-6 lg:pb-8">
-                    <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-neutral-950 mb-1 md:mb-2">
-                      Vote for Today&apos;s Best Word
-                    </h2>
-                    <p className="text-neutral-600 text-sm md:text-base lg:text-lg">
-                      Vote for the top ranked suggested words!
-                    </p>
-                  </div>
-
-                  {/* Word Display */}
-                  <div
-                    className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 ${wordCards[1].bgColor} ${wordCards[1].borderColor} border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
-                  >
-                    <div className="flex items-center justify-between mb-3 md:mb-4 lg:mb-6">
-                      <div
-                        className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full text-xs md:text-sm lg:text-base font-medium ${wordCards[1].tagColor}`}
-                      >
-                        Word of the day
-                      </div>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => handleVote(wordCards[1].id)}
-                        leftIcon={
-                          <Vote className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
-                        }
-                        className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl text-xs md:text-sm lg:text-base font-medium hover:scale-105 active:scale-95 transition-transform"
-                      >
-                        Vote
-                      </Button>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-neutral-950">
-                      {wordCards[1].word}
-                    </h3>
-                  </div>
-                </motion.div>
+                <CtaCard
+                  title="Vote for today's best word"
+                  subTitle="Vote for the top ranked suggested words"
+                  word={wordCards[1].word}
+                  ctatext="Word of the day"
+                  variant="vote"
+                  onHandleClick={() => handleCta('/vote')}
+                />
               </div>
 
               {/* Right Column - Leaderboard (Desktop) or Third Card (Mobile) */}

@@ -7,16 +7,36 @@ datasource db {
   provider = "postgresql"
 }
 
-model UserProfile {
-  id         Int    @id @default(autoincrement())
-  userId     String @db.Uuid
-  name       String?
-  phone      String?
-  language   Language? @relation(fields: [languageId], references: [id])
-  languageId Int?
-  onboardingCompleted Boolean  @default(false)
-  neoCommunities UserNeoCommunity[]
+// UI Language for application interface ONLY
+model UILanguage {
+  id            Int           @id @default(autoincrement())
+  name          String        @unique  // "English", "Spanish"
+  code          String        @unique  // "en", "es"
+  icon          String?
+  is_supported  Boolean       @default(false)
+  userProfiles  UserProfile[]
+  
+  @@map("ui_languages")
+}
 
+model UserProfile {
+  id                  Int                  @id @default(autoincrement())
+  userId              String               @db.Uuid
+  name                String?
+  phone               String?
+  
+  // UI language preference (separate from translation languages)
+  uiLanguageId        Int?
+  uiLanguage          UILanguage?          @relation(fields: [uiLanguageId], references: [id])
+  
+  onboardingCompleted Boolean              @default(false)
+  
+  // Communities user joined (for LRL contributions)
+  targetLanguages     UserTargetLanguage[]
+  votes               Vote[]
+  requests            TranslationRequest[] @relation("RequestedBy")
+  approvals           TranslationRequest[] @relation("ApprovedBy")
+  
   @@unique([userId])
   @@map("user_profile")
 }
@@ -40,33 +60,168 @@ model UserRole {
   @@map("user_roles")
 }
 
+// Unified language table for all translations (both HRL and LRL)
 model Language {
-  id           Int           @id @default(autoincrement())
-  name         String        @unique
-  is_supported Boolean  @default(false)
-  icon         String?
-  userProfiles UserProfile[]
-
-  @@map("language")
+  id              Int                  @id @default(autoincrement())
+  name            String               @unique  // "English", "Yoruba", "Hausa"
+  code            String               @unique  // ISO 639-3: "eng", "yor", "hau"
+  short           String?              // Short name or abbreviation
+  type            LanguageType                  // HRL or LRL
+  description     String?
+  icon            String?
+  is_supported    Boolean              @default(true)
+  metadata        Json?                         // For LRL community info
+  
+  // Relations
+  sourceTerms     Term[]               @relation("SourceLanguage")
+  targetTerms     Term[]               @relation("TargetLanguage")
+  sourceRequests  TranslationRequest[] @relation("SourceLanguageRequest")
+  targetRequests  TranslationRequest[] @relation("TargetLanguageRequest")
+  userLanguages   UserTargetLanguage[]
+  
+  @@map("languages")
 }
 
-model NeoCommunities {
-  id             Int           @id @default(autoincrement())
-  name           String
-  users          UserNeoCommunity[]
-
-  @@unique([name])
-  @@map("neo_communities")
+enum LanguageType {
+  HRL  // High-Resource Language
+  LRL  // Low-Resource Language
 }
 
-model UserNeoCommunity {
-  id             Int    @id @default(autoincrement())
-  userId         String @db.Uuid
-  neoCommunityId Int
+model PartOfSpeech {
+  id       Int                  @id @default(autoincrement())
+  name     String               @unique // e.g. Noun
+  code     String               @unique // e.g. N
+  terms    Term[]
+  requests TranslationRequest[]
 
-  userProfile  UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  neoCommunity NeoCommunities @relation(fields: [neoCommunityId], references: [id], onDelete: Cascade)
+  @@map("part_of_speech")
+}
 
-  @@unique([userId, neoCommunityId])
-  @@map("user_neo_communities")
+model Concept {
+  id          Int          @id @default(autoincrement())
+  gloss       String?      // Universal explanation of the concept
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  terms       Term[]
+  definitions Definition[]
+
+  @@map("concepts")
+}
+
+model Term {
+  id               Int          @id @default(autoincrement())
+  text             String
+  
+  // Source language (e.g., English word "Peace")
+  sourceLanguageId Int
+  sourceLanguage   Language     @relation("SourceLanguage", fields: [sourceLanguageId], references: [id])
+  
+  // Target language (e.g., Yoruba translation "Alafia")
+  targetLanguageId Int
+  targetLanguage   Language     @relation("TargetLanguage", fields: [targetLanguageId], references: [id])
+
+  partOfSpeechId   Int
+  partOfSpeech     PartOfSpeech @relation(fields: [partOfSpeechId], references: [id])
+
+  conceptId        Int
+  concept          Concept      @relation(fields: [conceptId], references: [id])
+  
+  votes            Vote[]
+  voteScore        Int          @default(0) // Cached score for sorting
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@map("terms")
+}
+
+model Definition {
+  id        Int      @id @default(autoincrement())
+  text      String
+
+  conceptId Int
+  concept   Concept  @relation(fields: [conceptId], references: [id])
+
+  @@map("definitions")
+}
+
+model Vote {
+  id        Int         @id @default(autoincrement())
+  value     Int         // 1 for upvote, -1 for downvote
+  
+  userId    String      @db.Uuid
+  user      UserProfile @relation(fields: [userId], references: [userId])
+  
+  termId    Int
+  term      Term        @relation(fields: [termId], references: [id])
+  
+  createdAt DateTime    @default(now())
+
+  @@unique([userId, termId])
+  @@map("votes")
+}
+
+model Domain {
+  id       Int                 @id @default(autoincrement())
+  name     String              @unique
+  requests DomainsOnRequests[]
+
+  @@map("domains")
+}
+
+model TranslationRequest {
+  id               Int          @id @default(autoincrement())
+  word             String
+  meaning          String?      // Context provided by user
+  
+  // Source language (what language is the word in)
+  sourceLanguageId Int
+  sourceLanguage   Language     @relation("SourceLanguageRequest", fields: [sourceLanguageId], references: [id])
+  
+  // Target language (what language to translate TO)
+  targetLanguageId Int
+  targetLanguage   Language     @relation("TargetLanguageRequest", fields: [targetLanguageId], references: [id])
+  
+  partOfSpeechId   Int
+  partOfSpeech     PartOfSpeech @relation(fields: [partOfSpeechId], references: [id])
+
+  userId           String       @db.Uuid
+  user             UserProfile  @relation("RequestedBy", fields: [userId], references: [userId])
+
+  domains          DomainsOnRequests[]
+
+  // Approval System
+  isApproved       Boolean      @default(false)
+  approvedById     String?      @db.Uuid
+  approvedBy       UserProfile? @relation("ApprovedBy", fields: [approvedById], references: [userId])
+
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  
+  @@map("translation_requests")
+}
+
+model DomainsOnRequests {
+  requestId Int
+  request   TranslationRequest @relation(fields: [requestId], references: [id])
+  
+  domainId  Int
+  domain    Domain             @relation(fields: [domainId], references: [id])
+  
+  @@id([requestId, domainId])
+  @@map("domains_on_requests")
+}
+
+// Join table for users joining LRL language communities
+model UserTargetLanguage {
+  id         Int          @id @default(autoincrement())
+  userId     String       @db.Uuid
+  languageId Int
+  
+  user       UserProfile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  language   Language     @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, languageId])
+  @@map("user_target_languages")
 }

@@ -5,6 +5,7 @@ import {
   completeOnboardingForUser,
   isOnboardingCompleted,
 } from '@/lib/onboarding';
+import { getUserContext } from '@/actions/auth';
 
 const PUBLIC_ROUTES = [
   '/signin',
@@ -31,7 +32,7 @@ const AUTH_ROUTES = [
 const roleAccess: Record<string, string[]> = {
   '/admin': ['ADMIN'],
   '/suggest': ['CONTRIBUTOR', 'ADMIN', 'JURY'],
-  '/vote': ['JURY', 'ADMIN'],
+  '/vote': ['JURY', 'ADMIN', 'CONTRIBUTOR'],
   '/requests': ['CONTRIBUTOR', 'ADMIN', 'JURY', 'USER'],
 };
 
@@ -72,30 +73,41 @@ export async function proxy(request: NextRequest) {
   let {
     data: { user },
   } = await supabase.auth.getUser();
-  const userRole = user
-    ? await prisma.userRole.findFirst({
-        where: { userId: user?.id },
-        include: { role: true },
-      })
-    : null;
-  const userNeoCommunity = user
-    ? await prisma.userNeoCommunity.findFirst({
-        where: { userId: user?.id },
-        include: { neoCommunity: true },
-      })
-    : null;
-  const userProfile = user
-    ? await prisma.userProfile.findFirst({
-        where: { userId: user?.id },
-        include: { language: true },
-      })
-    : null;
+
+  const { userRole, userTargetLanguage, userProfile } = user
+    ? await getUserContext(user.id)
+    : { userRole: null, userTargetLanguage: null, userProfile: null };
   const roleName = userRole?.role?.name;
-  const languageId = userProfile?.languageId;
-  const neoCommunityId = userNeoCommunity?.neoCommunity?.id;
+  const uiLanguageId = userProfile?.uiLanguageId;
+  const targetLanguageId = userTargetLanguage?.languageId;
+  const isUserOnboardingCompleted = userProfile?.onboardingCompleted || false;
+  let roleCopy = 'Explorer';
+  switch (roleName) {
+    case 'ADMIN':
+      roleCopy = 'Admin';
+      break;
+    case 'CONTRIBUTOR':
+      roleCopy = 'Curator';
+      break;
+    case 'JURY':
+      roleCopy = 'Jury';
+      break;
+    case 'USER':
+      roleCopy = 'Explorer';
+      break;
+    default:
+      roleCopy = 'Explorer';
+  }
+  //@todo use new convention
   response.cookies.set(
     'extra',
-    JSON.stringify({ role: roleName, languageId, neoCommunityId }),
+    JSON.stringify({
+      role: roleCopy,
+      languageId: uiLanguageId,
+      neoCommunityId: targetLanguageId,
+      neoCommunityName: userTargetLanguage?.language?.name,
+      neoCommunity: userTargetLanguage?.language,
+    }),
     {
       httpOnly: true,
     }
@@ -140,14 +152,15 @@ export async function proxy(request: NextRequest) {
   ) {
     const onboardingCompleted = await isOnboardingCompleted(user.id);
     if (!onboardingCompleted) {
-      if (!languageId) {
-        const redirectUrl = new URL('/language-setup', request.url);
-        return NextResponse.redirect(redirectUrl);
-      } else if (!neoCommunityId) {
+      // if (!uiLanguageId) {
+      //   const redirectUrl = new URL('/language-setup', request.url);
+      //   return NextResponse.redirect(redirectUrl);
+      // } else
+      if (!targetLanguageId) {
         const redirectUrl = new URL('/neo-language-setup', request.url);
         return NextResponse.redirect(redirectUrl);
-      } else if (languageId && neoCommunityId) {
-        await completeOnboardingForUser(user.id, languageId);
+      } else if (targetLanguageId && !isUserOnboardingCompleted) {
+        await completeOnboardingForUser(user.id);
       }
     }
   }

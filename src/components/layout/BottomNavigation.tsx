@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { TrendingUp, Vote, Lightbulb, Book } from 'lucide-react';
+import { Vote, Lightbulb, Book, Home, BookPlus } from 'lucide-react';
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -15,9 +15,9 @@ function NavItem({ icon, label, active = false, onClick }: NavItemProps) {
   return (
     <button
       onClick={onClick}
-      className={`flex flex-col items-center gap-1 py-2 px-3 rounded-lg transition-colors ${
+      className={`flex flex-row items-center gap-1 py-2 px-3 ${active ? 'rounded-full' : ''} transition-colors ${
         active
-          ? 'text-primary-800 bg-primary-50'
+          ? 'text-primary-800 bg-stone-200'
           : 'text-neutral-600 hover:text-neutral-800 hover:bg-neutral-50'
       }`}
     >
@@ -33,24 +33,29 @@ export function BottomNavigation() {
 
   const navItems = [
     {
-      icon: <TrendingUp className="w-5 h-5" />,
-      label: 'Home',
+      icon: <Home className="w-5 h-5" />,
+      label: pathname === '/home' ? 'Home' : '',
       href: '/home',
     },
     {
-      icon: <Lightbulb className="w-5 h-5" />,
-      label: 'Suggest',
-      href: '/suggest',
+      icon: <Book className="w-5 h-5" />,
+      label: pathname === '/dictionary' ? 'Dictionary' : '',
+      href: '/dictionary',
+    },
+    {
+      icon: <BookPlus className="w-5 h-5" />,
+      label: pathname === '/dictionary/request' ? 'Request' : '',
+      href: '/dictionary/request',
     },
     {
       icon: <Vote className="w-5 h-5" />,
-      label: 'Vote',
+      label: pathname === '/vote' ? 'Vote' : '',
       href: '/vote',
     },
     {
-      icon: <Book className="w-5 h-5" />,
-      label: 'Dictionary',
-      href: '/dictionary',
+      icon: <Lightbulb className="w-5 h-5" />,
+      label: pathname === '/suggest' ? 'Curation' : '',
+      href: '/suggest',
     },
   ];
 

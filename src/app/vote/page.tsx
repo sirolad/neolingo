@@ -3,10 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Vote, ArrowLeft, TrendingUp, RefreshCcw } from 'lucide-react';
+import { Vote, ArrowLeft, TrendingUp } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { WordCard } from '@/components/ui/WordCard';
 import { useAuth } from '@/contexts/AuthContext';
+import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 
 interface WordSuggestion {
   id: string;
@@ -22,9 +23,9 @@ interface WordSuggestion {
 
 export default function VotePage() {
   const router = useRouter();
-  const { appUser, isLoading: authLoading } = useAuth();
+  const { appUser, isLoading: authLoading, userNeoCommunity } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
+  // const [refreshing, setRefreshing] = useState(false);
   const [suggestions, setSuggestions] = useState<WordSuggestion[]>([]);
 
   useEffect(() => {
@@ -142,13 +143,13 @@ export default function VotePage() {
     );
   };
 
-  const handleRefresh = () => {
-    setRefreshing(true);
-    setTimeout(() => {
-      loadSuggestions();
-      setRefreshing(false);
-    }, 1000);
-  };
+  // const handleRefresh = () => {
+  //   setRefreshing(true);
+  //   setTimeout(() => {
+  //     loadSuggestions();
+  //     setRefreshing(false);
+  //   }, 1000);
+  // };
 
   const sortedSuggestions = [...suggestions].sort((a, b) => b.votes - a.votes);
 
@@ -167,7 +168,7 @@ export default function VotePage() {
           <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
             Vote
           </h1>
-          <button
+          {/* <button
             onClick={handleRefresh}
             disabled={refreshing}
             className="p-2 md:p-3 lg:p-4 rounded-full hover:bg-neutral-100 transition-colors active:scale-95"
@@ -175,7 +176,13 @@ export default function VotePage() {
             <RefreshCcw
               className={`w-5 h-5 md:w-6 md:h-6 text-neutral-600 ${refreshing ? 'animate-spin' : ''}`}
             />
-          </button>
+          </button> */}
+          <div className="md:w-20">
+            <MyCommunityTag
+              userNeoCommunity={userNeoCommunity}
+              user={appUser}
+            />
+          </div>
         </div>
 
         {/* Main Content */}

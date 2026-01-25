@@ -6,8 +6,8 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getUserLanguageAndCommunity,
-  getCommunities,
-  setMyCommunity,
+  getTargetLanguages,
+  setMyTargetLanguage,
 } from '@/actions/language';
 
 interface NeoLanguageOption {
@@ -25,19 +25,20 @@ export default function NeoLanguage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    const getCountries = async () => {
-      await getCommunities().then(({ data }) => {
+    const getLanguages = async () => {
+      await getTargetLanguages().then(({ data }) => {
         setNeoLanguages(data || []);
       });
     };
-    getCountries();
-    const fetchSelectedNeoLanguage = async () => {
+    getLanguages();
+    const fetchSelectedTargetLanguage = async () => {
       await getUserLanguageAndCommunity(user?.id || '').then(({ extra }) => {
-        setSelectedNeoLanguage(extra?.neoCommunityId || null);
+        setSelectedNeoLanguage(extra?.targetLanguageId || null);
       });
     };
-    fetchSelectedNeoLanguage();
+    fetchSelectedTargetLanguage();
   }, [user]);
+
   const handleBack = () => {
     router.back();
   };
@@ -52,7 +53,8 @@ export default function NeoLanguage() {
     const selectedLanguage = neoLanguages.find(
       lang => lang.id === selectedNeoLanguage
     );
-    await setMyCommunity(selectedNeoLanguage)
+
+    await setMyTargetLanguage(selectedNeoLanguage)
       .then(() => {
         setLoading(false);
         toast.success(`Neo Community set to ${selectedLanguage?.name}`);
@@ -106,7 +108,7 @@ export default function NeoLanguage() {
               </p>
             </div>
 
-            <div className="space-y-4 mb-8">
+            <div className="space-y-4 mb-8 h-[50vh] overflow-y-auto">
               {neoLanguages.map(language => (
                 <button
                   key={language.id}
@@ -119,7 +121,8 @@ export default function NeoLanguage() {
                 >
                   <div className="flex items-center space-x-3">
                     <span className="text-[14px] font-normal leading-[20px] text-[#111111] font-[Parkinsans]">
-                      {language.name.charAt(0).toUpperCase() + language.name.slice(1).toLowerCase()}
+                      {language.name.charAt(0).toUpperCase() +
+                        language.name.slice(1).toLowerCase()}
                     </span>
                   </div>
 

@@ -69,6 +69,16 @@ The app uses a mock authentication system that simulates real backend behavior w
 - localStorage persistence for development
 - Social login simulation for Google/Apple
 
+## Feature Context
+
+### Dictionary & Translation
+This is a **Low-Resource Language** focused application.
+- **Concept-Based Schema**: Words are organized by abstract "Concepts" to ensure translation accuracy across languages. Definitions are linked to Concepts.
+- **Community Voting**: Translations are crowdsourced. Users submit terms (translations) for a concept, and the community votes on them. The application displays translations based on the highest vote count.
+- **Translation Requests**: Users can request translations for source words.
+    - **Domains**: Requests use a tagging system (Many-to-Many with `Domain` table) allowing users to select multiple categories or search for them (e.g., "Medical", "Tech").
+    - **Approval**: Requests require admin approval (`isApproved`) before becoming public/actionable to prevent spam.
+
 ## Development Notes
 
 - Do not implement a ui framework yourself, install it from shadcn/ui only custom implementation is allowed
@@ -100,6 +110,14 @@ See `TESTING.md` for comprehensive testing guide and best practices.
 ### Linting
 
 The project uses ESLint with Next.js configuration. Always run `npm run lint` before committing changes.
+
+### Database & Prisma
+
+**Version**: Prisma 7 (v7.x)
+- **Configuration**: `prisma.config.ts` (TypeScript config) is used instead of just `schema.prisma`.
+- **Connection**: Uses `DIRECT_URL` in `prisma.config.ts` for CLI migrations to bypass Supabase transaction pooler.
+- **Runtime**: Uses `@prisma/adapter-pg` with `pg` pool in `src/lib/prisma.ts` for application runtime.
+- **Seeding**: Uses `prisma/seed.ts` with the adapter pattern.
 
 ### PWA Development
 
