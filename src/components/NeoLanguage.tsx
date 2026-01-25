@@ -6,8 +6,8 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   getUserLanguageAndCommunity,
-  getCommunities,
-  setMyCommunity,
+  getTargetLanguages,
+  setMyTargetLanguage,
 } from '@/actions/language';
 
 interface NeoLanguageOption {
@@ -25,21 +25,20 @@ export default function NeoLanguage() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!user?.id) return;
-
-    const getCountries = async () => {
-      await getCommunities().then(({ data }) => {
+    const getLanguages = async () => {
+      await getTargetLanguages().then(({ data }) => {
         setNeoLanguages(data || []);
       });
     };
-    getCountries();
-    const fetchSelectedNeoLanguage = async () => {
-      await getUserLanguageAndCommunity(user.id || '').then(({ extra }) => {
-        setSelectedNeoLanguage(extra?.neoCommunityId || null);
+    getLanguages();
+    const fetchSelectedTargetLanguage = async () => {
+      await getUserLanguageAndCommunity(user?.id || '').then(({ extra }) => {
+        setSelectedNeoLanguage(extra?.targetLanguageId || null);
       });
     };
-    fetchSelectedNeoLanguage();
-  }, [user?.id]);
+    fetchSelectedTargetLanguage();
+  }, [user]);
+
   const handleBack = () => {
     router.back();
   };
@@ -54,7 +53,8 @@ export default function NeoLanguage() {
     const selectedLanguage = neoLanguages.find(
       lang => lang.id === selectedNeoLanguage
     );
-    await setMyCommunity(selectedNeoLanguage)
+
+    await setMyTargetLanguage(selectedNeoLanguage)
       .then(() => {
         setLoading(false);
         toast.success(`Neo Community set to ${selectedLanguage?.name}`);

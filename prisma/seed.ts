@@ -92,12 +92,30 @@ async function main() {
 
   console.log('Roles seeded successfully!');
 
+  // Seed UI Languages
+  const uiLanguages = [
+    { name: 'English', code: 'en', icon: 'GB', is_supported: true },
+    { name: 'French', code: 'fr', icon: 'FR', is_supported: false },
+    { name: 'Spanish', code: 'es', icon: 'ES', is_supported: false },
+  ];
+  for (const uiLang of uiLanguages) {
+    await prisma.uILanguage.upsert({
+      where: { code: uiLang.code },
+      update: { icon: uiLang.icon, is_supported: uiLang.is_supported },
+      create: uiLang,
+    });
+  }
+  console.log('UI Languages seeded successfully!');
+
+  // Seed HRL Languages (like English)
   for (const language of languages) {
     await prisma.language.upsert({
       where: { name: language.name },
       update: { icon: language.icon, is_supported: language.is_supported },
       create: {
         name: language.name,
+        code: language.name.toLowerCase().substring(0, 3),
+        type: 'HRL',
         icon: language.icon,
         is_supported: language.is_supported,
       },
@@ -105,18 +123,22 @@ async function main() {
   }
   console.log('Languages seeded successfully!');
 
-  for (const community of neoCommunities) {
-    await prisma.neoCommunities.upsert({
-      where: { name: community.name },
-      update: { short: community.short, flagIcon: community.flagIcon },
+  // Seed LRL Languages (Neo Communities)
+  for (const communityName of neoCommunities) {
+    await prisma.language.upsert({
+      where: { name: communityName.name },
+      update: {},
       create: {
-        name: community.name,
-        short: community.short,
-        flagIcon: community.flagIcon,
+        name: communityName.name,
+        code: communityName.name.toLowerCase().substring(0, 3),
+        type: 'LRL',
+        short: communityName.short,
+        icon: communityName.flagIcon,
+        is_supported: true,
       },
     });
   }
-  console.log('NeoCommunities seeded successfully!');
+  console.log('LRL Languages seeded successfully!');
 
   const partsOfSpeech = [
     { name: 'Noun', code: 'N' },
