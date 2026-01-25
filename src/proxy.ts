@@ -110,9 +110,16 @@ export async function proxy(request: NextRequest) {
     default:
       roleCopy = 'Explorer';
   }
+  //@todo use new convention
   response.cookies.set(
     'extra',
-    JSON.stringify({ role: roleCopy, uiLanguageId, targetLanguageId }),
+    JSON.stringify({
+      role: roleCopy,
+      languageId: uiLanguageId,
+      neoCommunityId: targetLanguageId,
+      neoCommunityName: userTargetLanguage?.language?.name,
+      neoCommunity: userTargetLanguage?.language,
+    }),
     {
       httpOnly: true,
     }
