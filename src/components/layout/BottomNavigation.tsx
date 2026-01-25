@@ -1,7 +1,14 @@
 import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Vote, Lightbulb, Book, Home, PlusSquare } from 'lucide-react';
+import {
+  Vote,
+  Lightbulb,
+  Book,
+  Home,
+  PlusSquare,
+  BookPlus,
+} from 'lucide-react';
 
 interface NavItemProps {
   icon: React.ReactNode;
@@ -43,9 +50,9 @@ export function BottomNavigation() {
       href: '/dictionary',
     },
     {
-      icon: <PlusSquare className="w-5 h-5" />,
-      label: pathname === '/request' ? 'Request' : '',
-      href: '/request',
+      icon: <BookPlus className="w-5 h-5" />,
+      label: pathname === '/dictionary/request' ? 'Request' : '',
+      href: '/dictionary/request',
     },
     {
       icon: <Vote className="w-5 h-5" />,
