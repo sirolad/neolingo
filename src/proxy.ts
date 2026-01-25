@@ -5,6 +5,7 @@ import {
   completeOnboardingForUser,
   isOnboardingCompleted,
 } from '@/lib/onboarding';
+import { getUserContext } from '@/actions/auth';
 
 const PUBLIC_ROUTES = [
   '/signin',
@@ -72,24 +73,10 @@ export async function proxy(request: NextRequest) {
   let {
     data: { user },
   } = await supabase.auth.getUser();
-  const userRole = user
-    ? await prisma.userRole.findFirst({
-        where: { userId: user?.id },
-        include: { role: true },
-      })
-    : null;
-  const userTargetLanguage = user
-    ? await prisma.userTargetLanguage.findFirst({
-        where: { userId: user?.id },
-        include: { language: true },
-      })
-    : null;
-  const userProfile = user
-    ? await prisma.userProfile.findFirst({
-        where: { userId: user?.id },
-        include: { uiLanguage: true },
-      })
-    : null;
+
+  const { userRole, userTargetLanguage, userProfile } = user
+    ? await getUserContext(user.id)
+    : { userRole: null, userTargetLanguage: null, userProfile: null };
   const roleName = userRole?.role?.name;
   const uiLanguageId = userProfile?.uiLanguageId;
   const targetLanguageId = userTargetLanguage?.languageId;

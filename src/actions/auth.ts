@@ -67,3 +67,26 @@ export async function isUserOnboardingCompleted(
   });
   return profile?.onboardingCompleted ?? false;
 }
+
+export async function getUserContext(userId: string) {
+  const [userRole, userTargetLanguage, userProfile] = await Promise.all([
+    prisma.userRole.findFirst({
+      where: { userId },
+      include: { role: true },
+    }),
+    prisma.userTargetLanguage.findFirst({
+      where: { userId },
+      include: { language: true },
+    }),
+    prisma.userProfile.findFirst({
+      where: { userId },
+      include: { uiLanguage: true },
+    }),
+  ]);
+
+  return {
+    userRole,
+    userTargetLanguage,
+    userProfile,
+  };
+}
