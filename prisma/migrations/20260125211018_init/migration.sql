@@ -7,6 +7,7 @@ CREATE TABLE "ui_languages" (
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "icon" TEXT,
+    "is_supported" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "ui_languages_pkey" PRIMARY KEY ("id")
 );
