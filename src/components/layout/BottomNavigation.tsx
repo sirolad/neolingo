@@ -1,14 +1,7 @@
 import React from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
-import {
-  Vote,
-  Lightbulb,
-  Book,
-  Home,
-  PlusSquare,
-  BookPlus,
-} from 'lucide-react';
+import { Vote, Lightbulb, Book, Home, BookPlus } from 'lucide-react';
 
 interface NavItemProps {
   icon: React.ReactNode;
