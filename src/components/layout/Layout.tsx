@@ -33,6 +33,12 @@ const Layout: React.FC<LayoutProps> = ({
         ];
       case 'home':
         return ['min-h-screen bg-neutral-50', 'flex flex-col'];
+      case 'fullbleed':
+        return [
+          'min-h-screen bg-white',
+          'flex flex-col',
+          'relative overflow-hidden',
+        ];
       default:
         return ['min-h-screen bg-white', 'flex flex-col'];
     }
@@ -54,7 +60,8 @@ const Layout: React.FC<LayoutProps> = ({
           variant === 'auth' && 'px-6 py-8',
           variant === 'home' && !shouldShowNavigation && 'px-4 py-4',
           variant === 'home' && shouldShowNavigation && 'md:px-0 md:py-0', // Remove padding on desktop when nav is present
-          shouldShowNavigation && 'pb-20 md:pb-0' // Add bottom padding for mobile nav
+          variant === 'fullbleed' && 'p-0', // No padding for fullbleed
+          shouldShowNavigation && variant !== 'fullbleed' && 'pb-20 md:pb-0' // Add bottom padding for mobile nav
         )}
       >
         {children}

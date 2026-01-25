@@ -92,7 +92,7 @@ export default function HomePage() {
                   word="Ask the community to mine Neos"
                   ctatext="Word on your mind"
                   variant="request"
-                  onHandleClick={() => handleCta('/request')}
+                  onHandleClick={() => handleCta('/dictionary/request')}
                 />
                 {/* Suggestion Card */}
                 <CtaCard

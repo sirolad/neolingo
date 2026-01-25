@@ -111,6 +111,14 @@ See `TESTING.md` for comprehensive testing guide and best practices.
 
 The project uses ESLint with Next.js configuration. Always run `npm run lint` before committing changes.
 
+### Database & Prisma
+
+**Version**: Prisma 7 (v7.x)
+- **Configuration**: `prisma.config.ts` (TypeScript config) is used instead of just `schema.prisma`.
+- **Connection**: Uses `DIRECT_URL` in `prisma.config.ts` for CLI migrations to bypass Supabase transaction pooler.
+- **Runtime**: Uses `@prisma/adapter-pg` with `pg` pool in `src/lib/prisma.ts` for application runtime.
+- **Seeding**: Uses `prisma/seed.ts` with the adapter pattern.
+
 ### PWA Development
 
 Icons are generated via scripts in the `/scripts` folder. The app includes comprehensive PWA metadata and offline support.

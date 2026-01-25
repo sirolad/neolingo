@@ -73,7 +73,7 @@ export interface NavItemProps {
 export interface LayoutProps {
   children: React.ReactNode;
   className?: string;
-  variant?: 'default' | 'auth' | 'home';
+  variant?: 'default' | 'auth' | 'home' | 'fullbleed';
   backgroundGradient?: boolean;
   showNavigation?: boolean;
 }

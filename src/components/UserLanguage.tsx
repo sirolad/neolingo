@@ -9,8 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/Button';
 import {
   getUserLanguageAndCommunity,
-  listLanguages,
-  setMyLanguage,
+  listUILanguages,
+  setMyUILanguage,
 } from '@/actions/language';
 
 interface LanguageOption {
@@ -37,12 +37,12 @@ export default function UserLanguage() {
     const fetchData = async () => {
       try {
         const [languagesResult, userLanguageResult] = await Promise.all([
-          listLanguages(),
+          listUILanguages(),
           getUserLanguageAndCommunity(user.id),
         ]);
 
         setLanguages(languagesResult?.data || []);
-        setSelectedLanguage(userLanguageResult?.extra?.languageId ?? null);
+        setSelectedLanguage(userLanguageResult?.extra?.uiLanguageId ?? null);
       } catch (error) {
         console.error('Failed to fetch languages or user language:', error);
       }
@@ -71,7 +71,7 @@ export default function UserLanguage() {
 
     try {
       const selected = languages.find(lang => lang.id === selectedLanguage);
-      await setMyLanguage(selectedLanguage);
+      await setMyUILanguage(selectedLanguage);
       toast.success(`Language set to ${selected?.name}`);
       router.push('/neo-language-setup');
     } catch (err) {
