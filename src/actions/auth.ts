@@ -40,21 +40,19 @@ export async function resetPassword(
 }
 
 export async function setCompleteOnboardingForUser(
-  userId: string,
-  uiLanguageId: number
+  userId: string
 ): Promise<void> {
-  const supported_languages = await prisma.language.findMany({
+  const uiLanguages = await prisma.uILanguage.findMany({
     where: { is_supported: true },
-    select: { id: true },
+    take: 1,
   });
-  const languageId =
-    supported_languages.length > 0 ? supported_languages[0].id : 1;
+  const languageId = uiLanguages.length > 0 ? uiLanguages[0].id : 1;
   await prisma.userProfile.upsert({
     where: { userId },
     update: { onboardingCompleted: true },
     create: {
       userId,
-      uiLanguageId,
+      uiLanguageId: languageId,
       onboardingCompleted: true,
     },
   });

@@ -94,14 +94,14 @@ async function main() {
 
   // Seed UI Languages
   const uiLanguages = [
-    { name: 'English', code: 'en', icon: 'GB' },
-    { name: 'French', code: 'fr', icon: 'FR' },
-    { name: 'Spanish', code: 'es', icon: 'ES' },
+    { name: 'English', code: 'en', icon: 'GB', is_supported: true },
+    { name: 'French', code: 'fr', icon: 'FR', is_supported: false },
+    { name: 'Spanish', code: 'es', icon: 'ES', is_supported: false },
   ];
   for (const uiLang of uiLanguages) {
     await prisma.uILanguage.upsert({
       where: { code: uiLang.code },
-      update: { icon: uiLang.icon },
+      update: { icon: uiLang.icon, is_supported: uiLang.is_supported },
       create: uiLang,
     });
   }

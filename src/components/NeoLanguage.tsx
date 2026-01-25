@@ -53,16 +53,17 @@ export default function NeoLanguage() {
     const selectedLanguage = neoLanguages.find(
       lang => lang.id === selectedNeoLanguage
     );
+
     await setMyTargetLanguage(selectedNeoLanguage)
       .then(() => {
         setLoading(false);
-        toast.success(`Target Language set to ${selectedLanguage?.name}`);
+        toast.success(`Neo Community set to ${selectedLanguage?.name}`);
         router.push('/home');
       })
       .catch(err => {
         setLoading(false);
         console.error(err);
-        toast.error('An error occurred while setting Target Language.');
+        toast.error('An error occurred while setting Neo Community.');
       });
   };
 

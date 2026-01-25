@@ -109,6 +109,24 @@ export async function setMyTargetLanguage(
       return { success: false, error: 'Unauthorized' };
     }
 
+    // Ensure user profile exists before creating relation
+    // We need to fetch a default UI language (usually English) if creating a profile
+    const uiLanguages = await prisma.uILanguage.findMany({
+      where: { is_supported: true },
+      take: 1,
+    });
+    const defaultUiLanguageId = uiLanguages.length > 0 ? uiLanguages[0].id : 1;
+
+    await prisma.userProfile.upsert({
+      where: { userId: user.id },
+      update: {}, // Don't change anything if it exists
+      create: {
+        userId: user.id,
+        name: user.user_metadata?.name || '',
+        uiLanguageId: defaultUiLanguageId,
+      },
+    });
+
     await prisma.userTargetLanguage.deleteMany({ where: { userId: user.id } });
     await prisma.userTargetLanguage.create({
       data: { userId: user.id, languageId },

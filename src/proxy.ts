@@ -92,6 +92,7 @@ export async function proxy(request: NextRequest) {
   const roleName = userRole?.role?.name;
   const uiLanguageId = userProfile?.uiLanguageId;
   const targetLanguageId = userTargetLanguage?.languageId;
+  const isUserOnboardingCompleted = userProfile?.onboardingCompleted || false;
   let roleCopy = 'Explorer';
   switch (roleName) {
     case 'ADMIN':
@@ -156,14 +157,15 @@ export async function proxy(request: NextRequest) {
   ) {
     const onboardingCompleted = await isOnboardingCompleted(user.id);
     if (!onboardingCompleted) {
-      if (!uiLanguageId) {
-        const redirectUrl = new URL('/language-setup', request.url);
-        return NextResponse.redirect(redirectUrl);
-      } else if (!targetLanguageId) {
+      // if (!uiLanguageId) {
+      //   const redirectUrl = new URL('/language-setup', request.url);
+      //   return NextResponse.redirect(redirectUrl);
+      // } else
+      if (!targetLanguageId) {
         const redirectUrl = new URL('/neo-language-setup', request.url);
         return NextResponse.redirect(redirectUrl);
-      } else if (uiLanguageId && targetLanguageId) {
-        await completeOnboardingForUser(user.id, uiLanguageId);
+      } else if (targetLanguageId && !isUserOnboardingCompleted) {
+        await completeOnboardingForUser(user.id);
       }
     }
   }

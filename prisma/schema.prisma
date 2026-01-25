@@ -13,6 +13,7 @@ model UILanguage {
   name          String        @unique  // "English", "Spanish"
   code          String        @unique  // "en", "es"
   icon          String?
+  is_supported  Boolean       @default(false)
   userProfiles  UserProfile[]
   
   @@map("ui_languages")
