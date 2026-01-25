@@ -6,6 +6,7 @@ import {
   getTargetLanguagesForDict,
   getPartsOfSpeech,
   getUserProfileForRequest,
+  getAllDomains,
 } from '@/actions/dictionary';
 import { RequestForm } from '@/components/dictionary/RequestForm';
 import { Layout } from '@/components/layout/Layout';
@@ -31,6 +32,9 @@ export default function RequestNeoPage() {
   const [userTargetLanguages, setUserTargetLanguages] = useState<Language[]>(
     []
   );
+  const [availableDomains, setAvailableDomains] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -46,18 +50,22 @@ export default function RequestNeoPage() {
 
   const loadPageData = async () => {
     try {
-      const [srcLangs, tgtLangs, pos, userProfile] = await Promise.all([
-        getSourceLanguages(),
-        getTargetLanguagesForDict(),
-        getPartsOfSpeech(),
-        appUser?.id
-          ? getUserProfileForRequest(appUser.id)
-          : Promise.resolve(null),
-      ]);
+      const [srcLangs, tgtLangs, pos, userProfile, domains] = await Promise.all(
+        [
+          getSourceLanguages(),
+          getTargetLanguagesForDict(),
+          getPartsOfSpeech(),
+          appUser?.id
+            ? getUserProfileForRequest(appUser.id)
+            : Promise.resolve(null),
+          getAllDomains(),
+        ]
+      );
 
       setSourceLanguages(srcLangs);
       setTargetLanguages(tgtLangs);
       setPartsOfSpeech(pos);
+      setAvailableDomains(domains);
 
       if (
         userProfile?.targetLanguages &&
@@ -97,7 +105,7 @@ export default function RequestNeoPage() {
     <Layout variant="fullbleed">
       <div className="flex flex-col h-full">
         {/* Header */}
-        <div className="px-4 md:px-6 lg:px-8 pt-16 md:pt-6 lg:pt-8">
+        <div className="px-4 md:px-6 lg:px-8 pt-16 md:pt-6 lg:pt-8 w-full max-w-2xl mx-auto">
           <div className="flex items-center gap-3 mb-2">
             <Link
               href="/dictionary"
@@ -107,10 +115,10 @@ export default function RequestNeoPage() {
             </Link>
             <h1 className="text-2xl text-neutral-900 px-16">Request A Neo</h1>
           </div>
+          <p className="text-neutral-500 mb-8 ml-4">
+            Nominate a word in search for its Neos
+          </p>
         </div>
-        <p className="text-neutral-500 mb-8 ml-4">
-          Nominate a word in search for its Neos
-        </p>
 
         {/* Content Area */}
         <div className="flex-1 flex flex-col items-center justify-center px-4 md:px-6 lg:px-8 py-2">
@@ -123,6 +131,7 @@ export default function RequestNeoPage() {
                 targetLanguages={targetLanguages}
                 showButton={false}
                 userTargetLanguages={userTargetLanguages}
+                availableDomains={availableDomains}
               />
             </div>
             <Button

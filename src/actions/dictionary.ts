@@ -155,6 +155,17 @@ export async function getUserProfileForRequest(userId: string) {
   }
 }
 
+export async function getAllDomains() {
+  try {
+    return await prisma.domain.findMany({
+      orderBy: { name: 'asc' },
+    });
+  } catch (error) {
+    console.error('Failed to fetch all domains:', error);
+    return [];
+  }
+}
+
 export async function searchDomains(query: string) {
   if (!query || query.length < 2) return [];
   try {

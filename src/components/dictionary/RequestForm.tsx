@@ -29,6 +29,7 @@ interface RequestFormProps {
   targetLanguages: { id: number; name: string }[];
   showButton?: boolean;
   userTargetLanguages?: Array<{ id: number; name: string }>;
+  availableDomains?: Array<{ id: number; name: string }>;
 }
 
 export function RequestForm({
@@ -37,6 +38,7 @@ export function RequestForm({
   targetLanguages,
   showButton = true,
   userTargetLanguages,
+  availableDomains = [],
 }: RequestFormProps) {
   const { appUser } = useAuth();
   const router = useRouter();
@@ -47,8 +49,34 @@ export function RequestForm({
 
   const [domainInput, setDomainInput] = useState('');
   const [domains, setDomains] = useState<string[]>([]);
+  const [domainSuggestions, setDomainSuggestions] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
 
-  // Determine default languages: user's first target language for target, first source language for source
+  // Filter domains based on input
+  useEffect(() => {
+    if (domainInput.trim().length > 0) {
+      const filtered = availableDomains.filter(
+        d =>
+          d.name.toLowerCase().includes(domainInput.toLowerCase()) &&
+          !domains.includes(d.name)
+      );
+      setDomainSuggestions(filtered);
+    } else {
+      setDomainSuggestions([]);
+    }
+  }, [domainInput, availableDomains, domains]);
+
+  const handleAddDomain = (domainToAdd?: string) => {
+    const value = domainToAdd || domainInput.trim();
+    if (value && !domains.includes(value)) {
+      const newDomains = [...domains, value];
+      setDomains(newDomains);
+      form.setValue('domains', newDomains);
+      setDomainInput('');
+      setDomainSuggestions([]);
+    }
+  };
   const englishId = sourceLanguages.find(l => l.name === 'English')?.id || 1;
   const userLangId = userTargetLanguages?.[0]?.id || targetLanguages[0]?.id;
   const userLangName =
@@ -84,15 +112,6 @@ export function RequestForm({
     }
   }, [appUser, form]);
 
-  const handleAddDomain = () => {
-    if (domainInput.trim() && !domains.includes(domainInput.trim())) {
-      const newDomains = [...domains, domainInput.trim()];
-      setDomains(newDomains);
-      form.setValue('domains', newDomains);
-      setDomainInput('');
-    }
-  };
-
   const handleRemoveDomain = (domainToRemove: string) => {
     const newDomains = domains.filter(d => d !== domainToRemove);
     setDomains(newDomains);
@@ -104,6 +123,10 @@ export function RequestForm({
       e.preventDefault();
       handleAddDomain();
     }
+  };
+
+  const handleSuggestionClick = (domainName: string) => {
+    handleAddDomain(domainName);
   };
 
   return (
@@ -270,22 +293,41 @@ export function RequestForm({
               <label className="text-sm font-medium text-neutral-700">
                 Related Domains
               </label>
-              <div className="flex gap-2 mb-2">
-                <Input
-                  value={domainInput}
-                  onChange={e => setDomainInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="e.g. medical, law (Press Enter)"
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleAddDomain}
-                  className="px-3"
-                >
-                  <Plus className="w-5 h-5" />
-                </Button>
+              <div className="relative">
+                <div className="flex gap-2 mb-2">
+                  <Input
+                    value={domainInput}
+                    onChange={e => setDomainInput(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    placeholder="e.g. medical, law (Press Enter)"
+                    className="flex-1"
+                    autoComplete="off"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => handleAddDomain()}
+                    className="px-3"
+                  >
+                    <Plus className="w-5 h-5" />
+                  </Button>
+                </div>
+
+                {/* Domain Suggestions */}
+                {domainSuggestions.length > 0 && (
+                  <div className="absolute z-10 w-full bg-white border border-neutral-200 rounded-lg shadow-lg max-h-48 overflow-y-auto mt-1">
+                    {domainSuggestions.map(domain => (
+                      <button
+                        key={domain.id}
+                        type="button"
+                        onClick={() => handleSuggestionClick(domain.name)}
+                        className="w-full text-left px-4 py-2 hover:bg-neutral-50 text-sm text-neutral-700 transition-colors"
+                      >
+                        {domain.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               {domains.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-2">

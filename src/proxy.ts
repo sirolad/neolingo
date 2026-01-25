@@ -81,6 +81,7 @@ export async function proxy(request: NextRequest) {
   const userTargetLanguage = user
     ? await prisma.userTargetLanguage.findFirst({
         where: { userId: user?.id },
+        include: { language: true },
       })
     : null;
   const userProfile = user
