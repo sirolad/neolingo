@@ -49,11 +49,12 @@ export function RequestForm({
   const [domains, setDomains] = useState<string[]>([]);
 
   // Determine default languages: user's first target language for target, first source language for source
-  const defaultSourceLanguageId =
-    sourceLanguages.find(l => l.name === 'English')?.id ||
-    sourceLanguages[0]?.id;
-  const defaultTargetLanguageId =
-    userTargetLanguages?.[0]?.id || targetLanguages[0]?.id;
+  const englishId = sourceLanguages.find(l => l.name === 'English')?.id || 1;
+  const userLangId = userTargetLanguages?.[0]?.id || targetLanguages[0]?.id;
+  const userLangName =
+    userTargetLanguages?.[0]?.name || targetLanguages[0]?.name;
+
+  const [selectedSourceId, setSelectedSourceId] = useState<number>(englishId);
 
   const form = useForm<RequestFormValues>({
     resolver: zodResolver(requestSchema) as any,
@@ -61,13 +62,20 @@ export function RequestForm({
     defaultValues: {
       word: '',
       meaning: '',
-      sourceLanguageId: defaultSourceLanguageId || 1,
-      targetLanguageId: defaultTargetLanguageId || 1,
+      sourceLanguageId: englishId,
+      targetLanguageId: userLangId,
       partOfSpeechId: 0,
       userId: appUser?.id || '',
       domains: [],
     },
   });
+
+  // Update target language when source changes or userLang loads
+  useEffect(() => {
+    const targetId = selectedSourceId === englishId ? userLangId : englishId;
+    form.setValue('sourceLanguageId', selectedSourceId);
+    form.setValue('targetLanguageId', targetId);
+  }, [selectedSourceId, userLangId, englishId, form]);
 
   // Update hidden userId field when auth loads
   useEffect(() => {
@@ -130,70 +138,73 @@ export function RequestForm({
           >
             <input type="hidden" name="userId" value={appUser?.id || ''} />
 
-            {/* Source Language Selection */}
+            {/* Language Selection - Radio Style Source Toggle */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-neutral-700">
-                Source Language
+                Source Language (Select one)
               </label>
               <input
                 type="hidden"
                 name="sourceLanguageId"
-                value={form.watch('sourceLanguageId')}
+                value={selectedSourceId}
               />
-              <Select
-                onValueChange={val =>
-                  form.setValue('sourceLanguageId', Number(val))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select source language" />
-                </SelectTrigger>
-                <SelectContent>
-                  {sourceLanguages.map(lang => (
-                    <SelectItem key={lang.id} value={lang.id.toString()}>
-                      {lang.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {state.errors?.sourceLanguageId && (
-                <p className="text-red-500 text-sm mt-1">
-                  {state.errors.sourceLanguageId[0]}
-                </p>
-              )}
-            </div>
-
-            {/* Target Language Selection */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-700">
-                Target Language
-              </label>
               <input
                 type="hidden"
                 name="targetLanguageId"
-                value={form.watch('targetLanguageId')}
+                value={selectedSourceId === englishId ? userLangId : englishId}
               />
-              <Select
-                onValueChange={val =>
-                  form.setValue('targetLanguageId', Number(val))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select target language" />
-                </SelectTrigger>
-                <SelectContent>
-                  {targetLanguages.map(lang => (
-                    <SelectItem key={lang.id} value={lang.id.toString()}>
-                      {lang.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {state.errors?.targetLanguageId && (
-                <p className="text-red-500 text-sm mt-1">
-                  {state.errors.targetLanguageId[0]}
-                </p>
-              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* English Option */}
+                <div
+                  onClick={() => setSelectedSourceId(englishId)}
+                  className={`p-4 rounded-lg border cursor-pointer flex items-center justify-between transition-colors ${
+                    selectedSourceId === englishId
+                      ? 'bg-white border-[rgba(17,17,17,0.15)]'
+                      : 'bg-[#F4F4F4] border-transparent'
+                  }`}
+                >
+                  <span className="text-sm font-normal text-[#111111]">
+                    English
+                  </span>
+                  <div
+                    className={`w-[22px] h-[22px] rounded-full border-[1.5px] flex items-center justify-center ${
+                      selectedSourceId === englishId
+                        ? 'border-[#111111]'
+                        : 'border-[rgba(17,17,17,0.3)]'
+                    }`}
+                  >
+                    {selectedSourceId === englishId && (
+                      <div className="w-[10px] h-[10px] bg-[#111111] rounded-full"></div>
+                    )}
+                  </div>
+                </div>
+
+                {/* User Language Option */}
+                <div
+                  onClick={() => setSelectedSourceId(userLangId)}
+                  className={`p-4 rounded-lg border cursor-pointer flex items-center justify-between transition-colors ${
+                    selectedSourceId === userLangId
+                      ? 'bg-white border-[rgba(17,17,17,0.15)]'
+                      : 'bg-[#F4F4F4] border-transparent'
+                  }`}
+                >
+                  <span className="text-sm font-normal text-[#111111]">
+                    {userLangName}
+                  </span>
+                  <div
+                    className={`w-[22px] h-[22px] rounded-full border-[1.5px] flex items-center justify-center ${
+                      selectedSourceId === userLangId
+                        ? 'border-[#111111]'
+                        : 'border-[rgba(17,17,17,0.3)]'
+                    }`}
+                  >
+                    {selectedSourceId === userLangId && (
+                      <div className="w-[10px] h-[10px] bg-[#111111] rounded-full"></div>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Word Input */}
