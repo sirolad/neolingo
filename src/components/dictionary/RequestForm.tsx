@@ -30,6 +30,7 @@ interface RequestFormProps {
   showButton?: boolean;
   userTargetLanguages?: Array<{ id: number; name: string }>;
   availableDomains?: Array<{ id: number; name: string }>;
+  userId?: string;
 }
 
 export function RequestForm({
@@ -39,8 +40,10 @@ export function RequestForm({
   showButton = true,
   userTargetLanguages,
   availableDomains = [],
+  userId,
 }: RequestFormProps) {
   const { appUser } = useAuth();
+  const currentUserId = userId || appUser?.id || '';
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(submitRequest, {
     success: false,
@@ -93,7 +96,7 @@ export function RequestForm({
       sourceLanguageId: englishId,
       targetLanguageId: userLangId,
       partOfSpeechId: 0,
-      userId: appUser?.id || '',
+      userId: currentUserId,
       domains: [],
     },
   });
@@ -105,12 +108,12 @@ export function RequestForm({
     form.setValue('targetLanguageId', targetId);
   }, [selectedSourceId, userLangId, englishId, form]);
 
-  // Update hidden userId field when auth loads
+  // Update hidden userId field when auth loads or prop changes
   useEffect(() => {
-    if (appUser) {
-      form.setValue('userId', appUser.id);
+    if (currentUserId) {
+      form.setValue('userId', currentUserId);
     }
-  }, [appUser, form]);
+  }, [currentUserId, form]);
 
   const handleRemoveDomain = (domainToRemove: string) => {
     const newDomains = domains.filter(d => d !== domainToRemove);
@@ -159,7 +162,7 @@ export function RequestForm({
             }}
             className="space-y-5"
           >
-            <input type="hidden" name="userId" value={appUser?.id || ''} />
+            <input type="hidden" name="userId" value={currentUserId} />
 
             {/* Language Selection - Radio Style Source Toggle */}
             <div className="space-y-2">
