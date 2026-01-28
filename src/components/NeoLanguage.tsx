@@ -1,43 +1,30 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
-import { useAuth } from '@/contexts/AuthContext';
-import {
-  getUserLanguageAndCommunity,
-  getTargetLanguages,
-  setMyTargetLanguage,
-} from '@/actions/language';
+import { setMyTargetLanguage } from '@/actions/language';
 
 interface NeoLanguageOption {
   id: number;
   name: string;
 }
 
-export default function NeoLanguage() {
+interface NeoLanguageProps {
+  languages: NeoLanguageOption[];
+  initialSelectedId: number | null;
+}
+
+export default function NeoLanguage({
+  languages,
+  initialSelectedId,
+}: NeoLanguageProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [selectedNeoLanguage, setSelectedNeoLanguage] = useState<number | null>(
-    null
+    initialSelectedId
   );
-  const [neoLanguages, setNeoLanguages] = useState<NeoLanguageOption[]>([]);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    const getLanguages = async () => {
-      await getTargetLanguages().then(({ data }) => {
-        setNeoLanguages(data || []);
-      });
-    };
-    getLanguages();
-    const fetchSelectedTargetLanguage = async () => {
-      await getUserLanguageAndCommunity(user?.id || '').then(({ extra }) => {
-        setSelectedNeoLanguage(extra?.targetLanguageId || null);
-      });
-    };
-    fetchSelectedTargetLanguage();
-  }, [user]);
+  const [neoLanguages] = useState<NeoLanguageOption[]>(languages);
 
   const handleBack = () => {
     router.back();
