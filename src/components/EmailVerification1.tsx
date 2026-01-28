@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export default function EmailVerification1() {
   const router = useRouter();
@@ -65,60 +66,13 @@ export default function EmailVerification1() {
       <div className="flex-1 flex flex-col items-center px-6 md:px-8 lg:px-12 pt-[220px] md:pt-[260px] lg:pt-[300px]">
         {/* Email Illustration */}
         <div className="w-[310px] md:w-[380px] lg:w-[450px] h-[300px] md:h-[360px] lg:h-[420px] mb-11 md:mb-14 lg:mb-16 relative">
-          {/* Simplified email illustration */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-64 md:w-80 lg:w-96 h-48 md:h-60 lg:h-72 bg-white border-2 md:border-3 lg:border-4 border-[#111111] rounded-lg md:rounded-xl lg:rounded-2xl relative shadow-lg">
-              {/* Email envelope */}
-              <div className="absolute top-4 md:top-6 lg:top-8 left-4 md:left-6 lg:left-8 right-4 md:right-6 lg:right-8 bottom-4 md:bottom-6 lg:bottom-8 border border-[#D9D9D9] rounded md:rounded-lg">
-                <div className="absolute top-2 md:top-3 lg:top-4 left-2 md:left-3 lg:left-4 right-2 md:right-3 lg:right-4">
-                  <div className="flex items-center justify-center h-8 md:h-10 lg:h-12 bg-[#F0F0F0] rounded md:rounded-lg">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      className="text-[#111111] md:w-7 md:h-7 lg:w-8 lg:h-8"
-                    >
-                      <path
-                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                      <polyline
-                        points="22,6 12,13 2,6"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div className="absolute bottom-2 md:bottom-3 lg:bottom-4 left-2 md:left-3 lg:left-4 right-2 md:right-3 lg:right-4 space-y-1 md:space-y-2">
-                  <div className="h-1 md:h-1.5 lg:h-2 bg-[#D9D9D9] rounded w-3/4"></div>
-                  <div className="h-1 md:h-1.5 lg:h-2 bg-[#D9D9D9] rounded w-1/2"></div>
-                  <div className="h-1 md:h-1.5 lg:h-2 bg-[#D9D9D9] rounded w-2/3"></div>
-                </div>
-              </div>
-
-              {/* Checkmark or verification symbol */}
-              <div className="absolute -top-4 md:-top-6 lg:-top-8 -right-4 md:-right-6 lg:-right-8 w-12 md:w-16 lg:w-20 h-12 md:h-16 lg:h-20 bg-[#111111] rounded-full flex items-center justify-center shadow-lg">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  className="text-white md:w-6 md:h-6 lg:w-7 lg:h-7"
-                >
-                  <path
-                    d="M9 12l2 2 4-4"
-                    stroke="currentColor"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
+          <Image
+            src="/assets/email-verification/account-created.png"
+            alt="Account created illustration"
+            fill
+            className="object-contain"
+            priority
+          />
         </div>
 
         {/* Content */}
