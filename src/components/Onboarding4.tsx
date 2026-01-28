@@ -118,11 +118,11 @@ export default function Onboarding4() {
             {/* Text Content */}
             <div className="text-center lg:text-left space-y-3 md:space-y-4 lg:space-y-5">
               <h1 className="text-[26px] md:text-[32px] lg:text-[38px] xl:text-[42px] font-medium leading-[36px] md:leading-[42px] lg:leading-[48px] xl:leading-[52px] tracking-[-0.5px] text-[#111111] font-[Parkinsans]">
-                Suggest Words Your Way
+                Solve for Your Mother Tongue
               </h1>
               <p className="text-[14px] md:text-[17px] lg:text-[19px] xl:text-[21px] font-normal leading-[21px] md:leading-[25px] lg:leading-[28px] xl:leading-[31px] text-[rgba(17,17,17,0.8)] font-[Metropolis] max-w-lg mx-auto lg:mx-0">
-                Suggest words, adaptive, functional, rooted, or playful. Every
-                idea helps shape the dictionary.
+                Every Neo gives your mother tongue a chance to survive in the
+                21st Century world.
               </p>
             </div>
 
