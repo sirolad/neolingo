@@ -3,22 +3,26 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Vote, ArrowLeft, TrendingUp } from 'lucide-react';
+import {
+  Vote,
+  ArrowLeft,
+  TrendingUp,
+  Trash,
+  RefreshCcwDot,
+} from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { WordCard } from '@/components/ui/WordCard';
 import { useAuth } from '@/contexts/AuthContext';
 import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
+import { WordOfTheDay } from '@/components/ui/WordOfTheDay';
+import AudioPlayer from '@/components/AudioPlayer';
+import { Button } from '@/components/ui/Button';
 
-interface WordSuggestion {
+interface ComunitySuggestion {
   id: string;
-  englishWord: string;
-  yorubaWord: string;
-  definition: string;
-  context?: string;
+  communityWord: string;
+  audioUrl?: string;
   votes: number;
-  submittedBy: string;
-  timeAgo: string;
-  userHasVoted: boolean;
 }
 
 export default function VotePage() {
@@ -26,7 +30,9 @@ export default function VotePage() {
   const { appUser, isLoading: authLoading, userNeoCommunity } = useAuth();
   const [loading, setLoading] = useState(true);
   // const [refreshing, setRefreshing] = useState(false);
-  const [suggestions, setSuggestions] = useState<WordSuggestion[]>([]);
+  const [suggestions, setSuggestions] = useState<ComunitySuggestion[]>([]);
+  const [myVotes, setMyVotes] = useState<string[]>(['2']);
+  const [currentWord, setCurrentWord] = useState<string>('Tripod');
 
   useEffect(() => {
     if (authLoading) return;
@@ -42,52 +48,30 @@ export default function VotePage() {
 
   const loadSuggestions = () => {
     // Mock data for word suggestions
-    const mockSuggestions: WordSuggestion[] = [
+    const mockSuggestions: ComunitySuggestion[] = [
       {
         id: '1',
-        englishWord: 'Beautiful',
-        yorubaWord: 'Lẹwa',
-        definition: 'Having beauty; aesthetically pleasing',
-        context:
-          'Mo ri obirin lẹwa kan ni oja (I saw a beautiful woman at the market)',
-        votes: 12,
-        submittedBy: 'Adunni',
-        timeAgo: '2 hours ago',
-        userHasVoted: false,
+        communityWord: 'Apo elese meta',
+        audioUrl: '/audio/short-11-237304.mp3',
+        votes: 5,
       },
       {
         id: '2',
-        englishWord: 'Wisdom',
-        yorubaWord: 'Ọgbọn',
-        definition:
-          'The quality of having experience, knowledge, and good judgment',
-        context: 'Ọgbọn ju agbara lọ (Wisdom is better than strength)',
-        votes: 8,
-        submittedBy: 'Femi',
-        timeAgo: '5 hours ago',
-        userHasVoted: true,
+        communityWord: 'Igi meta',
+        audioUrl: '/audio/short-11-237304.mp3',
+        votes: 3,
       },
       {
         id: '3',
-        englishWord: 'Peace',
-        yorubaWord: 'Alafia',
-        definition: 'A state of tranquility or quiet; freedom from disturbance',
-        context: 'Alafia ni ọrọ to dara ju (Peace is the best thing)',
-        votes: 15,
-        submittedBy: 'Kemi',
-        timeAgo: '1 day ago',
-        userHasVoted: false,
+        communityWord: 'Aga elese meta',
+        audioUrl: '/audio/short-11-237304.mp3',
+        votes: 4,
       },
       {
         id: '4',
-        englishWord: 'Hope',
-        yorubaWord: 'Ireti',
-        definition:
-          'A feeling of expectation and desire for a certain thing to happen',
-        votes: 5,
-        submittedBy: 'Tunde',
-        timeAgo: '2 days ago',
-        userHasVoted: false,
+        communityWord: 'itile meta',
+        audioUrl: '/audio/short-11-237304.mp3',
+        votes: 6,
       },
     ];
     setSuggestions(mockSuggestions);
@@ -127,21 +111,21 @@ export default function VotePage() {
     router.push('/home');
   };
 
-  const handleVote = (suggestionId: string) => {
-    setSuggestions(prev =>
-      prev.map(suggestion =>
-        suggestion.id === suggestionId
-          ? {
-              ...suggestion,
-              votes: suggestion.userHasVoted
-                ? suggestion.votes - 1
-                : suggestion.votes + 1,
-              userHasVoted: !suggestion.userHasVoted,
-            }
-          : suggestion
-      )
-    );
-  };
+  // const handleVote = (suggestionId: string) => {
+  //   setSuggestions(prev =>
+  //     prev.map(suggestion =>
+  //       suggestion.id === suggestionId
+  //         ? {
+  //             ...suggestion,
+  //             votes: suggestion.userHasVoted
+  //               ? suggestion.votes - 1
+  //               : suggestion.votes + 1,
+  //             userHasVoted: !suggestion.userHasVoted,
+  //           }
+  //         : suggestion
+  //     )
+  //   );
+  // };
 
   // const handleRefresh = () => {
   //   setRefreshing(true);
@@ -166,7 +150,7 @@ export default function VotePage() {
             <span className="font-medium text-sm md:text-base">Back</span>
           </button>
           <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
-            Vote
+            Voting Lounge
           </h1>
           {/* <button
             onClick={handleRefresh}
@@ -188,94 +172,48 @@ export default function VotePage() {
         {/* Main Content */}
         <div className="flex-1 space-y-6 md:space-y-8 lg:space-y-10 pb-20 md:pb-8">
           {/* Header Card */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft p-6 md:p-8 lg:p-10 hover:shadow-lg transition-shadow"
-          >
-            <div className="flex items-center gap-3 md:gap-4 lg:gap-5 mb-4 md:mb-6">
-              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-blue-100 rounded-full md:rounded-2xl lg:rounded-3xl flex items-center justify-center">
-                <Vote className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-neutral-950">
-                  Vote for Word Suggestions
-                </h2>
-                <p className="text-neutral-600 text-sm md:text-base lg:text-lg">
-                  Help decide which words make it into our dictionary
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 md:gap-3 text-sm md:text-base text-neutral-600">
-              <TrendingUp className="w-4 h-4 md:w-5 md:h-5" />
-              <span>Sorted by most votes</span>
-            </div>
-          </motion.div>
+          <WordOfTheDay
+            word="Tripod"
+            definition="A three-legged stand or support, often used to hold a camera or other device steady."
+            partOfSpeech="noun"
+          />
 
           {/* Suggestions List - Responsive Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
+          <div className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-all hover:scale-[1.02]">
             {sortedSuggestions.map((suggestion, index) => (
               <motion.div
                 key={suggestion.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
-                className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-all hover:scale-[1.02]"
+                className="mx-6 md:mx-8 lg:mx-10 py-4 md:py-6 lg:py-8 border-b border-neutral-100 last:border-0"
               >
-                <div className="p-6 md:p-8">
-                  {/* Header with submission info */}
+                <div>
                   <div className="flex items-center justify-between mb-4 md:mb-6">
                     <div className="flex items-center gap-2 text-sm md:text-base text-neutral-600">
-                      <span>
-                        Suggested by{' '}
-                        <strong className="text-neutral-800">
-                          {suggestion.submittedBy}
-                        </strong>
-                      </span>
-                      <span>•</span>
-                      <span>{suggestion.timeAgo}</span>
+                      <span>{(index + 1).toString().padStart(2, '0')}.</span>
+                      <span>{suggestion.communityWord}</span>
                     </div>
-                    <div className="flex items-center gap-1 md:gap-2 text-sm md:text-base text-neutral-500 bg-neutral-100 px-2 md:px-3 py-1 md:py-1.5 rounded-full">
-                      <TrendingUp className="w-4 h-4 md:w-5 md:h-5" />
-                      <span>#{index + 1}</span>
+                    <div className="flex items-center gap-1 md:gap-2 text-sm md:text-base px-2 md:px-3 py-1 md:py-1.5 ">
+                      <AudioPlayer audioUrl={suggestion.audioUrl || ''} />
+                      <Button
+                        variant={
+                          myVotes.find(id => id == suggestion.id)
+                            ? 'default'
+                            : 'outline'
+                        }
+                        size="sm"
+                        onClick={() => {
+                          // Handle delete action
+                        }}
+                        className={`rounded-full ${myVotes.find(id => id == suggestion.id) ? 'bg-[#cdffce] text-[#2da529]' : 'border border-primary-500 text-primary-500'}`}
+                      >
+                        {myVotes.find(id => id == suggestion.id)
+                          ? 'Voted'
+                          : 'Vote ' + '\u00A0'}
+                      </Button>
                     </div>
                   </div>
-
-                  {/* Word Card */}
-                  <WordCard
-                    word={suggestion.yorubaWord}
-                    translation={suggestion.englishWord}
-                    definition={suggestion.definition}
-                    type="voting"
-                    bgColor={
-                      suggestion.userHasVoted ? 'bg-blue-50' : 'bg-neutral-50'
-                    }
-                    borderColor={
-                      suggestion.userHasVoted
-                        ? 'border-blue-200'
-                        : 'border-neutral-200'
-                    }
-                    tagColor="bg-blue-100 text-blue-800"
-                    tagText="Word Suggestion"
-                    votes={suggestion.votes}
-                    onAction={() => handleVote(suggestion.id)}
-                    actionText={suggestion.userHasVoted ? 'Voted' : 'Vote'}
-                    actionIcon={<Vote className="w-4 h-4 md:w-5 md:h-5" />}
-                    className="mb-4 md:mb-6 hover:scale-[1.01] transition-transform"
-                  />
-
-                  {/* Context if available */}
-                  {suggestion.context && (
-                    <div className="bg-neutral-50 hover:bg-neutral-100 transition-colors rounded-xl md:rounded-2xl p-4 md:p-5 lg:p-6">
-                      <h4 className="text-sm md:text-base font-medium text-neutral-800 mb-2 md:mb-3">
-                        Usage Example:
-                      </h4>
-                      <p className="text-sm md:text-base text-neutral-600 italic leading-relaxed">
-                        &quot;{suggestion.context}&quot;
-                      </p>
-                    </div>
-                  )}
                 </div>
               </motion.div>
             ))}
@@ -298,6 +236,25 @@ export default function VotePage() {
               </p>
             </motion.div>
           )}
+          <div className="flex flex-row w-90 justify-center">
+            <Button
+              variant="outline"
+              size="md"
+              onClick={handleGoBack}
+              className="mt-6 md:mt-8 lg:mt-10 h-12 md:h-14 lg:h-16 text-base md:text-lg font-medium rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all w-50"
+            >
+              Load More <RefreshCcwDot className="ml-2 w-5 h-5 md:w-6 md:h-6" />
+            </Button>
+            <Button
+              variant="outline"
+              size="md"
+              // onClick={handleSubmitAnother}
+              className="mt-6 md:mt-8 lg:mt-10 ml-4 h-12 md:h-14 lg:h-16 text-base md:text-lg font-medium rounded-full md:rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all w-50"
+            >
+              Next Word{' '}
+              <ArrowLeft className="rotate-180 ml-2 w-5 h-5 md:w-6 md:h-6" />
+            </Button>
+          </div>
         </div>
       </div>
     </Layout>
