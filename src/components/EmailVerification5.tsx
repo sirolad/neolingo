@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function EmailVerification5() {
   const router = useRouter();
@@ -23,29 +24,18 @@ export default function EmailVerification5() {
     <div className="min-h-screen bg-[#F4F4F4] flex flex-col">
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-5 md:px-8 lg:px-12 pt-[120px] md:pt-[140px] lg:pt-[160px] justify-center">
-        {/* Success Card */}
-        <div className="bg-white rounded-[20px] md:rounded-[24px] lg:rounded-[28px] border border-[#EFEFEF] p-8 md:p-10 lg:p-12 mx-auto w-full max-w-[390px] md:max-w-[480px] lg:max-w-[560px] text-center shadow-sm">
-          {/* Success Icon */}
-          <div className="mb-8 md:mb-10 lg:mb-12 flex justify-center">
-            <div className="w-[80px] h-[80px] md:w-[100px] md:h-[100px] lg:w-[120px] lg:h-[120px] bg-[#4CAF50] rounded-full flex items-center justify-center shadow-lg">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                className="md:w-[50px] md:h-[50px] lg:w-[60px] lg:h-[60px]"
-              >
-                <path
-                  d="M33.3333 10L15 28.3333L6.66666 20"
-                  stroke="white"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-          </div>
+        {/* Success Illustration */}
+        <div className="w-[310px] md:w-[380px] lg:w-[450px] h-[300px] md:h-[360px] lg:h-[420px] mb-11 md:mb-14 lg:mb-16 relative mx-auto">
+          <Image
+            src="/assets/email-verification/email-verified.png"
+            alt="Email verified illustration"
+            fill
+            className="object-contain"
+            priority
+          />
+        </div>
 
+        <div className="mx-auto w-full max-w-[390px] md:max-w-[480px] lg:max-w-[560px] text-center">
           {/* Success Message */}
           <div className="mb-8 md:mb-10 lg:mb-12">
             <h1 className="text-[28px] md:text-[32px] lg:text-[36px] font-medium leading-[34px] md:leading-[38px] lg:leading-[42px] text-[#292929] font-[Parkinsans] mb-4 md:mb-5 lg:mb-6">
