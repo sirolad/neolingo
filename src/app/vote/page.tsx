@@ -3,20 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import {
-  Vote,
-  ArrowLeft,
-  TrendingUp,
-  Trash,
-  RefreshCcwDot,
-} from 'lucide-react';
+import { Vote, ArrowLeft, RefreshCcwDot } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
-import { WordCard } from '@/components/ui/WordCard';
 import { useAuth } from '@/contexts/AuthContext';
 import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 import { WordOfTheDay } from '@/components/ui/WordOfTheDay';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Button } from '@/components/ui/Button';
+import { set } from 'zod';
 
 interface ComunitySuggestion {
   id: string;
@@ -44,6 +38,8 @@ export default function VotePage() {
 
     loadSuggestions();
     setLoading(false);
+    setMyVotes(['2']); // Mock: user has voted for suggestion with id '2'
+    setCurrentWord('Tripod');
   }, [router, appUser, authLoading]);
 
   const loadSuggestions = () => {
@@ -110,30 +106,6 @@ export default function VotePage() {
   const handleGoBack = () => {
     router.push('/home');
   };
-
-  // const handleVote = (suggestionId: string) => {
-  //   setSuggestions(prev =>
-  //     prev.map(suggestion =>
-  //       suggestion.id === suggestionId
-  //         ? {
-  //             ...suggestion,
-  //             votes: suggestion.userHasVoted
-  //               ? suggestion.votes - 1
-  //               : suggestion.votes + 1,
-  //             userHasVoted: !suggestion.userHasVoted,
-  //           }
-  //         : suggestion
-  //     )
-  //   );
-  // };
-
-  // const handleRefresh = () => {
-  //   setRefreshing(true);
-  //   setTimeout(() => {
-  //     loadSuggestions();
-  //     setRefreshing(false);
-  //   }, 1000);
-  // };
 
   const sortedSuggestions = [...suggestions].sort((a, b) => b.votes - a.votes);
 

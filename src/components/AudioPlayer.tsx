@@ -1,11 +1,4 @@
-import {
-  AudioLinesIcon,
-  Mic,
-  Pause,
-  PauseCircleIcon,
-  Play,
-  Trash,
-} from 'lucide-react';
+import { PauseCircleIcon, Play } from 'lucide-react';
 import React from 'react';
 
 export default function AudioPlayer({ audioUrl }: { audioUrl: string }) {
