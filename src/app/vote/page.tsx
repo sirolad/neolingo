@@ -10,7 +10,6 @@ import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 import { WordOfTheDay } from '@/components/ui/WordOfTheDay';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Button } from '@/components/ui/Button';
-import { set } from 'zod';
 
 interface ComunitySuggestion {
   id: string;
@@ -71,6 +70,7 @@ export default function VotePage() {
       },
     ];
     setSuggestions(mockSuggestions);
+    console.log('currentWord:', currentWord);
   };
 
   if (loading) {
