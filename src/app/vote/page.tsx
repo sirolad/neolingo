@@ -70,7 +70,6 @@ export default function VotePage() {
       },
     ];
     setSuggestions(mockSuggestions);
-    console.log('currentWord:', currentWord);
   };
 
   if (loading) {

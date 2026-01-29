@@ -165,11 +165,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  const userRoles = await prisma.userRole.findFirst({
-    where: { userId: user?.id },
-    include: { role: true },
-  });
-  const userRoleName = userRoles?.role?.name;
+  const userRoleName = userRole?.role?.name;
   // Check if the route requires a role
   const allowedRoles = Object.entries(roleAccess).find(([route]) =>
     pathname.startsWith(route)
