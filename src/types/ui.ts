@@ -41,6 +41,22 @@ export interface WordCardProps {
   className?: string;
 }
 
+// Modal component props
+export interface DicoWord {
+  word: string;
+  translation?: string;
+  definition?: string;
+  partOfSpeech?: string;
+  languageName?: string;
+  index: number;
+  translations?: {
+    id: string;
+    communityWord: string;
+    audioUrl?: string;
+    votes: number;
+  }[];
+}
+
 // Search bar component props
 export interface SearchBarProps {
   placeholder?: string;

@@ -1,19 +1,20 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Book, ArrowLeft, Star, BookPlus } from 'lucide-react';
+import { ArrowLeft, BookPlus, SortDescIcon } from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { SearchBar } from '@/components/ui/SearchBar';
-import { WordCard } from '@/components/ui/WordCard';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/contexts/AuthContext';
-import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
+import { LanguageSwitchTag } from '@/components/ui/LanguageSwitchTag';
+import { NeoDicoWord } from '@/components/ui/NeoDicoWord';
+import Image from 'next/image';
 
 interface DictionaryWord {
   id: string;
-  yorubaWord: string;
+  translation: string;
   englishWord: string;
   definition: string;
   context?: string;
@@ -21,15 +22,23 @@ interface DictionaryWord {
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   isFavorite: boolean;
   usage: number;
+  translations?: {
+    id: string;
+    communityWord: string;
+    audioUrl?: string;
+    votes: number;
+  }[];
 }
 
 export default function DictionaryPage() {
   const router = useRouter();
   const { appUser, isLoading: authLoading, userNeoCommunity } = useAuth();
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [words, setWords] = useState<DictionaryWord[]>([]);
+  const [currentAlphabet, setCurrentAlphabet] = useState('A');
+  const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   useEffect(() => {
     // Wait for auth check to complete
@@ -45,75 +54,282 @@ export default function DictionaryPage() {
   }, [router, appUser, authLoading]);
 
   const loadDictionaryWords = () => {
-    // Mock dictionary data
     const mockWords: DictionaryWord[] = [
       {
+        // Mock dictionary For Words starting with B
         id: '1',
-        yorubaWord: 'Alafia',
-        englishWord: 'Peace',
-        definition: 'A state of tranquility or quiet; freedom from disturbance',
-        context: 'Alafia ni ọrọ to dara ju (Peace is the best thing)',
-        category: 'emotions',
+        translation: 'Bookumaaki',
+        englishWord: 'BookMark',
+        definition:
+          'A piece of thick paper, leather, or plastic that you put between the pages of a book so that you can find a page again quickly.',
+        context: 'I use a bookmark to save my place in the book',
+        category: 'abstract',
         difficulty: 'beginner',
         isFavorite: true,
         usage: 245,
+        translations: [
+          {
+            id: '1a',
+            communityWord: 'Bookumaaki',
+            audioUrl: 'https://example.com/audio/bookumaaki.mp3',
+            votes: 10,
+          },
+          {
+            id: '1b',
+            communityWord: 'Booki',
+            audioUrl: 'https://example.com/audio/booki.mp3',
+            votes: 7,
+          },
+          {
+            id: '1c',
+            communityWord: 'Booko',
+            audioUrl: 'https://example.com/audio/booko.mp3',
+            votes: 5,
+          },
+        ],
       },
       {
         id: '2',
-        yorubaWord: 'Ọgbọn',
-        englishWord: 'Wisdom',
+        translation: 'Igo',
+        englishWord: 'Bottle',
         definition:
-          'The quality of having experience, knowledge, and good judgment',
-        context: 'Ọgbọn ju agbara lọ (Wisdom is better than strength)',
+          'A container, typically made of glass or plastic, with a narrow neck, used for storing drinks or other liquids',
+        context: 'She drank water from the bottle',
         category: 'abstract',
         difficulty: 'intermediate',
         isFavorite: false,
         usage: 189,
+        translations: [
+          {
+            id: '2a',
+            communityWord: 'Igo',
+            audioUrl: 'https://example.com/audio/igo.mp3',
+            votes: 8,
+          },
+          {
+            id: '2b',
+            communityWord: 'Igolu',
+            audioUrl: 'https://example.com/audio/igolu.mp3',
+            votes: 6,
+          },
+        ],
       },
       {
         id: '3',
-        yorubaWord: 'Lẹwa',
-        englishWord: 'Beautiful',
-        definition: 'Having beauty; aesthetically pleasing',
-        context:
-          'Mo ri obirin lẹwa kan ni oja (I saw a beautiful woman at the market)',
+        translation: 'Bodipo',
+        englishWord: 'Backpack',
+        definition:
+          "A bag with shoulder straps that allow it to be carried on one's back, typically used by students or hikers to carry books or supplies",
+        context: 'He packed his lunch in his backpack',
         category: 'appearance',
         difficulty: 'beginner',
         isFavorite: true,
-        usage: 312,
+        usage: 310,
+        translations: [
+          {
+            id: '3a',
+            communityWord: 'Bodipo',
+            audioUrl: 'https://example.com/audio/bodipo.mp3',
+            votes: 12,
+          },
+          {
+            id: '3b',
+            communityWord: 'Bodipolu',
+            audioUrl: 'https://example.com/audio/bodipolu.mp3',
+            votes: 9,
+          },
+        ],
       },
       {
         id: '4',
-        yorubaWord: 'Ireti',
-        englishWord: 'Hope',
+        translation: 'Bodipo lilu',
+        englishWord: 'Briefcase',
         definition:
-          'A feeling of expectation and desire for a certain thing to happen',
-        category: 'emotions',
-        difficulty: 'beginner',
+          'A flat, rectangular container with a handle, used for carrying books, papers, or a laptop, typically used by professionals',
+        context: 'The lawyer carried important documents in his briefcase',
+        category: 'abstract',
+        difficulty: 'advanced',
         isFavorite: false,
-        usage: 156,
+        usage: 95,
+        translations: [
+          {
+            id: '4a',
+            communityWord: 'Bodipo lilu',
+            audioUrl: 'https://example.com/audio/bodipolilu.mp3',
+            votes: 4,
+          },
+        ],
       },
       {
         id: '5',
-        yorubaWord: 'Àgbára',
-        englishWord: 'Power',
-        definition: 'The ability to do something or act in a particular way',
-        context: 'Àgbára wa ni ọwọ Ọlọrun (Power belongs to God)',
-        category: 'abstract',
+        translation: 'Bata',
+        englishWord: 'Boot',
+        definition:
+          'A sturdy item of footwear covering the foot and ankle, and sometimes extending up to the knee or hip, typically made of leather or rubber',
+        context: 'She wore boots to protect her feet from the snow',
+        category: 'appearance',
         difficulty: 'intermediate',
         isFavorite: false,
-        usage: 203,
+        usage: 150,
+        translations: [
+          {
+            id: '5a',
+            communityWord: 'Bata',
+            audioUrl: 'https://example.com/audio/bata.mp3',
+            votes: 7,
+          },
+          {
+            id: '5b',
+            communityWord: 'Batalilu',
+            audioUrl: 'https://example.com/audio/batalilu.mp3',
+            votes: 3,
+          },
+          {
+            id: '5c',
+            communityWord: 'Bato',
+            audioUrl: 'https://example.com/audio/bato.mp3',
+            votes: 2,
+          },
+        ],
       },
       {
         id: '6',
-        yorubaWord: 'Ayọ',
-        englishWord: 'Joy',
-        definition: 'A feeling of great pleasure and happiness',
-        context: 'Ayọ mi po (My joy is abundant)',
-        category: 'emotions',
+        translation: 'Bata lilu',
+        englishWord: 'Boots',
+        definition:
+          'A pair of sturdy items of footwear covering the foot and ankle, and sometimes extending up to the knee or hip, typically made of leather or rubber',
+        context: 'She wore boots to protect her feet from the snow',
+        category: 'appearance',
+        difficulty: 'intermediate',
+        isFavorite: false,
+        usage: 150,
+        translations: [
+          {
+            id: '6a',
+            communityWord: 'Bata lilu',
+            audioUrl: 'https://example.com/audio/batalilu.mp3',
+            votes: 5,
+          },
+        ],
+      },
+      {
+        // Mock dictionary For Words starting with A
+        id: '7',
+        translation: 'Abokiti',
+        englishWord: 'Aboringinal',
+        definition:
+          'A person, typically a member of a community, who is the original inhabitant of a country or region, especially one who has been displaced or marginalized by colonization or migration.',
+        context: 'The aboriginal people have a rich cultural heritage',
+        category: 'abstract',
+        difficulty: 'advanced',
+        isFavorite: false,
+        usage: 75,
+        translations: [
+          {
+            id: '7a',
+            communityWord: 'Abokiti',
+            audioUrl: 'https://example.com/audio/abokiti.mp3',
+            votes: 6,
+          },
+          {
+            id: '7b',
+            communityWord: 'Abokitulilu',
+            audioUrl: 'https://example.com/audio/abokitulilu.mp3',
+            votes: 4,
+          },
+        ],
+      },
+      {
+        id: '8',
+        translation: 'Aja',
+        englishWord: 'Apple',
+        definition:
+          'A round fruit with red or green skin and a whitish interior, typically sweet and crisp, grown on apple trees.',
+        context: 'She ate an apple as a healthy snack',
+        category: 'abstract',
         difficulty: 'beginner',
         isFavorite: true,
-        usage: 278,
+        usage: 400,
+        translations: [
+          {
+            id: '8a',
+            communityWord: 'Aja',
+            audioUrl: 'https://example.com/audio/aja.mp3',
+            votes: 15,
+          },
+          {
+            id: '8b',
+            communityWord: 'Ajalilu',
+            audioUrl: 'https://example.com/audio/ajalilu.mp3',
+            votes: 10,
+          },
+        ],
+      },
+      {
+        id: '9',
+        translation: 'Aso',
+        englishWord: 'Apron',
+        definition:
+          "A protective garment worn over the front of one's clothes and tied at the back, typically used while cooking or cleaning to keep clothes clean.",
+        context: 'She wore an apron while baking cookies',
+        category: 'appearance',
+        difficulty: 'intermediate',
+        isFavorite: false,
+        usage: 120,
+        translations: [
+          {
+            id: '9a',
+            communityWord: 'Aso',
+            audioUrl: 'https://example.com/audio/aso.mp3',
+            votes: 8,
+          },
+        ],
+      },
+      {
+        id: '10',
+        translation: 'Awo',
+        englishWord: 'Arrow',
+        definition:
+          'A thin, pointed missile that is shot from a bow, typically made of wood or carbon fiber with a metal tip and feathers at the back for stability during flight.',
+        context: 'The archer aimed his arrow at the target',
+        category: 'appearance',
+        difficulty: 'advanced',
+        isFavorite: false,
+        usage: 60,
+        translations: [
+          {
+            id: '10a',
+            communityWord: 'Awo',
+            audioUrl: 'https://example.com/audio/awo.mp3',
+            votes: 5,
+          },
+        ],
+      },
+      {
+        id: '11',
+        translation: 'Awo lilu',
+        englishWord: 'Arrows',
+        definition:
+          'Thin, pointed missiles that are shot from a bow, typically made of wood or carbon fiber with a metal tip and feathers at the back for stability during flight.',
+        context: 'The archer aimed his arrows at the target',
+        category: 'appearance',
+        difficulty: 'advanced',
+        isFavorite: false,
+        usage: 60,
+        translations: [
+          {
+            id: '11a',
+            communityWord: 'Awo lilu',
+            audioUrl: 'https://example.com/audio/awolilu.mp3',
+            votes: 3,
+          },
+          {
+            id: '11b',
+            communityWord: 'Awolilu',
+            audioUrl: 'https://example.com/audio/awolilu.mp3',
+            votes: 2,
+          },
+        ],
       },
     ];
     setWords(mockWords);
@@ -159,19 +375,24 @@ export default function DictionaryPage() {
     .filter(word => {
       const matchesSearch =
         searchQuery === '' ||
-        word.yorubaWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        word.translation.toLowerCase().includes(searchQuery.toLowerCase()) ||
         word.englishWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
         word.definition.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesCategory =
         selectedCategory === 'all' || word.category === selectedCategory;
+      const matchesAlphabet =
+        currentAlphabet === '' ||
+        word.englishWord
+          .toUpperCase()
+          .startsWith(currentAlphabet.toUpperCase());
 
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesAlphabet;
     })
     .sort((a, b) => {
       // Sort by usage (most used first), then alphabetically
       if (a.usage !== b.usage) return b.usage - a.usage;
-      return a.yorubaWord.localeCompare(b.yorubaWord);
+      return a.translation.localeCompare(b.translation);
     });
 
   const handleGoBack = () => {
@@ -209,13 +430,15 @@ export default function DictionaryPage() {
             className="inline-flex items-center text-neutral-950 hover:text-primary-800 transition-colors p-2 rounded-lg hover:bg-neutral-100"
           >
             <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
-            <span className="font-medium text-sm md:text-base">Back</span>
+            <span className="font-medium text-sm md:text-base hidden lg:block">
+              Back
+            </span>
           </button>
-          <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
-            Dictionary
-          </h1>
+          <span className="text-lg md:text-xl lg:text-2xl font-[400] text-[20px] text-neutral-950">
+            NeoDicko {userNeoCommunity ? `${userNeoCommunity.name}` : ''}
+          </span>
           <div className="md:w-20">
-            <MyCommunityTag
+            <LanguageSwitchTag
               userNeoCommunity={userNeoCommunity}
               user={appUser}
             />
@@ -225,148 +448,101 @@ export default function DictionaryPage() {
 
         {/* Main Content */}
         <div className="flex-1 space-y-6 md:space-y-8 lg:space-y-10 pb-20 md:pb-8">
-          {/* Header Card with Search */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft p-6 md:p-8 lg:p-10 hover:shadow-lg transition-shadow"
-          >
-            <div className="flex items-center gap-3 md:gap-4 lg:gap-5 mb-4 md:mb-6 lg:mb-8">
-              <div className="w-12 h-12 md:w-16 md:h-16 lg:w-20 lg:h-20 bg-purple-100 rounded-full md:rounded-2xl lg:rounded-3xl flex items-center justify-center">
-                <Book className="w-6 h-6 md:w-8 md:h-8 lg:w-10 lg:h-10 text-purple-600" />
-              </div>
-              <div>
-                <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-neutral-950">
-                  Yoruba Dictionary
-                </h2>
-                <p className="text-neutral-600 text-sm md:text-base lg:text-lg">
-                  {filteredWords.length} word
-                  {filteredWords.length !== 1 ? 's' : ''} available
-                </p>
+          {/* Search Bar */}
+          <SearchBar
+            value={searchQuery}
+            onChange={val => {
+              setSearchQuery(val);
+              setCurrentAlphabet(val.charAt(0).toUpperCase());
+            }}
+            placeholder="Search words"
+            onClear={() => setSearchQuery('')}
+            className="mb-4 md:mb-6 lg:mb-8"
+            iconPosition="right"
+            rounded={true}
+          />
+
+          <div className="flex space-x-4 overflow-x-auto pb-2 mb-4 md:mb-6 lg:mb-8">
+            <div className="flex-1 overflow-auto">
+              {/* Words List - Responsive Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+                {filteredWords.length > 0 ? (
+                  filteredWords.map((word, index) => (
+                    //
+                    <NeoDicoWord
+                      key={word.id}
+                      word={word.englishWord}
+                      translation={word.translation}
+                      // definition={`${word.definition}  eg: ${word.context}`}
+                      definition={`${word.definition}`}
+                      languageName={
+                        userNeoCommunity ? userNeoCommunity.name : 'NeoLingo'
+                      }
+                      index={index}
+                      translations={word.translations}
+                    />
+                  ))
+                ) : (
+                  //Empty State
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft p-8 md:p-10 lg:p-12 text-center col-span-full items-center justify-center"
+                  >
+                    {/* <Book className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-neutral-400 mx-auto mb-4 md:mb-6 lg:mb-8" /> */}
+                    <Image
+                      src="/assets/dictionary/404.png"
+                      alt="No Results"
+                      width={400}
+                      height={600}
+                      className="object-contain mx-auto mb-4 md:mb-6 lg:mb-8"
+                      priority
+                    />
+                    <div className="mb-2">
+                      <span className="text-[26px] font-[500] md:text-xl lg:text-2xl text-neutral-800 mb-2 md:mb-3 lg:mb-4">
+                        Word Not Found
+                      </span>
+                    </div>
+                    <p className="text-neutral-600 text-[15px] font-[400] md:text-base lg:text-lg max-w-md mx-auto mb-4 md:mb-6">
+                      Kindly nominate a word for your community to suggest Neos
+                      for it.
+                    </p>
+                    {searchQuery && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSearchQuery('')}
+                        className="h-10 md:h-12 px-4 md:px-6 text-sm md:text-base hover:scale-105 active:scale-95 transition-transform"
+                      >
+                        Clear Search
+                      </Button>
+                    )}
+                  </motion.div>
+                )}
               </div>
             </div>
-
-            {/* Search Bar */}
-            <SearchBar
-              value={searchQuery}
-              onChange={setSearchQuery}
-              placeholder="Search words, meanings, or definitions..."
-              onClear={() => setSearchQuery('')}
-              className="mb-4 md:mb-6 lg:mb-8"
-            />
-
-            {/* Category Filters */}
-            <div className="flex flex-wrap gap-2 md:gap-3">
-              {categories.map(category => (
-                <Button
-                  key={category.id}
-                  variant={
-                    selectedCategory === category.id ? 'primary' : 'outline'
-                  }
-                  size="sm"
-                  onClick={() => setSelectedCategory(category.id)}
-                  className="h-8 md:h-10 lg:h-12 px-3 md:px-4 lg:px-5 text-xs md:text-sm lg:text-base hover:scale-105 active:scale-95 transition-transform"
+            <div className="w-10 shrink-0  bg-white border border-neutral-200 hover:bg-gray-200 transition-colors rounded-full flex-row justify-center px-1">
+              <div className="flex justify-center py-3 w-full">
+                <SortDescIcon className="w-5 h-5 text-neutral-600" />
+              </div>
+              {alphabets.map(letter => (
+                <button
+                  key={letter}
+                  onClick={() => setCurrentAlphabet(letter)}
+                  className={`w-full py-1 mb-4 text-sm font-medium transition-colors ${
+                    currentAlphabet === letter
+                      ? 'border border-neutral-300 text-neutral-900 rounded-full'
+                      : 'text-neutral-600 hover:bg-gray-200'
+                  }`}
                 >
-                  {category.label} ({category.count})
-                </Button>
+                  {letter}
+                  {letter.toLocaleLowerCase()}
+                </button>
               ))}
             </div>
-          </motion.div>
-
-          {/* Words List - Responsive Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-            {filteredWords.map((word, index) => (
-              <motion.div
-                key={word.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.03 }}
-                className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-all hover:scale-[1.02]"
-              >
-                <div className="p-6 md:p-8">
-                  {/* Header with favorite and difficulty */}
-                  <div className="flex items-center justify-between mb-4 md:mb-6">
-                    <div className="flex items-center gap-2 md:gap-3">
-                      <div
-                        className={`px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 rounded-full text-xs md:text-sm lg:text-base font-medium ${getDifficultyColor(word.difficulty)}`}
-                      >
-                        {word.difficulty}
-                      </div>
-                      <div className="px-2 md:px-3 lg:px-4 py-1 md:py-1.5 lg:py-2 bg-neutral-100 text-neutral-600 rounded-full text-xs md:text-sm lg:text-base">
-                        {word.usage} uses
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleToggleFavorite(word.id)}
-                      className={`p-2 md:p-3 lg:p-4 rounded-full transition-all hover:scale-110 active:scale-95 ${
-                        word.isFavorite
-                          ? 'text-yellow-500 bg-yellow-50 hover:bg-yellow-100'
-                          : 'text-neutral-400 hover:text-yellow-500 hover:bg-neutral-50'
-                      }`}
-                    >
-                      <Star
-                        className={`w-5 h-5 md:w-6 md:h-6 ${word.isFavorite ? 'fill-current' : ''}`}
-                      />
-                    </button>
-                  </div>
-
-                  {/* Word Card */}
-                  <WordCard
-                    word={word.yorubaWord}
-                    translation={word.englishWord}
-                    definition={word.definition}
-                    type="dictionary"
-                    bgColor="bg-neutral-50"
-                    borderColor="border-neutral-200"
-                    tagColor="bg-purple-100 text-purple-800"
-                    tagText={word.category}
-                    className="mb-4 md:mb-6 hover:scale-[1.01] transition-transform"
-                  />
-
-                  {/* Context if available */}
-                  {word.context && (
-                    <div className="bg-purple-50 hover:bg-purple-100 transition-colors rounded-xl md:rounded-2xl p-4 md:p-5 lg:p-6">
-                      <h4 className="text-sm md:text-base lg:text-lg font-medium text-purple-800 mb-2 md:mb-3">
-                        Usage Example:
-                      </h4>
-                      <p className="text-sm md:text-base lg:text-lg text-purple-700 italic leading-relaxed">
-                        &quot;{word.context}&quot;
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
           </div>
 
-          {/* Empty state */}
-          {filteredWords.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft p-8 md:p-10 lg:p-12 text-center col-span-full"
-            >
-              <Book className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-neutral-400 mx-auto mb-4 md:mb-6 lg:mb-8" />
-              <h3 className="text-lg md:text-xl lg:text-2xl font-medium text-neutral-800 mb-2 md:mb-3 lg:mb-4">
-                No Words Found
-              </h3>
-              <p className="text-neutral-600 text-sm md:text-base lg:text-lg max-w-md mx-auto mb-4 md:mb-6">
-                Try adjusting your search or filter criteria
-              </p>
-              {searchQuery && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setSearchQuery('')}
-                  className="h-10 md:h-12 px-4 md:px-6 text-sm md:text-base hover:scale-105 active:scale-95 transition-transform"
-                >
-                  Clear Search
-                </Button>
-              )}
-            </motion.div>
-          )}
           {/* Request Neo Floating Button */}
           <motion.button
             initial={{ scale: 0.8, opacity: 0 }}

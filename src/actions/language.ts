@@ -43,7 +43,7 @@ export async function setMyUILanguage(
 
 export async function getTargetLanguages(): Promise<{
   success: boolean;
-  data: { id: number; name: string }[];
+  data: { id: number; name: string; icon: string | null }[];
 }> {
   try {
     const languages = await prisma.language.findMany({
@@ -51,6 +51,7 @@ export async function getTargetLanguages(): Promise<{
       select: {
         id: true,
         name: true,
+        icon: true,
       },
       orderBy: { name: 'desc' },
     });
