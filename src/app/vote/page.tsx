@@ -146,7 +146,7 @@ export default function VotePage() {
         <div className="flex-1 space-y-6 md:space-y-8 lg:space-y-10 pb-20 md:pb-8">
           {/* Header Card */}
           <WordOfTheDay
-            word="Tripod"
+            word={currentWord}
             definition="A three-legged stand or support, often used to hold a camera or other device steady."
             partOfSpeech="noun"
           />

@@ -1,12 +1,6 @@
 import type { DicoWord } from '@/types';
 import { motion } from 'framer-motion';
-import {
-  ChevronDown,
-  Lightbulb,
-  LineChart,
-  Vote,
-  VoteIcon,
-} from 'lucide-react';
+import { ChevronDown, Lightbulb, LineChart, VoteIcon } from 'lucide-react';
 import { SugesstionsRow } from './SugesstionRow';
 
 import { useState } from 'react';
