@@ -9,7 +9,7 @@ import { ReactCountryFlag } from 'react-country-flag';
 interface NeoLanguageOption {
   id: number;
   name: string;
-  icon: string;
+  icon: string | null;
 }
 
 interface NeoLanguageProps {
@@ -109,11 +109,13 @@ export default function NeoLanguage({
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    <ReactCountryFlag
-                      countryCode={language.icon}
-                      svg
-                      className="w-6 h-6"
-                    />
+                    {language.icon && (
+                      <ReactCountryFlag
+                        countryCode={language.icon}
+                        svg
+                        className="w-6 h-6"
+                      />
+                    )}
                     <span className="text-[14px] font-normal leading-[20px] text-[#111111] font-[Parkinsans]">
                       {language.name.charAt(0).toUpperCase() +
                         language.name.slice(1).toLowerCase()}
