@@ -435,7 +435,7 @@ export default function DictionaryPage() {
             </span>
           </button>
           <span className="text-lg md:text-xl lg:text-2xl font-[400] text-[20px] text-neutral-950">
-            NeoDicko {userNeoCommunity ? `${userNeoCommunity.name}` : ''}
+            NeoDiko {userNeoCommunity ? `${userNeoCommunity.name}` : ''}
           </span>
           <div className="md:w-20">
             <LanguageSwitchTag
