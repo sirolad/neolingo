@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
+import { fa } from 'zod/v4/locales';
 
 interface SearchBarProps {
   value: string;
@@ -7,6 +8,8 @@ interface SearchBarProps {
   placeholder?: string;
   className?: string;
   onClear?: () => void;
+  iconPosition?: 'left' | 'right';
+  rounded?: boolean;
 }
 
 export function SearchBar({
@@ -15,15 +18,24 @@ export function SearchBar({
   placeholder = 'Search...',
   className = '',
   onClear,
+  iconPosition = 'left',
+  rounded = false,
 }: SearchBarProps) {
   return (
     <div className={`relative ${className}`}>
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Search className="h-5 w-5 text-neutral-400" />
-      </div>
+      {iconPosition === 'left' && (
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Search className="h-5 w-5 text-neutral-400" />
+        </div>
+      )}
+      {iconPosition === 'right' && (
+        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+          <Search className="h-5 w-5 text-neutral-400" />
+        </div>
+      )}
       <input
         type="text"
-        className="block w-full pl-10 pr-10 py-3 border border-neutral-200 rounded-2xl bg-white text-neutral-950 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+        className={`block w-full pl-10 pr-10 py-3 border border-neutral-200 ${rounded ? 'rounded-full' : 'rounded-2xl'} bg-white text-neutral-950 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent`}
         placeholder={placeholder}
         value={value}
         onChange={e => onChange(e.target.value)}

@@ -29,9 +29,9 @@ describe('NeoLanguage Component', () => {
   };
 
   const mockLanguages = [
-    { id: 1, name: 'Yoruba' },
-    { id: 2, name: 'Igbo' },
-    { id: 3, name: 'Hausa' },
+    { id: 1, name: 'Yoruba', icon: 'NG' },
+    { id: 2, name: 'Igbo', icon: null },
+    { id: 3, name: 'Hausa', icon: null },
   ];
 
   beforeEach(() => {

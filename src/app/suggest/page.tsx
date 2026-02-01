@@ -193,11 +193,13 @@ export default function SuggestPage() {
               className="inline-flex items-center text-neutral-950 hover:text-primary-800 transition-colors p-2 rounded-lg hover:bg-neutral-100"
             >
               <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
-              <span className="font-medium text-sm md:text-base">Back</span>
+              <span className="font-medium text-sm md:text-base hidden lg:block">
+                Back
+              </span>
             </button>
-            <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
+            <span className="text-lg md:text-xl lg:text-2xl font-[400] text-[20px] text-neutral-950">
               Curation Lounge
-            </h1>
+            </span>
             <div className="md:w-20">
               <MyCommunityTag
                 userNeoCommunity={userNeoCommunity}
@@ -413,10 +415,10 @@ export default function SuggestPage() {
                     fullWidth
                     loading={submitting}
                     disabled={
-                      formData.existingWord === '' ||
-                      formData.adoptiveWord === '' ||
-                      formData.functionalWord === '' ||
-                      formData.rootWord === '' ||
+                      formData.existingWord === '' &&
+                      formData.adoptiveWord === '' &&
+                      formData.functionalWord === '' &&
+                      formData.rootWord === '' &&
                       formData.nonConformingWord === ''
                     }
                     className="h-12 md:h-14 lg:h-16 rounded-full md:rounded-full font-medium text-base md:text-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
