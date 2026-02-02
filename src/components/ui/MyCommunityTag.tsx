@@ -1,7 +1,10 @@
+'use client';
+
 import { NeoCommunity } from '@/types/neocommunity';
 import { CircleUser } from 'lucide-react';
 import Image from 'next/image';
 import ReactCountryFlag from 'react-country-flag';
+import { useRouter } from 'next/navigation';
 
 export function MyCommunityTag({
   userNeoCommunity,
@@ -10,6 +13,8 @@ export function MyCommunityTag({
   userNeoCommunity: NeoCommunity | null;
   user: { avatar?: string | null; name?: string | null } | null;
 }) {
+  const router = useRouter();
+
   return (
     <div className="text-2xl md:text-3xl lg:text-4xl lg:hidden flex  justify-end align-middle">
       <div className="from-primary-600 to-primary-700 flex items-center justify-center mr-2 py-1">
@@ -24,17 +29,22 @@ export function MyCommunityTag({
           </span>
         </div>
       </div>
-      {user?.avatar ? (
-        <Image
-          src={user.avatar}
-          alt={user?.name || 'Contributor'}
-          width={40}
-          height={40}
-          className="rounded-full"
-        />
-      ) : (
-        <CircleUser className="w-10 h-10 text-neutral-400" />
-      )}
+      <button
+        onClick={() => router.push('/profile')}
+        className="focus:outline-none transition-transform active:scale-95"
+      >
+        {user?.avatar ? (
+          <Image
+            src={user.avatar}
+            alt={user?.name || 'Contributor'}
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+        ) : (
+          <CircleUser className="w-10 h-10 text-neutral-400" />
+        )}
+      </button>
     </div>
   );
 }
