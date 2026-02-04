@@ -35,7 +35,6 @@ export default function DictionaryPage() {
   const { appUser, isLoading: authLoading, userNeoCommunity } = useAuth();
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
   const [words, setWords] = useState<DictionaryWord[]>([]);
   const [currentAlphabet, setCurrentAlphabet] = useState('A');
   const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -352,25 +351,6 @@ export default function DictionaryPage() {
     return null;
   }
 
-  const categories = [
-    { id: 'all', label: 'All Words', count: words.length },
-    {
-      id: 'emotions',
-      label: 'Emotions',
-      count: words.filter(w => w.category === 'emotions').length,
-    },
-    {
-      id: 'abstract',
-      label: 'Abstract',
-      count: words.filter(w => w.category === 'abstract').length,
-    },
-    {
-      id: 'appearance',
-      label: 'Appearance',
-      count: words.filter(w => w.category === 'appearance').length,
-    },
-  ];
-
   const filteredWords = words
     .filter(word => {
       const matchesSearch =
@@ -379,15 +359,13 @@ export default function DictionaryPage() {
         word.englishWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
         word.definition.toLowerCase().includes(searchQuery.toLowerCase());
 
-      const matchesCategory =
-        selectedCategory === 'all' || word.category === selectedCategory;
       const matchesAlphabet =
         currentAlphabet === '' ||
         word.englishWord
           .toUpperCase()
           .startsWith(currentAlphabet.toUpperCase());
 
-      return matchesSearch && matchesCategory && matchesAlphabet;
+      return matchesSearch && matchesAlphabet;
     })
     .sort((a, b) => {
       // Sort by usage (most used first), then alphabetically
@@ -397,27 +375,6 @@ export default function DictionaryPage() {
 
   const handleGoBack = () => {
     router.push('/home');
-  };
-
-  const handleToggleFavorite = (wordId: string) => {
-    setWords(prev =>
-      prev.map(word =>
-        word.id === wordId ? { ...word, isFavorite: !word.isFavorite } : word
-      )
-    );
-  };
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'beginner':
-        return 'bg-green-100 text-green-800';
-      case 'intermediate':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'advanced':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-neutral-100 text-neutral-800';
-    }
   };
 
   return (
