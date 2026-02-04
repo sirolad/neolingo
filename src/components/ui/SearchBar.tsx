@@ -1,6 +1,5 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
-import { fa } from 'zod/v4/locales';
 
 interface SearchBarProps {
   value: string;
