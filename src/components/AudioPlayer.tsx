@@ -1,13 +1,11 @@
 import { PauseCircleIcon, Play } from 'lucide-react';
 import React from 'react';
 
-export default function AudioPlayer({
-  audioUrl,
-  className,
-}: {
+interface AudioPlayerProps {
   audioUrl: string;
   className?: string;
-}) {
+}
+export default function AudioPlayer({ audioUrl, className }: AudioPlayerProps) {
   const audioRef = React.useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
 
