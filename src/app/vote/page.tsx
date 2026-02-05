@@ -118,11 +118,13 @@ export default function VotePage() {
             className="inline-flex items-center text-neutral-950 hover:text-primary-800 transition-colors p-2 rounded-lg hover:bg-neutral-100"
           >
             <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
-            <span className="font-medium text-sm md:text-base">Back</span>
+            <span className="font-medium text-sm md:text-base hidden lg:block">
+              Back
+            </span>
           </button>
-          <h1 className="text-lg md:text-xl lg:text-2xl font-semibold text-neutral-950">
+          <span className="text-lg md:text-xl lg:text-2xl font-[400] text-[20px] text-neutral-950">
             Voting Lounge
-          </h1>
+          </span>
           {/* <button
             onClick={handleRefresh}
             disabled={refreshing}
@@ -144,7 +146,7 @@ export default function VotePage() {
         <div className="flex-1 space-y-6 md:space-y-8 lg:space-y-10 pb-20 md:pb-8">
           {/* Header Card */}
           <WordOfTheDay
-            word="Tripod"
+            word={currentWord}
             definition="A three-legged stand or support, often used to hold a camera or other device steady."
             partOfSpeech="noun"
           />

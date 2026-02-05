@@ -2,6 +2,7 @@
 
 import prisma from '@/lib/prisma';
 import createClient from '@/lib/supabase/server';
+import { LanguageColumns } from '@/types';
 import * as Sentry from '@sentry/nextjs';
 
 export async function setMyUILanguage(
@@ -43,7 +44,7 @@ export async function setMyUILanguage(
 
 export async function getTargetLanguages(): Promise<{
   success: boolean;
-  data: { id: number; name: string }[];
+  data: LanguageColumns[];
 }> {
   try {
     const languages = await prisma.language.findMany({
@@ -51,6 +52,7 @@ export async function getTargetLanguages(): Promise<{
       select: {
         id: true,
         name: true,
+        icon: true,
       },
       orderBy: { name: 'desc' },
     });

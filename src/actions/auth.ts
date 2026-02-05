@@ -3,6 +3,7 @@
 import createClient from '@/lib/supabase/server';
 import * as Sentry from '@sentry/nextjs';
 import prisma from '@/lib/prisma';
+import { getBaseUrl } from '@/lib/urls';
 
 /**
  * Send a password reset email to the user
@@ -16,7 +17,7 @@ export async function resetPassword(
     const supabase = await createClient();
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password#step=newPassword`,
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || getBaseUrl()}/reset-password#step=newPassword`,
     });
 
     if (error) {

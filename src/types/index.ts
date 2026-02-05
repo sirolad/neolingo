@@ -4,3 +4,4 @@ export * from './user';
 export * from './dictionary';
 export * from './ui';
 export * from './common';
+export * from './language';

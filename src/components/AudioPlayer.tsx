@@ -1,7 +1,11 @@
 import { PauseCircleIcon, Play } from 'lucide-react';
 import React from 'react';
 
-export default function AudioPlayer({ audioUrl }: { audioUrl: string }) {
+interface AudioPlayerProps {
+  audioUrl: string;
+  className?: string;
+}
+export default function AudioPlayer({ audioUrl, className }: AudioPlayerProps) {
   const audioRef = React.useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = React.useState(false);
 
@@ -35,14 +39,15 @@ export default function AudioPlayer({ audioUrl }: { audioUrl: string }) {
   }, []);
 
   return (
-    <div className="flex items-center space-x-4">
+    <div className={`flex items-center space-x-4 ${className}`}>
+      <audio ref={audioRef} src={audioUrl} />
       <button
         onClick={togglePlay}
+        className="self-end"
         // className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
       >
         {isPlaying ? <PauseCircleIcon /> : <Play />}
       </button>
-      <audio ref={audioRef} src={audioUrl} />
     </div>
   );
 }
