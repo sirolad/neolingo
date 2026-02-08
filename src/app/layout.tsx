@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Parkinsans } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
@@ -13,6 +13,11 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
+  subsets: ['latin'],
+});
+
+const parkinsans = Parkinsans({
+  variable: '--font-parkinsans',
   subsets: ['latin'],
 });
 
@@ -73,7 +78,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/icons/icon.svg" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${parkinsans.variable} antialiased`}
       >
         <ErrorBoundary>
           <AuthProvider>

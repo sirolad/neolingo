@@ -129,14 +129,8 @@
 */
 
 /* Font fallbacks for design system fonts */
-.font-\[Parkinsans\] {
-  font-family:
-    'Parkinsans',
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
+.font-parkinsans {
+  font-family: var(--font-parkinsans), system-ui, sans-serif;
 }
 
 .font-\[Metropolis\] {

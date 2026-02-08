@@ -133,7 +133,10 @@ export default function ProfilePage() {
                   Join our community of language experts and help preserve our
                   heritage.
                 </p>
-                <Button className="w-full bg-white text-neutral-950 hover:bg-neutral-100 border-none relative z-10 rounded-full">
+                <Button
+                  onClick={() => router.push('/become-curator')}
+                  className="w-full bg-white text-neutral-950 hover:bg-neutral-100 border-none relative z-10 rounded-full"
+                >
                   Apply Now
                 </Button>
               </div>
@@ -245,7 +248,10 @@ export default function ProfilePage() {
               </div>
 
               <div className="mt-8 lg:hidden">
-                <Button className="w-full bg-neutral-950 hover:bg-neutral-900 text-white rounded-full h-12 font-medium">
+                <Button
+                  onClick={() => router.push('/become-curator')}
+                  className="w-full bg-neutral-950 hover:bg-neutral-900 text-white rounded-full h-12 font-medium"
+                >
                   Become a Curator
                 </Button>
               </div>
