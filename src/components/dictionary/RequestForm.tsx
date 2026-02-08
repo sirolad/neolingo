@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useActionState, useEffect, useState } from 'react';
+import React, { useActionState, useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
 import { Loader2, Check, X, Plus } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import {
@@ -49,6 +50,7 @@ export function RequestForm({
     success: false,
     message: '',
   });
+  const prevStateRef = useRef(state);
 
   const [domainInput, setDomainInput] = useState('');
   const [domains, setDomains] = useState<string[]>([]);
@@ -114,6 +116,14 @@ export function RequestForm({
       form.setValue('userId', currentUserId);
     }
   }, [currentUserId, form]);
+
+  // Show toast notification when there's an error (especially for duplicate words)
+  useEffect(() => {
+    if (state !== prevStateRef.current && !state.success && state.message) {
+      toast.error(state.message);
+    }
+    prevStateRef.current = state;
+  }, [state]);
 
   const handleRemoveDomain = (domainToRemove: string) => {
     const newDomains = domains.filter(d => d !== domainToRemove);

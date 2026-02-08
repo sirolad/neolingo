@@ -63,7 +63,8 @@ export async function submitRequest(
 
     if (existingRequest) {
       return {
-        message: 'This word has already been requested for translation.',
+        message:
+          'This word has already been requested for translation. Please Be Patient.',
         success: false,
         errors: {
           word: ['This word already has a pending translation request.'],
