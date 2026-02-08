@@ -133,7 +133,7 @@ export default function ProfilePage() {
                   Join our community of language experts and help preserve our
                   heritage.
                 </p>
-                <Button className="w-full bg-white text-neutral-950 hover:bg-neutral-100 border-none relative z-10">
+                <Button className="w-full bg-white text-neutral-950 hover:bg-neutral-100 border-none relative z-10 rounded-full">
                   Apply Now
                 </Button>
               </div>
@@ -142,8 +142,8 @@ export default function ProfilePage() {
 
           {/* Right Column: Settings */}
           <div className="lg:col-span-8">
-            <div className="bg-white rounded-[2rem] p-6 lg:p-8 shadow-sm h-fit">
-              <div className="flex items-center gap-3 mb-6 lg:mb-8 border-b border-neutral-100 pb-4 lg:pb-6">
+            <div className="bg-white rounded-[2rem] p-2 mb-0 lg:p-8 shadow-sm h-fit">
+              <div className="flex items-center gap-3 lg:mb-8 border-b border-neutral-100 pb-2 lg:pb-6">
                 <div className="w-10 h-10 rounded-full bg-neutral-50 flex items-center justify-center">
                   <Settings className="w-5 h-5 text-neutral-600" />
                 </div>
@@ -151,7 +151,7 @@ export default function ProfilePage() {
                   <h3 className="text-lg font-semibold text-neutral-950">
                     Settings
                   </h3>
-                  <p className="text-sm text-neutral-500">
+                  <p className="text-sm text-neutral-500 hidden sm:block">
                     Manage preferences and notifications
                   </p>
                 </div>
@@ -159,8 +159,8 @@ export default function ProfilePage() {
 
               <div className="space-y-6 lg:space-y-8">
                 {/* App Preferences */}
-                <div className="space-y-4">
-                  <h4 className="text-sm font-medium text-neutral-400 uppercase tracking-wider">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-neutral-400 uppercase tracking-wider hidden sm:block">
                     Preferences
                   </h4>
 
@@ -168,34 +168,34 @@ export default function ProfilePage() {
                   <div className="flex items-center justify-between p-2 hover:bg-neutral-50 rounded-xl transition-colors">
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-neutral-900">
-                        Push Notifications
+                        Disallow in-App Notifications
                       </span>
-                      <span className="text-xs text-neutral-500">
+                      <span className="text-xs text-neutral-500 hidden sm:block">
                         Receive updates about your contributions
                       </span>
                     </div>
-                    <Switch />
+                    <Switch size="sm" />
                   </div>
 
                   {/* Dark Mode */}
                   <div className="flex items-center justify-between p-2 hover:bg-neutral-50 rounded-xl transition-colors">
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-neutral-900">
-                        Dark Mode
+                        Switch to Dark Mode
                       </span>
-                      <span className="text-xs text-neutral-500">
+                      <span className="text-xs text-neutral-500 hidden sm:block">
                         Switch between light and dark themes
                       </span>
                     </div>
-                    <Switch />
+                    <Switch size="sm" />
                   </div>
                 </div>
 
                 <div className="h-px bg-neutral-100 w-full" />
 
                 {/* Community & Support */}
-                <div className="space-y-4">
-                  <h4 className="text-sm font-medium text-neutral-400 uppercase tracking-wider">
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-neutral-400 uppercase tracking-wider hidden sm:block">
                     Community
                   </h4>
 
@@ -245,7 +245,7 @@ export default function ProfilePage() {
               </div>
 
               <div className="mt-8 lg:hidden">
-                <Button className="w-full bg-neutral-950 hover:bg-neutral-900 text-white rounded-2xl h-12 font-medium">
+                <Button className="w-full bg-neutral-950 hover:bg-neutral-900 text-white rounded-full h-12 font-medium">
                   Become a Curator
                 </Button>
               </div>
