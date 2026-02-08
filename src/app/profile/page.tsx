@@ -142,7 +142,7 @@ export default function ProfilePage() {
 
           {/* Right Column: Settings */}
           <div className="lg:col-span-8">
-            <div className="bg-white rounded-[2rem] p-6 lg:p-8 shadow-sm h-full">
+            <div className="bg-white rounded-[2rem] p-6 lg:p-8 shadow-sm h-fit">
               <div className="flex items-center gap-3 mb-6 lg:mb-8 border-b border-neutral-100 pb-4 lg:pb-6">
                 <div className="w-10 h-10 rounded-full bg-neutral-50 flex items-center justify-center">
                   <Settings className="w-5 h-5 text-neutral-600" />
