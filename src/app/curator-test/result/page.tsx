@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, Trophy, RefreshCw } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Suspense } from 'react';
 
@@ -41,16 +42,16 @@ function ResultContent() {
       <main className="flex-1 flex flex-col items-center justify-center px-6 pb-8 lg:pb-16">
         <div className="w-full max-w-md lg:max-w-lg flex flex-col items-center">
           {/* Illustration */}
-          <div
-            className={`w-64 h-64 lg:w-72 lg:h-72 mb-8 lg:mb-10 rounded-full flex items-center justify-center ${
-              passed ? 'bg-green-100' : 'bg-red-100'
-            }`}
-          >
-            {passed ? (
-              <Trophy className="w-32 h-32 lg:w-40 lg:h-40 text-green-600" />
-            ) : (
-              <RefreshCw className="w-32 h-32 lg:w-40 lg:h-40 text-red-500" />
-            )}
+          <div className="relative w-64 h-64 lg:w-72 lg:h-72 mb-8 lg:mb-10">
+            <Image
+              src={
+                passed ? '/assets/test/success.png' : '/assets/test/failure.png'
+              }
+              alt={passed ? 'Success illustration' : 'Failure illustration'}
+              fill
+              className="object-contain"
+              priority
+            />
           </div>
 
           {/* Text Content */}
