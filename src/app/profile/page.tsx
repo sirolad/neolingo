@@ -1,13 +1,11 @@
 'use client';
 
-import React from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
   Pencil,
   Settings,
-  ChevronDown,
   Megaphone,
   FileText,
   LogOut,
@@ -19,7 +17,7 @@ import { Layout } from '@/components/layout/Layout';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { formatJoinedDate } from '@/lib/utils';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -59,10 +57,6 @@ export default function ProfilePage() {
               Manage your account settings and preferences
             </p>
           </div>
-          <Button variant="outline" className="gap-2" onClick={handleLogout}>
-            <LogOut className="w-4 h-4" />
-            Log Out
-          </Button>
         </div>
 
         <div className="flex-1 px-4 lg:px-8 pb-8 space-y-4 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8">
@@ -98,12 +92,12 @@ export default function ProfilePage() {
               </div>
 
               <p className="text-sm text-neutral-500 mb-4 lg:mb-6">
-                {user?.email || 'JohnDoe@gmail.com'}
+                {user?.email || 'neouser@gmail.com'}
               </p>
 
               <div className="w-full pt-4 border-t border-neutral-100">
                 <p className="text-xs text-neutral-400">
-                  Joined 29th September, 2025
+                  {formatJoinedDate(user?.createdAt)}
                 </p>
               </div>
             </div>
