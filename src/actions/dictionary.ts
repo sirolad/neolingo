@@ -48,7 +48,53 @@ export async function submitRequest(
   } = validatedFields.data;
 
   try {
-    // 1. Handle Domains (Find or Create)
+    // 1. Check if word already exists in TranslationRequest table
+    const existingRequest = await prisma.translationRequest.findFirst({
+      where: {
+        word: {
+          equals: word,
+          mode: 'insensitive',
+        },
+        sourceLanguageId,
+        targetLanguageId,
+        partOfSpeechId,
+      },
+    });
+
+    if (existingRequest) {
+      return {
+        message: 'This word has already been requested for translation.',
+        success: false,
+        errors: {
+          word: ['This word already has a pending translation request.'],
+        },
+      };
+    }
+
+    // 2. Check if word already exists in Terms table
+    const existingTerm = await prisma.term.findFirst({
+      where: {
+        text: {
+          equals: word,
+          mode: 'insensitive',
+        },
+        sourceLanguageId,
+        targetLanguageId,
+        partOfSpeechId,
+      },
+    });
+
+    if (existingTerm) {
+      return {
+        message: 'This word already exists in the dictionary.',
+        success: false,
+        errors: {
+          word: ['This word already exists in the dictionary.'],
+        },
+      };
+    }
+
+    // 3. Handle Domains (Find or Create)
     const domainRecords = [];
     if (domainNames && domainNames.length > 0) {
       for (const domainName of domainNames) {
@@ -66,7 +112,7 @@ export async function submitRequest(
       }
     }
 
-    // 2. Create the Translation Request
+    // 4. Create the Translation Request
     await prisma.translationRequest.create({
       data: {
         word,
@@ -136,7 +182,7 @@ export async function getTargetLanguagesForDict() {
 
 export async function getUserProfileForRequest(userId: string) {
   try {
-    const userProfile = await prisma.userProfile.findUnique({
+    return await prisma.userProfile.findUnique({
       where: { userId },
       include: {
         uiLanguage: true,
@@ -147,8 +193,6 @@ export async function getUserProfileForRequest(userId: string) {
         },
       },
     });
-
-    return userProfile;
   } catch (error) {
     console.error('Failed to fetch user profile:', error);
     return null;
