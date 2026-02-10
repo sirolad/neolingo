@@ -106,7 +106,14 @@ export async function proxy(request: NextRequest) {
       languageId: uiLanguageId,
       neoCommunityId: targetLanguageId,
       neoCommunityName: userTargetLanguage?.language?.name,
-      neoCommunity: userTargetLanguage?.language,
+      neoCommunity: userTargetLanguage?.language
+        ? {
+            id: userTargetLanguage.language.id.toString(),
+            name: userTargetLanguage.language.name,
+            short: userTargetLanguage.language.short || '',
+            flagIcon: userTargetLanguage.language.icon || '',
+          }
+        : null,
     }),
     {
       httpOnly: true,

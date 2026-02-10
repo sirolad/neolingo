@@ -114,7 +114,7 @@ export default async function RequestNeoPage() {
               form="request-form"
               type="submit"
               variant="primary"
-              className="w-full h-12 body-base font-semibold my-12 rounded-full"
+              className="w-full h-12 md:h-14 text-base md:text-lg font-semibold my-12 rounded-full"
             >
               Submit Request
             </Button>
