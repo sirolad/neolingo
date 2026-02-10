@@ -117,12 +117,12 @@ export default function CuratorTestPage() {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-100 flex flex-col">
+    <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 flex flex-col">
       {/* Header */}
       <header className="px-4 py-4 lg:px-8 lg:py-6">
         <button
           onClick={handleBack}
-          className="p-2 -ml-2 text-neutral-800 hover:bg-neutral-200 rounded-full transition-colors"
+          className="p-2 -ml-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full transition-colors"
           aria-label="Go back"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -133,13 +133,13 @@ export default function CuratorTestPage() {
       <main className="flex-1 px-5 pb-8 lg:px-8 lg:pb-16">
         <div className="max-w-md lg:max-w-lg mx-auto">
           {/* Question Card */}
-          <div className="bg-white rounded-[20px] border border-neutral-200 p-6 lg:p-8">
+          <div className="bg-white dark:bg-neutral-900 rounded-[20px] border border-neutral-200 dark:border-neutral-800 p-6 lg:p-8">
             {/* Card Header */}
-            <div className="text-center pb-4 border-b border-neutral-200 mb-6">
-              <h1 className="heading-3 text-neutral-950 mb-2">
+            <div className="text-center pb-4 border-b border-neutral-200 dark:border-neutral-800 mb-6">
+              <h1 className="heading-3 text-neutral-950 dark:text-neutral-50 mb-2">
                 Lang Cultural Check
               </h1>
-              <p className="body-small text-neutral-600">
+              <p className="body-small text-neutral-600 dark:text-neutral-400">
                 Provide your answers to these questions, to become a Neo
                 Contributor
               </p>
@@ -147,7 +147,7 @@ export default function CuratorTestPage() {
 
             {/* Progress */}
             <div className="flex items-center justify-between mb-6">
-              <span className="body-base font-semibold text-neutral-600">
+              <span className="body-base font-semibold text-neutral-600 dark:text-neutral-400">
                 Question {currentQuestionIndex + 1} of {totalQuestions}
               </span>
               <div className="flex gap-1">
@@ -156,8 +156,8 @@ export default function CuratorTestPage() {
                     key={index}
                     className={`h-1.5 w-8 rounded-full transition-colors ${
                       index <= currentQuestionIndex
-                        ? 'bg-neutral-950'
-                        : 'bg-neutral-200'
+                        ? 'bg-neutral-950 dark:bg-neutral-50'
+                        : 'bg-neutral-200 dark:bg-neutral-700'
                     }`}
                   />
                 ))}
@@ -165,7 +165,7 @@ export default function CuratorTestPage() {
             </div>
 
             {/* Question */}
-            <h2 className="heading-5 text-neutral-950 mb-6 leading-relaxed">
+            <h2 className="heading-5 text-neutral-950 dark:text-neutral-50 mb-6 leading-relaxed">
               {currentQuestion.text}
             </h2>
 
@@ -177,11 +177,11 @@ export default function CuratorTestPage() {
                   onClick={() => handleSelectAnswer(option.value)}
                   className={`w-full text-left p-4 rounded-lg border transition-all ${
                     selectedAnswer === option.value
-                      ? 'border-primary bg-neutral-50 ring-1 ring-primary'
-                      : 'border-neutral-300 hover:border-neutral-400 hover:bg-neutral-50'
+                      ? 'border-primary bg-neutral-50 dark:bg-neutral-800 ring-1 ring-primary'
+                      : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800'
                   }`}
                 >
-                  <span className="body-base font-medium text-neutral-800">
+                  <span className="body-base font-medium text-neutral-800 dark:text-neutral-200">
                     {option.label}. {option.value}
                   </span>
                 </button>
@@ -199,8 +199,8 @@ export default function CuratorTestPage() {
             disabled={!selectedAnswer}
             className={`w-full rounded-full h-14 lg:h-16 text-lg lg:text-xl font-semibold transition-colors ${
               selectedAnswer
-                ? 'bg-neutral-950 hover:bg-neutral-800 text-white'
-                : 'bg-neutral-300 text-neutral-500 cursor-not-allowed'
+                ? 'bg-neutral-950 dark:bg-neutral-50 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-white dark:text-neutral-950'
+                : 'bg-neutral-300 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-500 cursor-not-allowed'
             }`}
           >
             {isLastQuestion ? 'Submit Test' : 'Next Question'}
