@@ -103,10 +103,10 @@ export default function SignInPage() {
           <div className="bg-card rounded-3xl border border-border p-4 mx-auto w-full max-w-md">
             {/* Header */}
             <div className="text-center mb-5">
-              <h1 className="text-[26px] font-medium leading-[34px] text-foreground font-[Parkinsans] mb-1">
+              <h1 className="auth-title text-foreground mb-1">
                 Sign into Your Account
               </h1>
-              <p className="text-[14px] font-normal leading-[14px] text-muted-foreground font-[Metropolis]">
+              <p className="subtitle-small text-muted-foreground">
                 Sign in with
               </p>
             </div>
@@ -120,7 +120,7 @@ export default function SignInPage() {
             {/* Divider */}
             <div className="flex items-center my-6">
               <div className="flex-1 h-px bg-border/40"></div>
-              <span className="px-4 text-[12px] font-normal text-muted-foreground font-[Metropolis] bg-card">
+              <span className="px-4 text-caption bg-card">
                 or sign in with email
               </span>
               <div className="flex-1 h-px bg-border/40"></div>
@@ -139,7 +139,7 @@ export default function SignInPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-medium text-primary font-[Parkinsans]">
+                      <FormLabel className="text-label text-primary">
                         Email Address
                       </FormLabel>
                       <FormControl>
@@ -148,7 +148,7 @@ export default function SignInPage() {
                             type="email"
                             placeholder="Enter Email Address"
                             disabled={loading}
-                            className="h-[52px] pr-12 border-border rounded-xl font-[Metropolis] text-[14px] placeholder:text-muted-foreground focus:border-primary"
+                            className="h-[52px] pr-12 border-border rounded-xl body-small placeholder:text-muted-foreground focus:border-primary"
                             {...field}
                           />
                           <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
@@ -156,7 +156,7 @@ export default function SignInPage() {
                           </div>
                         </div>
                       </FormControl>
-                      <FormMessage className="text-[12px] font-[Metropolis]" />
+                      <FormMessage className="text-caption" />
                     </FormItem>
                   )}
                 />
@@ -167,7 +167,7 @@ export default function SignInPage() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs font-medium text-primary font-[Parkinsans]">
+                      <FormLabel className="text-label text-primary">
                         Password
                       </FormLabel>
                       <FormControl>
@@ -176,7 +176,7 @@ export default function SignInPage() {
                             type={showPassword ? 'text' : 'password'}
                             placeholder="Enter Password"
                             disabled={loading}
-                            className="h-[52px] pr-20 border-border rounded-xl font-[Metropolis] text-[14px] placeholder:text-muted-foreground focus:border-primary"
+                            className="h-[52px] pr-20 border-border rounded-xl body-small placeholder:text-muted-foreground focus:border-primary"
                             {...field}
                           />
                           <Button
@@ -194,7 +194,7 @@ export default function SignInPage() {
                           </Button>
                         </div>
                       </FormControl>
-                      <FormMessage className="text-[12px] font-[Metropolis]" />
+                      <FormMessage className="text-caption" />
                     </FormItem>
                   )}
                 />
@@ -207,13 +207,13 @@ export default function SignInPage() {
                       onClick={() => setRememberMe(!rememberMe)}
                       className="w-4 h-4 text-primary border-input rounded focus:ring-ring"
                     />
-                    <span className="text-xs text-muted-foreground font-[Metropolis]">
+                    <span className="text-caption text-muted-foreground">
                       Remember Me
                     </span>
                   </label>
                   <a
                     href="/reset-password"
-                    className="text-xs text-muted-foreground hover:text-primary transition-colors font-[Metropolis]"
+                    className="text-caption text-muted-foreground hover:text-primary transition-colors"
                   >
                     Forget Password?
                   </a>
@@ -228,18 +228,18 @@ export default function SignInPage() {
             form="signin-form"
             loading={loading}
             fullWidth
-            className="btn-big rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] mt-6 font-[Parkinsans] text-[16px] font-semibold mx-auto w-full max-w-md"
+            className="btn-big rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] mt-6 text-button text-base mx-auto w-full max-w-md text-primary-foreground"
           >
             {loading ? 'Signing In...' : 'Log in'}
           </Button>
 
           {/* Sign Up Link */}
           <div className="text-center mt-2 mx-auto w-full max-w-md">
-            <p className="text-xs text-muted-foreground font-[Metropolis]">
+            <p className="text-caption text-muted-foreground">
               Don&apos;t have an account?{' '}
               <a
                 href="/signup"
-                className="text-primary font-semibold hover:opacity-70 transition-opacity font-[Parkinsans]"
+                className="text-primary text-label hover:opacity-70 transition-opacity"
               >
                 Sign Up
               </a>

@@ -1,7 +1,7 @@
 import type { DicoWord } from '@/types';
 import { motion } from 'framer-motion';
 import { ChevronDown, Lightbulb, LineChart, VoteIcon } from 'lucide-react';
-import { SugesstionsRow } from './SugesstionRow';
+import { SuggestionsRow } from './SugesstionRow';
 
 import { useState } from 'react';
 import { Button } from './Button';
@@ -23,40 +23,40 @@ export function NeoDicoWord({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.03 }}
-      className="bg-white  rounded-xl  border border-neutral-200 shadow-soft overflow-hidden hover:shadow-lg transition-all hover:scale-[1.02]"
+      className="bg-white dark:bg-neutral-900 rounded-xl border border-neutral-200 dark:border-neutral-700 shadow-soft overflow-hidden hover:shadow-lg transition-all hover:scale-[1.02]"
     >
-      <div className={`p-4 bg-white `}>
-        <div className={`p-2 w-full  rounded-xl bg-white`}>
+      <div className={`p-4 bg-white dark:bg-neutral-900`}>
+        <div className={`p-2 w-full rounded-xl bg-white dark:bg-neutral-900`}>
           <div className="mb-2">
-            <span className="font-[400] text-[16px] text-neutral-950">
+            <span className="body-base text-neutral-950 dark:text-neutral-50">
               {word}
             </span>
           </div>
           <div className="mb-1">
-            <em className="font-[400] text-[16px] text-[#A30202] mr-1">
+            <em className="body-base text-[#A30202] dark:text-red-400 mr-1">
               NeoDiko {languageName}:
             </em>
-            <span className="font-[500] text-[16px] text-[#111111CC]">
+            <span className="body-base font-medium text-[#111111CC] dark:text-neutral-300">
               {translation}
             </span>
           </div>
 
           <div className="mb-2">
-            <div className="italic text-neutral-600 mb-2">
+            <div className="text-caption italic text-neutral-600 dark:text-neutral-400 mb-2">
               <em>{partOfSpeech ?? 'noun'}</em>
             </div>
-            <span>{definition}</span>
+            <p className="body-small dark:text-neutral-300">{definition}</p>
           </div>
           {/* Suggestions Dropdown */}
-          <div className="relative w-full border-[#EFEFEF] border  bg-[#fafafa] rounded-lg">
+          <div className="relative w-full border-[#EFEFEF] dark:border-neutral-700 border bg-[#fafafa] dark:bg-neutral-800 rounded-lg">
             {/* Trigger Div */}
             <div
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center w-full justify-between p-3 cursor-pointer hover:bg-gray-50 transition-all"
+              className="flex items-center w-full justify-between p-3 cursor-pointer hover:bg-gray-50 dark:hover:bg-neutral-700 transition-all"
             >
               <div className="relative">
-                <LineChart className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                <span className="w-full py-[25px] pl-10  font-[500] text-[13px]">
+                <LineChart className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-neutral-500 pointer-events-none" />
+                <span className="body-small font-medium w-full py-[25px] pl-10 dark:text-neutral-200">
                   {selected}
                 </span>
               </div>
@@ -73,9 +73,9 @@ export function NeoDicoWord({
                 ${isOpen ? 'grid-rows-[1fr] opacity-100 mt-2' : 'grid-rows-[0fr] opacity-0'}
             `}
             >
-              <div className="overflow-hidden border">
+              <div className="overflow-hidden border dark:border-neutral-700">
                 {translations?.map((translation_, index) => (
-                  <SugesstionsRow
+                  <SuggestionsRow
                     key={translation_.id}
                     suggestion={translation_}
                     index={index}

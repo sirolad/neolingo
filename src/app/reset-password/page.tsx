@@ -178,10 +178,10 @@ export default function ResetPasswordPage() {
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Check className="w-8 h-8 text-green-600" />
               </div>
-              <h1 className="text-[28px] sm:text-[32px] lg:text-[36px] font-medium leading-[34px] sm:leading-[38px] lg:leading-[42px] text-[#292929] font-[Parkinsans] mb-3">
+              <h1 className="auth-title text-[#292929] mb-3">
                 Check Your Email
               </h1>
-              <p className="text-[14px] sm:text-[15px] font-normal leading-[18px] sm:leading-[20px] text-[#656565] font-[Metropolis] mb-6 max-w-sm mx-auto">
+              <p className="subtitle-small text-[#656565] mb-6 max-w-sm mx-auto">
                 We&apos;ve sent password recovery instructions to{' '}
                 <span className="font-medium text-[#292929]">{email}</span>
               </p>
@@ -190,18 +190,18 @@ export default function ResetPasswordPage() {
                 onClick={() => setSubmitted(false)}
                 className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full mb-4 transition-colors"
               >
-                <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
+                <span className="text-button text-base text-white">
                   Try Another Email
                 </span>
               </button>
 
               <div className="flex items-center justify-center gap-2">
-                <span className="text-[14px] text-[#656565] font-[Metropolis]">
+                <span className="body-small text-[#656565]">
                   Remember Password?
                 </span>
                 <Link
                   href="/signin"
-                  className="text-[14px] text-[#111111] font-bold font-[Parkinsans] hover:opacity-70 transition-opacity"
+                  className="body-small text-[#111111] font-bold hover:opacity-70 transition-opacity"
                 >
                   Log In
                 </Link>
@@ -232,10 +232,10 @@ export default function ResetPasswordPage() {
 
           {/* Success Text */}
           <div className="mb-11">
-            <h1 className="text-[26px] sm:text-[28px] font-medium leading-[36px] text-[#111111] font-[Parkinsans] mb-3">
+            <h1 className="success-title text-[#111111] mb-3">
               Password Reset Successful
             </h1>
-            <p className="text-[15px] font-normal leading-[21px] text-[#111111]/80 font-[Metropolis]">
+            <p className="body-base text-[#111111]/80">
               You have successfully reset your password
             </p>
           </div>
@@ -245,7 +245,7 @@ export default function ResetPasswordPage() {
             onClick={() => (window.location.href = '/signin')}
             className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] transition-all duration-200"
           >
-            <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
+            <span className="text-button text-base text-white">
               Continue to Log In
             </span>
           </button>
@@ -274,10 +274,10 @@ export default function ResetPasswordPage() {
             <div className="bg-white rounded-[20px] border border-[#EFEFEF] px-4 py-6 sm:px-6 lg:px-8">
               {/* Header */}
               <div className="mb-8">
-                <h1 className="text-[28px] sm:text-[32px] lg:text-[36px] font-medium leading-[34px] sm:leading-[38px] lg:leading-[42px] text-[#292929] font-[Parkinsans] mb-3 text-center">
+                <h1 className="auth-title text-[#292929] mb-3 text-center">
                   Reset Your password
                 </h1>
-                <p className="text-[14px] sm:text-[15px] font-normal leading-[18px] sm:leading-[20px] text-[#656565] font-[Metropolis] text-center max-w-sm mx-auto">
+                <p className="subtitle-small text-[#656565] text-center max-w-sm mx-auto">
                   You can now go ahead to set a new password
                 </p>
               </div>
@@ -286,7 +286,7 @@ export default function ResetPasswordPage() {
               <form onSubmit={handlePasswordSubmit} className="space-y-6">
                 {/* Password Input */}
                 <div className="space-y-1">
-                  <label className="text-[13px] font-medium leading-[19px] text-[#464646] font-[Parkinsans] block">
+                  <label className="text-label text-[#464646] block">
                     Password
                   </label>
                   <div className="relative">
@@ -297,7 +297,7 @@ export default function ResetPasswordPage() {
                       onChange={handlePasswordChange}
                       placeholder="Enter Password"
                       disabled={loading}
-                      className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white font-[Metropolis] text-[14px] sm:text-[15px] leading-[20px] text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
+                      className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white body-small text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
                     />
                     <Button
                       type="button"
@@ -312,7 +312,7 @@ export default function ResetPasswordPage() {
                     </Button>
                   </div>
                   {passwordError && (
-                    <p className="text-[12px] text-red-500 font-[Metropolis] mt-1">
+                    <p className="text-caption text-red-500 mt-1">
                       {passwordError}
                     </p>
                   )}
@@ -320,7 +320,7 @@ export default function ResetPasswordPage() {
 
                 {/* Confirm Password Input */}
                 <div className="space-y-1">
-                  <label className="text-[13px] font-medium leading-[19px] text-[#464646] font-[Parkinsans] block">
+                  <label className="text-label text-[#464646] block">
                     Confirm Password
                   </label>
                   <div className="relative">
@@ -331,7 +331,7 @@ export default function ResetPasswordPage() {
                       onChange={handleConfirmPasswordChange}
                       placeholder="Re-enter Password"
                       disabled={loading}
-                      className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white font-[Metropolis] text-[14px] sm:text-[15px] leading-[20px] text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
+                      className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white body-small text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
                     />
                     <Button
                       type="button"
@@ -348,7 +348,7 @@ export default function ResetPasswordPage() {
                     </Button>
                   </div>
                   {confirmPasswordError && (
-                    <p className="text-[12px] text-red-500 font-[Metropolis] mt-1">
+                    <p className="text-caption text-red-500 mt-1">
                       {confirmPasswordError}
                     </p>
                   )}
@@ -360,7 +360,7 @@ export default function ResetPasswordPage() {
                   disabled={loading}
                   className="w-full btn-big sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
                 >
-                  <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
+                  <span className="text-button text-base text-white">
                     {loading ? 'Resetting...' : 'Reset Password'}
                   </span>
                 </Button>
@@ -369,12 +369,12 @@ export default function ResetPasswordPage() {
               {/* Footer Links */}
               <div className="text-center mt-6">
                 <div className="flex items-center justify-center mx-auto gap-2">
-                  <span className="text-[14px] text-[#656565] font-[Metropolis]">
+                  <span className="body-small text-[#656565]">
                     Remember Password?
                   </span>
                   <Link
                     href="/signin"
-                    className="text-[14px] text-[#111111] font-bold font-[Parkinsans] hover:opacity-70 transition-opacity"
+                    className="body-small text-[#111111] font-bold hover:opacity-70 transition-opacity"
                   >
                     Log In
                   </Link>
@@ -407,10 +407,10 @@ export default function ResetPasswordPage() {
           <div className="bg-white rounded-[20px] border border-[#EFEFEF] px-4 py-6 sm:px-6 lg:px-8">
             {/* Header */}
             <div className="mb-8">
-              <h1 className="text-[28px] sm:text-[32px] lg:text-[36px] font-medium leading-[34px] sm:leading-[38px] lg:leading-[42px] text-[#292929] font-[Parkinsans] mb-3 text-center">
+              <h1 className="auth-title text-[#292929] mb-3 text-center">
                 Reset Your password
               </h1>
-              <p className="text-[14px] sm:text-[15px] font-normal leading-[18px] sm:leading-[20px] text-[#656565] font-[Metropolis] text-center max-w-sm mx-auto">
+              <p className="subtitle-small text-[#656565] text-center max-w-sm mx-auto">
                 Kindly provide your email account, to be able to reset your
                 Password
               </p>
@@ -420,7 +420,7 @@ export default function ResetPasswordPage() {
             <form onSubmit={handleEmailSubmit} className="space-y-6">
               {/* Email Input - Custom styled to match Figma */}
               <div className="space-y-1">
-                <label className="text-[13px] font-medium leading-[19px] text-[#464646] font-[Parkinsans] block">
+                <label className="text-label text-[#464646] block">
                   Email Address
                 </label>
                 <div className="relative">
@@ -431,7 +431,7 @@ export default function ResetPasswordPage() {
                     onChange={handleEmailChange}
                     placeholder="Enter Email Address"
                     disabled={loading}
-                    className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white font-[Metropolis] text-[14px] sm:text-[15px] leading-[20px] text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
+                    className="w-full h-[56px] sm:h-[60px] px-4 pr-12 border border-[#DCDCDC] rounded-[8px] bg-white body-small text-black placeholder:text-[#989898] focus:outline-none focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10 transition-all disabled:opacity-50"
                   />
                   {/* Email icon */}
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
@@ -439,9 +439,7 @@ export default function ResetPasswordPage() {
                   </div>
                 </div>
                 {error && (
-                  <p className="text-[12px] text-red-500 font-[Metropolis] mt-1">
-                    {error}
-                  </p>
+                  <p className="text-caption text-red-500 mt-1">{error}</p>
                 )}
               </div>
 
@@ -451,7 +449,7 @@ export default function ResetPasswordPage() {
                 disabled={loading}
                 className="w-full h-[58px] sm:h-[64px] flex items-center justify-center bg-[#111111] hover:bg-[#222222] rounded-full shadow-[0px_3px_32px_-1px_rgba(0,0,0,0.15)] disabled:opacity-70 disabled:cursor-not-allowed transition-all duration-200"
               >
-                <span className="text-[16px] sm:text-[17px] font-semibold leading-[22px] text-white font-[Parkinsans]">
+                <span className="text-button text-base text-white">
                   {loading ? 'Sending...' : 'Send Code'}
                 </span>
               </button>
@@ -460,12 +458,12 @@ export default function ResetPasswordPage() {
             {/* Footer Links */}
             <div className="text-center mt-6">
               <div className="flex items-center justify-center gap-2">
-                <span className="text-[14px] text-[#656565] font-[Metropolis]">
+                <span className="body-small text-[#656565]">
                   Remember Password?
                 </span>
                 <Link
                   href="/signin"
-                  className="text-[14px] text-[#111111] font-bold font-[Parkinsans] hover:opacity-70 transition-opacity"
+                  className="body-small text-[#111111] font-bold hover:opacity-70 transition-opacity"
                 >
                   Log In
                 </Link>

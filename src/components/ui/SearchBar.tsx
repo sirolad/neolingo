@@ -34,7 +34,7 @@ export function SearchBar({
       )}
       <input
         type="text"
-        className={`block w-full pl-10 pr-10 py-3 border border-neutral-200 ${rounded ? 'rounded-full' : 'rounded-2xl'} bg-white text-neutral-950 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent`}
+        className={`block w-full pl-10 pr-10 py-3 border border-neutral-200 dark:border-neutral-700 ${rounded ? 'rounded-full' : 'rounded-2xl'} bg-white dark:bg-neutral-900 text-neutral-950 dark:text-neutral-50 placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent`}
         placeholder={placeholder}
         value={value}
         onChange={e => onChange(e.target.value)}
@@ -44,7 +44,7 @@ export function SearchBar({
           onClick={onClear}
           className="absolute inset-y-0 right-0 pr-3 flex items-center"
         >
-          <X className="h-5 w-5 text-neutral-400 hover:text-neutral-600" />
+          <X className="h-5 w-5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300" />
         </button>
       )}
     </div>

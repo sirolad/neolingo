@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
-import { Geist, Geist_Mono, Parkinsans } from 'next/font/google';
+import { Geist, Geist_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import './globals.css';
 import { Toaster } from '@/components/ui/sonner';
 import ErrorBoundary from '@/components/ErrorBoundary';
@@ -16,9 +18,75 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-const parkinsans = Parkinsans({
+// Parkinsans font for headlines (local)
+const parkinsans = localFont({
+  src: [
+    {
+      path: '../../public/fonts/Parkinsans/Parkinsans-Light.ttf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Parkinsans/Parkinsans-Regular.ttf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Parkinsans/Parkinsans-Medium.ttf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Parkinsans/Parkinsans-SemiBold.ttf',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Parkinsans/Parkinsans-Bold.ttf',
+      weight: '700',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Parkinsans/Parkinsans-ExtraBold.ttf',
+      weight: '800',
+      style: 'normal',
+    },
+  ],
   variable: '--font-parkinsans',
-  subsets: ['latin'],
+  display: 'swap',
+});
+
+// Metropolis font for subtexts
+const metropolis = localFont({
+  src: [
+    {
+      path: '../../public/fonts/Metropolis Font family/Metropolis-Light.otf',
+      weight: '300',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Metropolis Font family/Metropolis-Regular.otf',
+      weight: '400',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Metropolis Font family/Metropolis-Medium.otf',
+      weight: '500',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Metropolis Font family/Metropolis-SemiBold.otf',
+      weight: '600',
+      style: 'normal',
+    },
+    {
+      path: '../../public/fonts/Metropolis Font family/Metropolis-Bold.otf',
+      weight: '700',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-metropolis',
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -59,7 +127,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="application-name" content="Neolingo" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -78,14 +146,16 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/icons/icon.svg" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${parkinsans.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${parkinsans.variable} ${metropolis.variable} antialiased`}
       >
         <ErrorBoundary>
-          <AuthProvider>
-            <PWAUpdater />
-            {children}
-            <Toaster richColors position="top-center" />
-          </AuthProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <PWAUpdater />
+              {children}
+              <Toaster richColors position="top-center" />
+            </AuthProvider>
+          </ThemeProvider>
         </ErrorBoundary>
       </body>
     </html>

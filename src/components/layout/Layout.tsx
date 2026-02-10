@@ -27,20 +27,23 @@ const Layout: React.FC<LayoutProps> = ({
     switch (variant) {
       case 'auth':
         return [
-          'min-h-screen bg-white',
+          'min-h-screen bg-white dark:bg-neutral-950',
           'flex flex-col',
           'relative overflow-hidden',
         ];
       case 'home':
-        return ['min-h-screen bg-neutral-50', 'flex flex-col'];
+        return [
+          'min-h-screen bg-neutral-50 dark:bg-neutral-950',
+          'flex flex-col',
+        ];
       case 'fullbleed':
         return [
-          'min-h-screen bg-white',
+          'min-h-screen bg-white dark:bg-neutral-950',
           'flex flex-col',
           'relative overflow-hidden',
         ];
       default:
-        return ['min-h-screen bg-white', 'flex flex-col'];
+        return ['min-h-screen bg-white dark:bg-neutral-950', 'flex flex-col'];
     }
   };
 

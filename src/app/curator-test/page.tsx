@@ -136,10 +136,10 @@ export default function CuratorTestPage() {
           <div className="bg-white rounded-[20px] border border-neutral-200 p-6 lg:p-8">
             {/* Card Header */}
             <div className="text-center pb-4 border-b border-neutral-200 mb-6">
-              <h1 className="font-display text-2xl lg:text-[28px] font-medium text-neutral-950 mb-2">
+              <h1 className="heading-3 text-neutral-950 mb-2">
                 Lang Cultural Check
               </h1>
-              <p className="text-sm text-neutral-600">
+              <p className="body-small text-neutral-600">
                 Provide your answers to these questions, to become a Neo
                 Contributor
               </p>
@@ -147,7 +147,7 @@ export default function CuratorTestPage() {
 
             {/* Progress */}
             <div className="flex items-center justify-between mb-6">
-              <span className="text-base font-semibold text-neutral-600">
+              <span className="body-base font-semibold text-neutral-600">
                 Question {currentQuestionIndex + 1} of {totalQuestions}
               </span>
               <div className="flex gap-1">
@@ -165,7 +165,7 @@ export default function CuratorTestPage() {
             </div>
 
             {/* Question */}
-            <h2 className="font-display text-lg lg:text-xl font-semibold text-neutral-950 mb-6 leading-relaxed">
+            <h2 className="heading-5 text-neutral-950 mb-6 leading-relaxed">
               {currentQuestion.text}
             </h2>
 
@@ -181,7 +181,7 @@ export default function CuratorTestPage() {
                       : 'border-neutral-300 hover:border-neutral-400 hover:bg-neutral-50'
                   }`}
                 >
-                  <span className="font-medium text-neutral-800">
+                  <span className="body-base font-medium text-neutral-800">
                     {option.label}. {option.value}
                   </span>
                 </button>
@@ -197,7 +197,7 @@ export default function CuratorTestPage() {
           <Button
             onClick={handleNext}
             disabled={!selectedAnswer}
-            className={`w-full rounded-full h-14 lg:h-16 text-base lg:text-lg font-medium transition-colors ${
+            className={`w-full rounded-full h-14 lg:h-16 text-lg lg:text-xl font-semibold transition-colors ${
               selectedAnswer
                 ? 'bg-neutral-950 hover:bg-neutral-800 text-white'
                 : 'bg-neutral-300 text-neutral-500 cursor-not-allowed'

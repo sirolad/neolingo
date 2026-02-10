@@ -60,6 +60,8 @@
   --color-btn-primary-text: var(--btn-primary-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-parkinsans), system-ui, sans-serif;
+  --font-subtitle: var(--font-metropolis), var(--font-geist-sans), system-ui, sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -176,14 +178,14 @@
   --popover: #171717;
   --popover-foreground: #fafafa;
 
-  --primary: #111111;
-  --primary-foreground: #ffffff;
+  --primary: #fafafa;
+  --primary-foreground: #0a0a0a;
 
   --secondary: #262626;
   --secondary-foreground: #fafafa;
 
   --muted: #262626;
-  --muted-foreground: #a3a3a3;
+  --muted-foreground: #b5b5b5;
 
   --accent: #262626;
   --accent-foreground: #fafafa;
@@ -191,7 +193,7 @@
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
-  --border: #262626;
+  --border: #333333;
   --input: #262626;
   --ring: #3b82f6;
 
@@ -209,5 +211,108 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Typography System - Parkinsans for Headlines, Metropolis for Subtexts */
+@layer components {
+  /* Major Headlines - Parkinsans */
+  .heading-1 {
+    @apply font-display text-4xl lg:text-5xl font-bold tracking-tight;
+  }
+  
+  .heading-2 {
+    @apply font-display text-3xl lg:text-4xl font-bold tracking-tight;
+  }
+  
+  .heading-3 {
+    @apply font-display text-2xl lg:text-3xl font-semibold lg:font-bold tracking-tight;
+  }
+  
+  .heading-4 {
+    @apply font-display text-xl lg:text-2xl font-semibold lg:font-bold tracking-tight;
+  }
+  
+  .heading-5 {
+    @apply font-display text-lg lg:text-xl font-semibold lg:font-bold tracking-tight;
+  }
+  
+  .heading-6 {
+    @apply font-display text-base lg:text-lg font-semibold tracking-tight;
+  }
+  
+  /* Subtexts and Body - Metropolis */
+  .body-large {
+    @apply font-subtitle text-lg font-normal leading-relaxed;
+  }
+  
+  .body-base {
+    @apply font-subtitle text-base font-normal leading-relaxed;
+  }
+  
+  .body-small {
+    @apply font-subtitle text-sm font-normal leading-relaxed;
+  }
+  
+  .body-xs {
+    @apply font-subtitle text-xs font-normal leading-relaxed;
+  }
+  
+  /* Subtitles */
+  .subtitle-large {
+    @apply font-subtitle text-lg font-medium text-neutral-600 dark:text-neutral-400;
+  }
+  
+  .subtitle-base {
+    @apply font-subtitle text-base font-medium text-neutral-600 dark:text-neutral-400;
+  }
+  
+  .subtitle-small {
+    @apply font-subtitle text-sm font-medium text-neutral-600 dark:text-neutral-400;
+  }
+  
+  /* UI Elements */
+  .text-button {
+    @apply font-subtitle font-semibold;
+  }
+  
+  .text-label {
+    @apply font-display text-sm font-medium;
+  }
+  
+  .text-caption {
+    @apply font-subtitle text-xs text-neutral-500 dark:text-neutral-400;
+  }
+  
+  /* Navigation */
+  .nav-primary {
+    @apply font-subtitle font-medium;
+  }
+  
+  .nav-secondary {
+    @apply font-subtitle text-sm font-medium;
+  }
+  
+  /* Card elements */
+  .card-title {
+    @apply font-display text-xl font-semibold;
+  }
+  
+  .card-subtitle {
+    @apply font-subtitle text-sm font-medium text-neutral-600;
+  }
+  
+  .card-content {
+    @apply font-subtitle text-base;
+  }
+  
+  /* Auth page titles */
+  .auth-title {
+    @apply font-display text-[28px] font-medium leading-[34px];
+  }
+  
+  /* Success screen title */
+  .success-title {
+    @apply font-display text-[26px] font-medium leading-[36px];
   }
 }

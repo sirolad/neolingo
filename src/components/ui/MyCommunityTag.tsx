@@ -24,7 +24,7 @@ export function MyCommunityTag({
             svg
             className="w-4 h-4"
           />
-          <span className="text-zinc-800 font-bold text-[10px] pl-2">
+          <span className="body-xs font-bold text-zinc-800 pl-2">
             {userNeoCommunity?.short}
           </span>
         </div>

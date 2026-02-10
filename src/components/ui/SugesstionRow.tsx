@@ -1,18 +1,18 @@
 import AudioPlayer from '../AudioPlayer';
 import { motion } from 'framer-motion';
 
-interface ComunitySuggestion {
+interface CommunitySuggestion {
   id: string;
   communityWord: string;
   audioUrl?: string;
   votes: number;
 }
 
-export function SugesstionsRow({
+export function SuggestionsRow({
   suggestion,
   index,
 }: {
-  suggestion: ComunitySuggestion;
+  suggestion: CommunitySuggestion;
   index: number;
 }) {
   return (
@@ -28,11 +28,11 @@ export function SugesstionsRow({
         >
           <div>
             <div className="flex justify-between mb-4">
-              <div className="flex items-center gap-2 text-sm md:text-base text-neutral-600">
+              <div className="flex items-center gap-2 body-small md:body-base text-neutral-600">
                 <span>{(index + 1).toString().padStart(2, '0')}.</span>
                 <span>{suggestion.communityWord}</span>
               </div>
-              <div className="flex justify-end self-end text-sm md:text-base pl-8 md:px-3 py-1 md:py-1.5">
+              <div className="flex justify-end self-end body-small md:body-base pl-8 md:px-3 py-1 md:py-1.5">
                 <AudioPlayer
                   className="self-end"
                   audioUrl={suggestion.audioUrl || ''}
