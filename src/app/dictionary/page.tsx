@@ -340,7 +340,9 @@ export default function DictionaryPage() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-4"></div>
-            <p className="text-neutral-600">Loading...</p>
+            <p className="body-base text-neutral-600 dark:text-neutral-400">
+              Loading...
+            </p>
           </div>
         </div>
       </Layout>
@@ -384,14 +386,14 @@ export default function DictionaryPage() {
         <div className="flex items-center justify-between py-4 md:py-6 lg:py-8">
           <button
             onClick={handleGoBack}
-            className="inline-flex items-center text-neutral-950 hover:text-primary-800 transition-colors p-2 rounded-lg hover:bg-neutral-100"
+            className="inline-flex items-center text-neutral-950 dark:text-neutral-50 hover:text-primary-800 dark:hover:text-primary-200 transition-colors p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800"
           >
             <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
-            <span className="font-medium text-sm md:text-base hidden lg:block">
+            <span className="body-small md:body-base font-medium hidden lg:block">
               Back
             </span>
           </button>
-          <span className="text-lg md:text-xl lg:text-2xl font-[400] text-[20px] text-neutral-950">
+          <span className="heading-4 text-neutral-950 dark:text-neutral-50">
             NeoDiko {userNeoCommunity ? `${userNeoCommunity.name}` : ''}
           </span>
           <div className="md:w-20">
@@ -445,7 +447,7 @@ export default function DictionaryPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft p-8 md:p-10 lg:p-12 text-center col-span-full items-center justify-center"
+                    className="bg-white dark:bg-neutral-900 rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 dark:border-neutral-800 shadow-soft p-8 md:p-10 lg:p-12 text-center col-span-full items-center justify-center"
                   >
                     {/* <Book className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 text-neutral-400 mx-auto mb-4 md:mb-6 lg:mb-8" /> */}
                     <Image
@@ -457,11 +459,11 @@ export default function DictionaryPage() {
                       priority
                     />
                     <div className="mb-2">
-                      <span className="text-[26px] font-[500] md:text-xl lg:text-2xl text-neutral-800 mb-2 md:mb-3 lg:mb-4">
+                      <h3 className="heading-3 text-neutral-800 dark:text-neutral-200 mb-2 md:mb-3 lg:mb-4">
                         Word Not Found
-                      </span>
+                      </h3>
                     </div>
-                    <p className="text-neutral-600 text-[15px] font-[400] md:text-base lg:text-lg max-w-md mx-auto mb-4 md:mb-6">
+                    <p className="body-base lg:body-large text-neutral-600 dark:text-neutral-400 max-w-md mx-auto mb-4 md:mb-6">
                       Kindly nominate a word for your community to suggest Neos
                       for it.
                     </p>
@@ -479,9 +481,9 @@ export default function DictionaryPage() {
                 )}
               </div>
             </div>
-            <div className="w-10 shrink-0  bg-white border border-neutral-200 hover:bg-gray-200 transition-colors rounded-full flex-row justify-center px-1">
+            <div className="w-10 shrink-0 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 hover:bg-gray-200 dark:hover:bg-neutral-800 transition-colors rounded-full flex-row justify-center px-1">
               <div className="flex justify-center py-3 w-full">
-                <SortDescIcon className="w-5 h-5 text-neutral-600" />
+                <SortDescIcon className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
               </div>
               {alphabets.map(letter => (
                 <button
@@ -489,8 +491,8 @@ export default function DictionaryPage() {
                   onClick={() => setCurrentAlphabet(letter)}
                   className={`w-full py-1 mb-4 text-sm font-medium transition-colors ${
                     currentAlphabet === letter
-                      ? 'border border-neutral-300 text-neutral-900 rounded-full'
-                      : 'text-neutral-600 hover:bg-gray-200'
+                      ? 'border border-neutral-300 dark:border-neutral-600 text-neutral-900 dark:text-neutral-100 rounded-full'
+                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-gray-200 dark:hover:bg-neutral-700'
                   }`}
                 >
                   {letter}
@@ -507,10 +509,10 @@ export default function DictionaryPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => router.push('/dictionary/request')}
-            className="fixed bottom-24 right-4 md:right-8 z-50 bg-neutral-950 text-white px-5 py-3 rounded-full shadow-lg flex items-center gap-2 font-medium hover:bg-neutral-900 transition-colors"
+            className="fixed bottom-24 right-4 md:right-8 z-50 bg-neutral-950 dark:bg-neutral-100 text-white dark:text-neutral-900 px-5 py-3 rounded-full shadow-lg flex items-center gap-2 text-button hover:bg-neutral-900 dark:hover:bg-neutral-200 transition-colors"
           >
             <BookPlus className="w-5 h-5" />
-            <span>Request Neo</span>
+            <span className="body-base">Request Neo</span>
           </motion.button>
         </div>
       </div>

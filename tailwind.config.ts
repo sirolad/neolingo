@@ -78,7 +78,13 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-geist-mono)', 'monospace'],
-        display: ['var(--font-parkinsans)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-parkinsans)', 'system-ui', 'sans-serif'], // For major headlines
+        subtitle: [
+          'var(--font-metropolis)',
+          'var(--font-geist-sans)',
+          'system-ui',
+          'sans-serif',
+        ], // For subtexts
       },
       fontSize: {
         xs: ['0.75rem', { lineHeight: '1rem' }],

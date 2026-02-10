@@ -78,33 +78,33 @@ export default function AudioRecorder({
   };
 
   return (
-    <div className="border border-neutral-200 rounded-2xl md:rounded-2xl bg-white text-neutral-950 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-lg transition-all h-12 md:h-14 lg:h-16 flex items-center px-4 md:px-5 lg:px-6 w-full justify-between">
+    <div className="border border-neutral-200 dark:border-neutral-700 rounded-2xl md:rounded-2xl bg-white dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-lg transition-all h-12 md:h-14 lg:h-16 flex items-center px-4 md:px-5 lg:px-6 w-full justify-between">
       {audioUrl === null ? (
         <>
           {!recording ? (
             <>
-              <p className="text-[10px] font-normal text-neutral-700">
+              <p className="text-caption text-neutral-700 dark:text-neutral-300">
                 Record voice
               </p>
               <button
                 type="button"
                 aria-label="Start recording"
                 onClick={startRecording}
-                className="rounded-2xl text-neutral-950 hover:bg-neutral-100 transition-all h-12 w-12 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="rounded-2xl text-neutral-950 dark:text-neutral-50 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all h-12 w-12 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
-                <Mic className="w-5 h-5 text-neutral-500" />
+                <Mic className="w-5 h-5 text-neutral-500 dark:text-neutral-400" />
               </button>
             </>
           ) : (
             <>
-              <p className="text-[10px] font-normal text-red-700">
+              <p className="text-caption text-red-700 dark:text-red-400">
                 Recording...
               </p>
               <button
                 type="button"
                 aria-label="Stop recording"
                 onClick={stopRecording}
-                className="border border-red-300 bg-red-100 text-red-700 rounded-2xl h-12 w-12 flex items-center justify-center animate-pulse focus:outline-none focus:ring-2 focus:ring-red-400"
+                className="border border-red-300 dark:border-red-700 bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-400 rounded-2xl h-12 w-12 flex items-center justify-center animate-pulse focus:outline-none focus:ring-2 focus:ring-red-400"
               >
                 <svg
                   className="w-5 h-5"
@@ -121,12 +121,21 @@ export default function AudioRecorder({
       {audioUrl && !recording && (
         <>
           {isPlaying ? (
-            <Pause onClick={togglePlay} className="w-5 h-5" />
+            <Pause
+              onClick={togglePlay}
+              className="w-5 h-5 text-neutral-700 dark:text-neutral-300 cursor-pointer"
+            />
           ) : (
-            <Play onClick={togglePlay} className="w-5 h-5" />
+            <Play
+              onClick={togglePlay}
+              className="w-5 h-5 text-neutral-700 dark:text-neutral-300 cursor-pointer"
+            />
           )}
-          <AudioLinesIcon className="w-10 h-5 text-neutral-500" />
-          <Trash onClick={deleteAudio} className="w-5 h-5" />
+          <AudioLinesIcon className="w-10 h-5 text-neutral-500 dark:text-neutral-400" />
+          <Trash
+            onClick={deleteAudio}
+            className="w-5 h-5 text-neutral-700 dark:text-neutral-300 cursor-pointer hover:text-red-500 dark:hover:text-red-400"
+          />
         </>
       )}
       {audioUrl && !recording && (

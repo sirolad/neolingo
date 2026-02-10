@@ -1,19 +1,19 @@
 import { motion } from 'framer-motion';
 import { Button } from './Button';
-import { Lightbulb, PlusSquare, Vote } from 'lucide-react';
+import { BookPlus, Lightbulb, Vote } from 'lucide-react';
 
 export function CtaCard({
   title,
   subTitle,
   word,
-  ctatext,
+  ctaText: ctaText,
   variant,
   onHandleClick,
 }: {
   title: string;
   subTitle: string;
   word: string;
-  ctatext?: string;
+  ctaText?: string;
   variant: 'suggest' | 'vote' | 'request';
   onHandleClick: () => void;
 }) {
@@ -24,27 +24,27 @@ export function CtaCard({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
-          className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
+          className="bg-white dark:bg-neutral-900 rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 dark:border-neutral-800 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
         >
           {/* Card Header */}
           <div className="p-6 md:p-8 lg:p-10 pb-4 md:pb-6 lg:pb-8">
-            <span className="text-[14px] md:text-2xl lg:text-3xl font-bold text-neutral-950 mb-1 md:mb-2">
+            <span className="card-title md:heading-4 lg:heading-3 text-neutral-950 dark:text-neutral-50 mb-1 md:mb-2">
               {title}
             </span>
-            <p className="text-neutral-600 text-[12px] md:text-base lg:text-lg">
+            <p className="body-small md:body-base lg:body-large text-neutral-600 dark:text-neutral-400">
               {subTitle}
             </p>
           </div>
 
           {/* Word Display */}
           <div
-            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-blue-50 border-blue-200 border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
+            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800 border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
           >
             <div className="flex items-center justify-between mb-3 md:mb-4 lg:mb-6">
               <div
-                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full text-xs md:text-sm lg:text-base font-medium bg-blue-100 text-blue-800`}
+                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full body-xs md:body-small lg:body-base font-medium bg-blue-100 dark:bg-blue-800/50 text-blue-800 dark:text-blue-200`}
               >
-                {ctatext}
+                {ctaText}
               </div>
               <Button
                 variant="primary"
@@ -53,12 +53,12 @@ export function CtaCard({
                 leftIcon={
                   <Lightbulb className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
                 }
-                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl text-xs md:text-sm lg:text-base font-medium hover:scale-105 active:scale-95 transition-transform"
+                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-medium hover:scale-105 active:scale-95 transition-transform"
               >
                 Curate
               </Button>
             </div>
-            <span className="text-2xl md:text-3xl lg:text-4xl font-light text-neutral-950">
+            <span className="heading-4 md:heading-3 lg:heading-2 font-light text-neutral-950 dark:text-neutral-50">
               {word}
             </span>
           </div>
@@ -70,27 +70,27 @@ export function CtaCard({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
-          className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
+          className="bg-white dark:bg-neutral-900 rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 dark:border-neutral-800 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
         >
           {/* Card Header */}
           <div className="p-6 md:p-8 lg:p-10 pb-4 md:pb-6 lg:pb-8">
-            <span className="text-[14px] md:text-2xl lg:text-3xl font-bold text-neutral-950 mb-1 md:mb-2">
+            <span className="card-title md:heading-4 lg:heading-3 text-neutral-950 dark:text-neutral-50 mb-1 md:mb-2">
               {title}
             </span>
-            <p className="text-neutral-600 text-[12px] md:text-base lg:text-lg">
+            <p className="body-small md:body-base lg:body-large text-neutral-600 dark:text-neutral-400">
               {subTitle}
             </p>
           </div>
 
           {/* Word Display */}
           <div
-            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-[#e4fde4] border-[#c8fac9] border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
+            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-[#e4fde4] dark:bg-green-900/30 border-[#c8fac9] dark:border-green-800 border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
           >
             <div className="flex items-center justify-between mb-3 md:mb-4 lg:mb-6">
               <div
-                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full text-xs md:text-sm lg:text-base font-medium bg-[#e4fde4] text-[#50954d]`}
+                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full body-xs md:body-small lg:body-base font-medium bg-[#e4fde4] dark:bg-green-800/50 text-[#50954d] dark:text-green-300`}
               >
-                {ctatext}
+                {ctaText}
               </div>
               <Button
                 variant="primary"
@@ -99,12 +99,12 @@ export function CtaCard({
                 leftIcon={
                   <Vote className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
                 }
-                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl text-xs md:text-sm lg:text-base font-medium hover:scale-105 active:scale-95 transition-transform"
+                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-medium hover:scale-105 active:scale-95 transition-transform"
               >
                 Vote
               </Button>
             </div>
-            <span className="text-2xl md:text-3xl lg:text-4xl font-light text-neutral-950">
+            <span className="heading-4 md:heading-3 lg:heading-2 font-light text-neutral-950 dark:text-neutral-50">
               {word}
             </span>
           </div>
@@ -116,41 +116,41 @@ export function CtaCard({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
-          className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
+          className="bg-white dark:bg-neutral-900 rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 dark:border-neutral-800 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
         >
           {/* Card Header */}
           <div className="p-6 md:p-8 lg:p-10 pb-4 md:pb-6 lg:pb-8">
-            <span className="text-[14px] md:text-2xl lg:text-3xl font-bold text-neutral-950 mb-1 md:mb-2">
+            <span className="card-title md:heading-4 lg:heading-3 text-neutral-950 dark:text-neutral-50 mb-1 md:mb-2">
               {title}
             </span>
-            <p className="text-neutral-600 text-[12px] md:text-base lg:text-lg">
+            <p className="body-small md:body-base lg:body-large text-neutral-600 dark:text-neutral-400">
               {subTitle}
             </p>
           </div>
 
           {/* Word Display */}
           <div
-            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-[#f8f3fd] border-[#eaddf7] border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
+            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-[#f8f3fd] dark:bg-purple-900/30 border-[#eaddf7] dark:border-purple-800 border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
           >
             <div className="flex items-center justify-between mb-3 md:mb-4 lg:mb-6">
               <div
-                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full text-xs md:text-sm lg:text-base font-medium bg-[#f8f3fd] text-[#292929]`}
+                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full body-xs md:body-small lg:body-base font-medium bg-[#f8f3fd] dark:bg-purple-800/50 text-[#292929] dark:text-purple-200`}
               >
-                {ctatext}
+                {ctaText}
               </div>
               <Button
                 variant="primary"
                 size="sm"
                 onClick={onHandleClick}
                 leftIcon={
-                  <PlusSquare className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+                  <BookPlus className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
                 }
-                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl text-xs md:text-sm lg:text-base font-medium hover:scale-105 active:scale-95 transition-transform"
+                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-medium hover:scale-105 active:scale-95 transition-transform"
               >
                 Request
               </Button>
             </div>
-            <span className="text-[12px] md:text-[16px] lg:text-4xl font-light text-[#6826af]">
+            <span className="body-small md:body-base lg:heading-2 font-light text-[#6826af] dark:text-purple-300">
               {word}
             </span>
           </div>
@@ -162,27 +162,27 @@ export function CtaCard({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.1 }}
-          className="bg-white rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
+          className="bg-white dark:bg-neutral-900 rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 dark:border-neutral-800 shadow-soft overflow-hidden hover:shadow-lg transition-shadow"
         >
           {/* Card Header */}
           <div className="p-6 md:p-8 lg:p-10 pb-4 md:pb-6 lg:pb-8">
-            <span className="text-[14px] md:text-2xl lg:text-3xl font-bold text-neutral-950 mb-1 md:mb-2">
+            <span className="card-title md:heading-4 lg:heading-3 text-neutral-950 dark:text-neutral-50 mb-1 md:mb-2">
               {title}
             </span>
-            <p className="text-neutral-600 text-[12px] md:text-base lg:text-lg">
+            <p className="body-small md:body-base lg:body-large text-neutral-600 dark:text-neutral-400">
               {subTitle}
             </p>
           </div>
 
           {/* Word Display */}
           <div
-            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-blue-50 border-blue-200 border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
+            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800 border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
           >
             <div className="flex items-center justify-between mb-3 md:mb-4 lg:mb-6">
               <div
-                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full text-xs md:text-sm lg:text-base font-medium bg-blue-100 text-blue-800`}
+                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full body-xs md:body-small lg:body-base font-medium bg-blue-100 dark:bg-blue-800/50 text-blue-800 dark:text-blue-200`}
               >
-                {ctatext || 'Word of the day'}
+                {ctaText || 'Word of the day'}
               </div>
               <Button
                 variant="primary"
@@ -191,12 +191,12 @@ export function CtaCard({
                 leftIcon={
                   <Lightbulb className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
                 }
-                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl text-xs md:text-sm lg:text-base font-medium hover:scale-105 active:scale-95 transition-transform"
+                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-medium hover:scale-105 active:scale-95 transition-transform"
               >
                 Curate
               </Button>
             </div>
-            <span className="text-2xl md:text-3xl lg:text-4xl font-light text-neutral-950">
+            <span className="heading-4 md:heading-3 lg:heading-2 font-light text-neutral-950 dark:text-neutral-50">
               {word}
             </span>
           </div>

@@ -148,15 +148,17 @@ export function RequestForm({
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-green-50 border border-green-200 rounded-2xl p-8 text-center"
+          className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-2xl p-8 text-center"
         >
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Check className="w-8 h-8 text-green-600" />
+          <div className="w-16 h-16 bg-green-100 dark:bg-green-800/50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Check className="w-8 h-8 text-green-600 dark:text-green-400" />
           </div>
-          <h3 className="text-xl font-semibold text-green-900 mb-2">
+          <h3 className="heading-5 text-green-900 dark:text-green-100 mb-2">
             Request Submitted!
           </h3>
-          <p className="text-green-700 mb-6">{state.message}</p>
+          <p className="body-base text-green-700 dark:text-green-300 mb-6">
+            {state.message}
+          </p>
           <Button onClick={() => router.push('/dictionary')} variant="primary">
             Back to Dictionary
           </Button>
@@ -176,7 +178,7 @@ export function RequestForm({
 
             {/* Language Selection - Radio Style Source Toggle */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-neutral-700">
+              <label className="text-label text-neutral-700 dark:text-neutral-300">
                 Source Language (Select one)
               </label>
               <input
@@ -196,22 +198,22 @@ export function RequestForm({
                   onClick={() => setSelectedSourceId(englishId)}
                   className={`p-4 rounded-lg border cursor-pointer flex items-center justify-between transition-colors ${
                     selectedSourceId === englishId
-                      ? 'bg-white border-[rgba(17,17,17,0.15)]'
-                      : 'bg-[#F4F4F4] border-transparent'
+                      ? 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-600'
+                      : 'bg-neutral-100 dark:bg-neutral-800/50 border-transparent'
                   }`}
                 >
-                  <span className="text-sm font-normal text-[#111111]">
+                  <span className="body-small text-neutral-900 dark:text-neutral-100">
                     English
                   </span>
                   <div
                     className={`w-[22px] h-[22px] rounded-full border-[1.5px] flex items-center justify-center ${
                       selectedSourceId === englishId
-                        ? 'border-[#111111]'
-                        : 'border-[rgba(17,17,17,0.3)]'
+                        ? 'border-neutral-900 dark:border-neutral-100'
+                        : 'border-neutral-400 dark:border-neutral-500'
                     }`}
                   >
                     {selectedSourceId === englishId && (
-                      <div className="w-[10px] h-[10px] bg-[#111111] rounded-full"></div>
+                      <div className="w-[10px] h-[10px] bg-neutral-900 dark:bg-neutral-100 rounded-full"></div>
                     )}
                   </div>
                 </div>
@@ -221,22 +223,22 @@ export function RequestForm({
                   onClick={() => setSelectedSourceId(userLangId)}
                   className={`p-4 rounded-lg border cursor-pointer flex items-center justify-between transition-colors ${
                     selectedSourceId === userLangId
-                      ? 'bg-white border-[rgba(17,17,17,0.15)]'
-                      : 'bg-[#F4F4F4] border-transparent'
+                      ? 'bg-white dark:bg-neutral-800 border-neutral-200 dark:border-neutral-600'
+                      : 'bg-neutral-100 dark:bg-neutral-800/50 border-transparent'
                   }`}
                 >
-                  <span className="text-sm font-normal text-[#111111]">
+                  <span className="body-small text-neutral-900 dark:text-neutral-100">
                     {userLangName}
                   </span>
                   <div
                     className={`w-[22px] h-[22px] rounded-full border-[1.5px] flex items-center justify-center ${
                       selectedSourceId === userLangId
-                        ? 'border-[#111111]'
-                        : 'border-[rgba(17,17,17,0.3)]'
+                        ? 'border-neutral-900 dark:border-neutral-100'
+                        : 'border-neutral-400 dark:border-neutral-500'
                     }`}
                   >
                     {selectedSourceId === userLangId && (
-                      <div className="w-[10px] h-[10px] bg-[#111111] rounded-full"></div>
+                      <div className="w-[10px] h-[10px] bg-neutral-900 dark:bg-neutral-100 rounded-full"></div>
                     )}
                   </div>
                 </div>
@@ -245,7 +247,7 @@ export function RequestForm({
 
             {/* Word Input */}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-neutral-700">
+              <label className="text-label text-neutral-700 dark:text-neutral-300">
                 Word
               </label>
               <Input
@@ -254,7 +256,7 @@ export function RequestForm({
                 error={!!state.errors?.word}
               />
               {state.errors?.word && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="body-small text-red-500 mt-1">
                   {state.errors.word[0]}
                 </p>
               )}
@@ -262,7 +264,7 @@ export function RequestForm({
 
             {/* Part of Speech */}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-neutral-700">
+              <label className="text-label text-neutral-700 dark:text-neutral-300">
                 Part of Speech
               </label>
               <Select
@@ -283,7 +285,7 @@ export function RequestForm({
                 </SelectContent>
               </Select>
               {state.errors?.partOfSpeechId && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="body-small text-red-500 mt-1">
                   {state.errors.partOfSpeechId[0]}
                 </p>
               )}
@@ -291,7 +293,7 @@ export function RequestForm({
 
             {/* Meaning */}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-neutral-700">
+              <label className="text-label text-neutral-700 dark:text-neutral-300">
                 Meaning
               </label>
               <Input
@@ -303,7 +305,7 @@ export function RequestForm({
 
             {/* Related Domains (Tags) */}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-neutral-700">
+              <label className="text-label text-neutral-700 dark:text-neutral-300">
                 Related Domains
               </label>
               <div className="relative">
@@ -328,13 +330,13 @@ export function RequestForm({
 
                 {/* Domain Suggestions */}
                 {domainSuggestions.length > 0 && (
-                  <div className="absolute z-10 w-full bg-white border border-neutral-200 rounded-lg shadow-lg max-h-48 overflow-y-auto mt-1">
+                  <div className="absolute z-10 w-full bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-lg shadow-lg max-h-48 overflow-y-auto mt-1">
                     {domainSuggestions.map(domain => (
                       <button
                         key={domain.id}
                         type="button"
                         onClick={() => handleSuggestionClick(domain.name)}
-                        className="w-full text-left px-4 py-2 hover:bg-neutral-50 text-sm text-neutral-700 transition-colors"
+                        className="w-full text-left px-4 py-2 hover:bg-neutral-50 dark:hover:bg-neutral-700 body-small text-neutral-700 dark:text-neutral-300 transition-colors"
                       >
                         {domain.name}
                       </button>
@@ -347,13 +349,13 @@ export function RequestForm({
                   {domains.map(domain => (
                     <span
                       key={domain}
-                      className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-neutral-100 text-neutral-800"
+                      className="inline-flex items-center px-3 py-1 rounded-full body-small bg-neutral-100 dark:bg-neutral-700 text-neutral-800 dark:text-neutral-200"
                     >
                       {domain}
                       <button
                         type="button"
                         onClick={() => handleRemoveDomain(domain)}
-                        className="ml-2 hover:text-red-500"
+                        className="ml-2 hover:text-red-500 dark:hover:text-red-400"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -364,7 +366,7 @@ export function RequestForm({
             </div>
 
             {state.message && !state.success && (
-              <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm">
+              <div className="p-3 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg body-small">
                 {state.message}
               </div>
             )}
@@ -376,7 +378,7 @@ export function RequestForm({
               form="request-form"
               type="submit"
               variant="primary"
-              className="w-full h-12 text-base font-semibold rounded-full mt-16"
+              className="w-full h-12 body-base font-semibold rounded-full mt-16"
               disabled={isPending}
             >
               {isPending ? (

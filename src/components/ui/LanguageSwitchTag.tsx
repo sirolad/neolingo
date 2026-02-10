@@ -1,3 +1,5 @@
+'use client';
+
 import { NeoCommunity } from '@/types/neocommunity';
 import { CircleUser } from 'lucide-react';
 import Image from 'next/image';

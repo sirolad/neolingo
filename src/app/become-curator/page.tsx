@@ -32,9 +32,9 @@ export default function BecomeCuratorPage() {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center px-6 pb-8 lg:pb-16">
-        <div className="w-full max-w-md lg:max-w-lg flex flex-col items-center">
+        <div className="w-full max-w-md lg:max-w-6xl flex flex-col lg:flex-row items-center lg:gap-12">
           {/* Illustration */}
-          <div className="relative w-64 h-64 lg:w-80 lg:h-80 mb-8 lg:mb-12">
+          <div className="relative w-80 h-80 lg:w-[28rem] lg:h-[28rem] mb-8 lg:mb-0 flex-shrink-0">
             <Image
               src="/assets/dictionary/curator.png"
               alt="Become a Curator illustration"
@@ -44,23 +44,26 @@ export default function BecomeCuratorPage() {
             />
           </div>
 
-          {/* Text Content */}
-          <div className="text-center mb-8 lg:mb-12">
-            <h1 className="text-2xl lg:text-3xl font-display font-semibold text-neutral-950 mb-2">
-              Become a Curator!
-            </h1>
-            <p className="text-neutral-500 text-base lg:text-lg">
-              Suggest new words
-            </p>
-          </div>
+          {/* Text Content & Button */}
+          <div className="flex flex-col items-center lg:items-start w-full">
+            {/* Text Content */}
+            <div className="text-center lg:text-left mb-8 lg:mb-12">
+              <h1 className="heading-3 text-neutral-950 mb-2">
+                Become a Curator!
+              </h1>
+              <p className="body-base lg:body-large text-neutral-500">
+                Suggest new words
+              </p>
+            </div>
 
-          {/* CTA Button */}
-          <Button
-            onClick={handleTakeTest}
-            className="w-full max-w-sm bg-neutral-950 hover:bg-neutral-800 text-white rounded-full h-14 lg:h-16 text-base lg:text-lg font-medium transition-colors"
-          >
-            Take the test
-          </Button>
+            {/* CTA Button */}
+            <Button
+              onClick={handleTakeTest}
+              className="w-full max-w-sm bg-neutral-950 hover:bg-neutral-800 text-white rounded-full h-14 lg:h-16 text-lg lg:text-xl font-semibold transition-colors"
+            >
+              Take the test
+            </Button>
+          </div>
         </div>
       </main>
     </div>

@@ -7,12 +7,12 @@ import {
   Lightbulb,
   Book,
   User,
-  Settings,
   LogOut,
   CircleUserRound,
   BookPlus,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import Image from 'next/image';
 
 interface NavItemProps {
@@ -27,10 +27,10 @@ function NavItem({ icon, label, active = false, onClick }: NavItemProps) {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all font-medium text-sm ${
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all nav-secondary ${
         active
-          ? 'text-primary-800 bg-primary-50 shadow-sm'
-          : 'text-neutral-600 hover:text-neutral-800 hover:bg-neutral-50'
+          ? 'text-primary-800 dark:text-primary-200 bg-primary-50 dark:bg-primary-900/30 shadow-sm'
+          : 'text-neutral-600 dark:text-neutral-400 hover:text-neutral-800 dark:hover:text-neutral-200 hover:bg-neutral-50 dark:hover:bg-neutral-800'
       }`}
     >
       {icon}
@@ -90,21 +90,24 @@ export function TopNavigation() {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="bg-white border-b border-neutral-200 px-6 lg:px-8 py-4 sticky top-0 z-50"
+      className="bg-white dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 px-6 lg:px-8 py-4 sticky top-0 z-50"
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo/Brand */}
-        <motion.div
+        <motion.button
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.2, delay: 0.05 }}
-          className="flex items-center gap-3"
+          onClick={() => handleNavigation('/home')}
+          className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity"
         >
           <div className="w-8 h-8 bg-gradient-to-br from-primary-600 to-primary-700 rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">N</span>
           </div>
-          <span className="text-xl font-bold text-neutral-950">Neolingo</span>
-        </motion.div>
+          <span className="heading-6 text-neutral-950 dark:text-neutral-50">
+            Neolingo
+          </span>
+        </motion.button>
 
         {/* Main Navigation */}
         <motion.div
@@ -134,10 +137,13 @@ export function TopNavigation() {
         >
           {user && (
             <>
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
               {/* User Info */}
               <button
                 onClick={handleProfile}
-                className="hidden lg:flex items-center gap-3 px-4 py-2 bg-neutral-50 rounded-lg hover:bg-neutral-100 transition-colors"
+                className="hidden lg:flex items-center gap-3 px-4 py-2 bg-neutral-50 dark:bg-neutral-800 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors"
               >
                 <div className="text-lg">
                   {user?.avatar ? (
@@ -152,11 +158,13 @@ export function TopNavigation() {
                     <CircleUserRound className="w-10 h-10 text-neutral-400" />
                   )}
                 </div>
-                <div className="text-sm text-left">
-                  <div className="font-semibold text-neutral-950">
+                <div className="body-small text-left">
+                  <div className="font-semibold text-neutral-950 dark:text-neutral-50">
                     {user.name || user.email}
                   </div>
-                  <div className="text-neutral-600">{userRole}</div>
+                  <div className="text-caption text-neutral-600 dark:text-neutral-400">
+                    {userRole}
+                  </div>
                 </div>
               </button>
 
@@ -164,7 +172,7 @@ export function TopNavigation() {
               <div className="lg:hidden">
                 <button
                   onClick={handleProfile}
-                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-50 transition-colors"
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
                 >
                   <div className="text-lg">
                     {user?.avatar ? (
@@ -179,7 +187,7 @@ export function TopNavigation() {
                       <CircleUserRound className="w-8 h-8 text-neutral-400" />
                     )}
                   </div>
-                  <User className="w-4 h-4 text-neutral-600" />
+                  <User className="w-4 h-4 text-neutral-600 dark:text-neutral-400" />
                 </button>
               </div>
 
@@ -187,7 +195,7 @@ export function TopNavigation() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleLogout}
-                  className="p-2 rounded-lg hover:bg-red-50 transition-colors text-neutral-600 hover:text-red-600"
+                  className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors text-neutral-600 dark:text-neutral-400 hover:text-red-600 dark:hover:text-red-400"
                   title="Logout"
                 >
                   <LogOut className="w-5 h-5" />
