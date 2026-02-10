@@ -146,7 +146,7 @@ export default function ProfilePage() {
                   </p>
                   <Button
                     onClick={() => router.push('/become-curator')}
-                    className="w-full bg-white text-neutral-950 hover:bg-neutral-100 border-none relative z-10 rounded-full"
+                    className="w-full bg-white text-neutral-950 hover:bg-neutral-100 border-none relative z-10 rounded-full text-base font-semibold h-12"
                   >
                     Apply Now
                   </Button>
@@ -265,7 +265,7 @@ export default function ProfilePage() {
                 <div className="mt-8 lg:hidden">
                   <Button
                     onClick={() => router.push('/become-curator')}
-                    className="w-full bg-neutral-950 hover:bg-neutral-900 text-white rounded-full h-12 font-medium"
+                    className="w-full bg-neutral-950 hover:bg-neutral-900 text-white rounded-full h-12 md:h-14 text-base md:text-lg font-semibold"
                   >
                     Become a Curator
                   </Button>
