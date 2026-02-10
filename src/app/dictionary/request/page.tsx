@@ -74,11 +74,12 @@ export default async function RequestNeoPage() {
                 userNeoCommunity={
                   userProfile?.targetLanguages?.[0]
                     ? {
-                        id: userProfile.targetLanguages[0].language.id,
+                        id: userProfile.targetLanguages[0].language.id.toString(),
                         name: userProfile.targetLanguages[0].language.name,
                         short:
                           userProfile.targetLanguages[0].language.short || '',
-                        flagIcon: userProfile.targetLanguages[0].language.icon,
+                        flagIcon:
+                          userProfile.targetLanguages[0].language.icon || '',
                       }
                     : null
                 }
