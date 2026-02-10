@@ -18,12 +18,12 @@ export default function BecomeCuratorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white dark:bg-neutral-950 flex flex-col">
       {/* Header */}
       <header className="px-4 py-4 lg:px-8 lg:py-6">
         <button
           onClick={handleBack}
-          className="p-2 -ml-2 text-neutral-800 hover:bg-neutral-100 rounded-full transition-colors"
+          className="p-2 -ml-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-full transition-colors"
           aria-label="Go back"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -39,7 +39,7 @@ export default function BecomeCuratorPage() {
               src="/assets/dictionary/curator.png"
               alt="Become a Curator illustration"
               fill
-              className="object-contain"
+              className="object-contain dark:brightness-200"
               priority
             />
           </div>
@@ -48,10 +48,10 @@ export default function BecomeCuratorPage() {
           <div className="flex flex-col items-center lg:items-start w-full">
             {/* Text Content */}
             <div className="text-center lg:text-left mb-8 lg:mb-12">
-              <h1 className="heading-3 text-neutral-950 mb-2">
+              <h1 className="heading-3 text-neutral-950 dark:text-neutral-50 mb-2">
                 Become a Curator!
               </h1>
-              <p className="body-base lg:body-large text-neutral-500">
+              <p className="body-base lg:body-large text-neutral-500 dark:text-neutral-400">
                 Suggest new words
               </p>
             </div>
@@ -59,7 +59,7 @@ export default function BecomeCuratorPage() {
             {/* CTA Button */}
             <Button
               onClick={handleTakeTest}
-              className="w-full max-w-sm bg-neutral-950 hover:bg-neutral-800 text-white rounded-full h-14 lg:h-16 text-lg lg:text-xl font-semibold transition-colors"
+              className="w-full max-w-sm bg-neutral-950 dark:bg-neutral-50 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-white dark:text-neutral-950 rounded-full h-14 lg:h-16 text-lg lg:text-xl font-semibold transition-colors"
             >
               Take the test
             </Button>
