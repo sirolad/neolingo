@@ -15,12 +15,19 @@ import { normalizeUser } from '@/lib/user';
 import type { AuthContextType, SocialProvider } from '@/types';
 import * as Sentry from '@sentry/nextjs';
 import { NeoCommunity } from '@/types/neocommunity';
+import {
+  hasPermission,
+  hasAnyPermission,
+  hasAllPermissions,
+  type Permission,
+  type Role,
+} from '@/lib/auth/permissions';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [roleName, setRoleName] = useState<string | null>(null);
+  const [roleName, setRoleName] = useState<Role | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const userRole = useMemo(() => roleName || 'EXPLORER', [roleName]);
   const [languageId, setLanguageId] = useState<number | null>(null);
@@ -39,33 +46,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = useCallback(async () => {
     try {
-      const { data, error } = await supabase.auth.getUser();
-      if (error) {
-        // AuthSessionMissingError is normal when no session exists
-        if (error.message?.includes('Auth session missing')) {
-          // No active session found - user not authenticated
-        } else {
-          console.warn('Supabase getUser error', error);
-        }
+      // Fetch user data and role in a single call
+      const res = await fetch('/api/auth/me');
+
+      if (!res.ok) {
         setUser(null);
+        setRoleName(null);
+        setLanguageId(null);
+        setUserNeoCommunityId(null);
+        setUserNeoCommunity(null);
       } else {
-        const res = await fetch('/api/get-extra?from=checkAuth');
-        const extraData = await res.json();
+        const data = await res.json();
 
-        setRoleName(extraData.extra?.role || null);
-        setLanguageId(extraData.extra?.languageId || null);
-        setUserNeoCommunityId(extraData.extra?.neoCommunityId);
-        setUserNeoCommunity(extraData.extra?.neoCommunity || null);
-
-        // Set user only AFTER fetching extra data to avoid flicker
-        setUser(data?.user ?? null);
+        // Set all state atomically to avoid race conditions
+        setRoleName(data.role || null);
+        setLanguageId(data.languageId || null);
+        setUserNeoCommunityId(data.neoCommunityId);
+        setUserNeoCommunity(data.neoCommunity || null);
+        setUser(data.user ?? null);
       }
     } catch (err) {
       console.warn('checkAuth unexpected error', err);
       setUser(null);
+      setRoleName(null);
     }
     setIsLoading(false);
-  }, [supabase]);
+  }, []);
 
   useEffect(() => {
     // Initial auth check
@@ -78,21 +84,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // console.log('🔄 Auth state changed:', event, session?.user?.email);
 
       if (event === 'SIGNED_IN') {
-        const res = await fetch(
-          '/api/get-extra?from=onAuthStateChange-SIGNED_IN'
-        );
-        const extraData = await res.json();
+        // Fetch fresh user data from database (not cookie)
+        const res = await fetch('/api/auth/me');
 
-        setRoleName(extraData.extra?.role || null);
-        setLanguageId(extraData.extra?.languageId || null);
-        setUserNeoCommunityId(extraData.extra?.neoCommunityId);
-        setUserNeoCommunity(extraData.extra?.neoCommunity || null);
+        if (res.ok) {
+          const data = await res.json();
 
-        setUser(session?.user ?? null);
+          // Set all state atomically
+          setRoleName(data.role || null);
+          setLanguageId(data.languageId || null);
+          setUserNeoCommunityId(data.neoCommunityId);
+          setUserNeoCommunity(data.neoCommunity || null);
+          setUser(data.user ?? null);
+        } else {
+          setUser(session?.user ?? null);
+        }
         setIsLoading(false);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
-        setRoleName(null); // Clear role on sign out
+        setRoleName(null);
+        setLanguageId(null);
+        setUserNeoCommunityId(null);
+        setUserNeoCommunity(null);
         setIsLoading(false);
       } else if (event === 'TOKEN_REFRESHED') {
         setUser(session?.user ?? null);
@@ -221,6 +234,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push('/signin');
   };
 
+  // Permission helper methods
+  const can = useCallback(
+    (permission: Permission): boolean => {
+      return hasPermission(userRole as Role, permission);
+    },
+    [userRole]
+  );
+
+  const canAny = useCallback(
+    (permissions: Permission[]): boolean => {
+      return hasAnyPermission(userRole as Role, permissions);
+    },
+    [userRole]
+  );
+
+  const canAll = useCallback(
+    (permissions: Permission[]): boolean => {
+      return hasAllPermissions(userRole as Role, permissions);
+    },
+    [userRole]
+  );
+
   const value: AuthContextType = {
     user,
     appUser,
@@ -235,6 +270,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     logout,
     checkAuth,
     socialLogin,
+    // Permission helpers
+    can,
+    canAny,
+    canAll,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

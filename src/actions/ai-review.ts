@@ -1,8 +1,10 @@
 'use server';
 
-import { generateObject } from 'ai';
+import { generateText, Output } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
+import { requirePermission } from '@/lib/auth/server-auth';
+import { logAudit } from '@/lib/audit';
 
 const ReviewResultSchema = z.object({
   strictDict: z.enum(['Approved', 'Rejected', 'Needs Review']),
@@ -16,10 +18,25 @@ export async function analyzeRequest(request: {
   word: string;
   meaning?: string | null;
 }) {
+  // Verify user has permission to use AI analysis
+  let user;
   try {
-    const { object } = await generateObject({
+    const result = await requirePermission('review:requests');
+    user = result.user;
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Unauthorized to use AI analysis',
+    };
+  }
+
+  try {
+    const { output } = await generateText({
       model: openai('gpt-4o-mini'),
-      schema: ReviewResultSchema,
+      output: Output.object({ schema: ReviewResultSchema }),
       prompt: `
         You are a strict linguistic curator for a dictionary app called Neolingo.
         Your task is to review a "Translation Request" where a user asks for a translation of a specific word.
@@ -39,7 +56,15 @@ export async function analyzeRequest(request: {
       `,
     });
 
-    return { success: true, data: object };
+    // Log AI usage for audit trail
+    await logAudit({
+      userId: user.id,
+      action: 'ai:analyze:request',
+      resourceId: request.word,
+      metadata: { meaning: request.meaning, result: output.strictDict },
+    });
+
+    return { success: true, data: output };
   } catch (error) {
     console.error('AI Analysis failed:', error);
     return { success: false, error: 'Failed to analyze request' };

@@ -109,7 +109,6 @@ export default async function RequestNeoPage() {
                 showButton={false}
                 userTargetLanguages={userTargetLanguages}
                 availableDomains={domains}
-                userId={user.id}
               />
             </div>
             <RequestSubmitButton formId="request-form" />

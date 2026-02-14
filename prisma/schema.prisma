@@ -232,3 +232,18 @@ model UserTargetLanguage {
   @@unique([userId, languageId])
   @@map("user_target_languages")
 }
+
+// Audit log for tracking sensitive operations
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  userId     String   @db.Uuid
+  action     String   // e.g., "review:request:approved", "ai:analyze:request"
+  resourceId String?  // ID of the affected resource
+  metadata   Json?    // Additional context (reason, old values, etc.)
+  createdAt  DateTime @default(now())
+  
+  @@map("audit_logs")
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}

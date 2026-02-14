@@ -8,7 +8,6 @@ export const requestSchema = z.object({
   targetLanguageId: z.coerce.number().min(1, 'Target language is required'),
   partOfSpeechId: z.coerce.number().min(1, 'Part of speech is required'),
   domains: z.array(z.string()).optional(),
-  userId: z.uuid('Invalid user ID'),
 });
 
 export type SubmitRequestState = {
