@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
-import { prisma } from '@/lib/prisma';
+
 import {
   completeOnboardingForUser,
   isOnboardingCompleted,
@@ -33,7 +33,7 @@ const roleAccess: Record<string, string[]> = {
   '/admin': ['ADMIN'],
   '/suggest': ['CONTRIBUTOR', 'ADMIN', 'JURY'],
   '/vote': ['JURY', 'ADMIN', 'CONTRIBUTOR'],
-  '/requests': ['CONTRIBUTOR', 'ADMIN', 'JURY', 'USER'],
+  '/requests': ['CONTRIBUTOR', 'ADMIN', 'JURY', 'EXPLORER'],
 };
 
 function isPublicRoute(pathname: string): boolean {

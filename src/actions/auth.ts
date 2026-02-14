@@ -67,7 +67,7 @@ export async function setCompleteOnboardingForUser(
 
     if (!existingRole) {
       const userRoleDef = await tx.role.findUnique({
-        where: { name: 'USER' },
+        where: { name: 'EXPLORER' },
       });
 
       if (userRoleDef) {
