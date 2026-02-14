@@ -187,7 +187,7 @@ export function RequestReviewList() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="w-full justify-start text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50"
+                    className="w-full justify-start text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-full"
                     onClick={() => handleAiAnalysis(req)}
                     disabled={analyzingId === req.id}
                     leftIcon={
@@ -203,14 +203,14 @@ export function RequestReviewList() {
                 <div className="flex gap-2 w-full">
                   <Button
                     variant="outline"
-                    className="flex-1 text-red-600 border-red-100 hover:bg-red-50 hover:border-red-200"
+                    className="flex-1 text-red-600 border-red-100 hover:bg-red-50 hover:border-red-200 rounded-full"
                     onClick={() => handleReview(req.id, 'REJECTED')}
                     leftIcon={<X className="w-4 h-4" />}
                   >
                     Reject
                   </Button>
                   <Button
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-full"
                     onClick={() => handleReview(req.id, 'APPROVED')}
                     leftIcon={<Check className="w-4 h-4" />}
                   >
@@ -229,6 +229,7 @@ export function RequestReviewList() {
             variant="outline"
             onClick={handleLoadMore}
             disabled={loadingMore}
+            className="rounded-full"
             leftIcon={
               loadingMore ? (
                 <RefreshCw className="w-4 h-4 animate-spin" />
