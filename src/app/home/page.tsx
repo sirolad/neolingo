@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { CtaCard } from '@/components/ui/WordCtaCard';
 import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
+import { log } from 'node:console';
 
 interface WordCard {
   id: string;
@@ -71,7 +72,10 @@ export default function HomePage() {
                 <div className="">
                   <span className="heading-5">Hi, {user?.name || 'User'}</span>
                   <button className="px-1.5 py-0.5 body-xs rounded-[0.25rem] bg-[#9c62d9] border border-neutral-200 ml-2 text-neutral-50">
-                    {userRole}
+                    {userRole
+                      ? userRole.charAt(0).toUpperCase() +
+                        userRole.slice(1).toLowerCase()
+                      : ''}
                   </button>
                 </div>
                 <MyCommunityTag
@@ -96,10 +100,11 @@ export default function HomePage() {
                     variant="request"
                     onHandleClick={() => handleCta('/dictionary/request')}
                   />
+
                   {/* Suggestion Card */}
                   <CtaCard
                     title="Make Your Suggestion"
-                    subTitle="Suggest a yoruba word for the word of the day!"
+                    subTitle={`Suggest a ${userNeoCommunity?.name} word for the word of the day!`}
                     word={wordCards[0].word}
                     ctaText="Word of the day"
                     variant="suggest"
@@ -117,7 +122,19 @@ export default function HomePage() {
                 </div>
 
                 {/* Right Column - Leaderboard (Desktop) or Third Card (Mobile) */}
-                <div className="lg:sticky lg:top-8 lg:h-fit">
+                <div className="lg:sticky lg:top-8 lg:h-fit space-y-6 md:space-y-8">
+                  {/* Review Card - Visible to Admin/Juror */}
+                  {(userRole === 'ADMIN' || userRole === 'JUROR') && (
+                    <CtaCard
+                      title="Review Requests"
+                      subTitle="Approve or reject new requests"
+                      word="Curate the dictionary"
+                      ctaText="Pending Reviews"
+                      variant="review"
+                      onHandleClick={() => handleCta('/admin/requests')}
+                    />
+                  )}
+
                   {/* Leaderboard Card */}
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}

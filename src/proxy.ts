@@ -81,28 +81,12 @@ export async function proxy(request: NextRequest) {
   const uiLanguageId = userProfile?.uiLanguageId;
   const targetLanguageId = userTargetLanguage?.languageId;
   const isUserOnboardingCompleted = userProfile?.onboardingCompleted || false;
-  let roleCopy = 'Explorer';
-  switch (roleName) {
-    case 'ADMIN':
-      roleCopy = 'Admin';
-      break;
-    case 'CONTRIBUTOR':
-      roleCopy = 'Curator';
-      break;
-    case 'JURY':
-      roleCopy = 'Jury';
-      break;
-    case 'USER':
-      roleCopy = 'Explorer';
-      break;
-    default:
-      roleCopy = 'Explorer';
-  }
+
   //@todo use new convention
   response.cookies.set(
     'extra',
     JSON.stringify({
-      role: roleCopy,
+      role: roleName,
       languageId: uiLanguageId,
       neoCommunityId: targetLanguageId,
       neoCommunityName: userTargetLanguage?.language?.name,

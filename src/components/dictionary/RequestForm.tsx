@@ -122,6 +122,10 @@ export function RequestForm({
     if (state !== prevStateRef.current && !state.success && state.message) {
       toast.error(state.message);
     }
+    // Dispatch success event for external button
+    if (state !== prevStateRef.current && state.success) {
+      window.dispatchEvent(new Event('request-submitted'));
+    }
     prevStateRef.current = state;
   }, [state]);
 
