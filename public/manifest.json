@@ -1,7 +1,7 @@
 {
-  "name": "Neolingo - Yoruba Language Learning",
+  "name": "Neolingo - Mothertongue Rescue",
   "short_name": "Neolingo",
-  "description": "A collaborative platform for learning and expanding the Yoruba language dictionary",
+  "description": "A collaborative platform for learning and expanding the Low Resource Language dictionaries",
   "start_url": "/home",
   "display": "standalone",
   "background_color": "#ffffff",

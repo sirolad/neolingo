@@ -90,9 +90,9 @@ const metropolis = localFont({
 });
 
 export const metadata: Metadata = {
-  title: 'Neolingo - Yoruba Language Learning',
+  title: 'Neolingo - Mothertongue Rescue ',
   description:
-    'A collaborative platform for learning and expanding the Yoruba language dictionary',
+    'A collaborative platform for learning and expanding the Low Resource Language dictionaries',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -105,15 +105,15 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: 'Neolingo',
-    title: 'Neolingo - Yoruba Language Learning',
+    title: 'Neolingo - Mothertongue Rescue',
     description:
-      'A collaborative platform for learning and expanding the Yoruba language dictionary',
+      'A collaborative platform for learning and expanding the Low Resource Language dictionaries',
   },
   twitter: {
     card: 'summary',
-    title: 'Neolingo - Yoruba Language Learning',
+    title: 'Neolingo - Mothertongue Rescue',
     description:
-      'A collaborative platform for learning and expanding the Yoruba language dictionary',
+      'A collaborative platform for learning and expanding the Low Resource Language dictionaries',
   },
 };
 

@@ -64,13 +64,15 @@ export default function HomePage() {
               <div className="flex items-center space-x-28 md:space-x-4">
                 <div className="hidden lg:block">
                   <h1 className="heading-4 text-neutral-950 dark:text-neutral-50 hidden lg:block">
-                    Hi {user?.name || 'User'}!
+                    Hi {user?.name?.split(' ')[0] || 'User'}!
                   </h1>
                 </div>
               </div>
               <div className="flex items-center space-x-4 lg:hidden justify-between w-full">
                 <div className="">
-                  <span className="heading-5">Hi, {user?.name || 'User'}</span>
+                  <span className="heading-5">
+                    Hi, {user?.name?.split(' ')[0] || 'User'}
+                  </span>
                   <button className="px-1.5 py-0.5 body-xs rounded-[0.25rem] bg-[#9c62d9] border border-neutral-200 ml-2 text-neutral-50">
                     {userRole
                       ? userRole.charAt(0).toUpperCase() +
