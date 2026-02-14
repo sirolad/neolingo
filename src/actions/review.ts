@@ -1,8 +1,9 @@
 'use server';
 
-import { prisma } from '@/lib/prisma'; // Assuming prisma client is exported from here
-import { RequestStatus } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+
+type RequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 export async function getPendingRequests(limit = 10, offset = 0) {
   try {
