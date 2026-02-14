@@ -163,7 +163,11 @@ export function RequestForm({
           <p className="body-base text-green-700 dark:text-green-300 mb-6">
             {state.message}
           </p>
-          <Button onClick={() => router.push('/dictionary')} variant="primary">
+          <Button
+            onClick={() => router.push('/dictionary')}
+            variant="primary"
+            className="rounded-full"
+          >
             Back to Dictionary
           </Button>
         </motion.div>

@@ -52,7 +52,7 @@ export function CtaCard({
                 size="sm"
                 onClick={onHandleClick}
                 leftIcon={
-                  <Lightbulb className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+                  <Lightbulb className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 strokeWidth={3.5} " />
                 }
                 className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-semibold hover:scale-105 active:scale-95 transition-transform"
               >
@@ -98,7 +98,7 @@ export function CtaCard({
                 size="sm"
                 onClick={onHandleClick}
                 leftIcon={
-                  <Vote className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+                  <Vote className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 strokeWidth={3.5} " />
                 }
                 className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-semibold hover:scale-105 active:scale-95 transition-transform"
               >
@@ -144,7 +144,7 @@ export function CtaCard({
                 size="sm"
                 onClick={onHandleClick}
                 leftIcon={
-                  <BookPlus className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
+                  <BookPlus className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 strokeWidth={3.5} " />
                 }
                 className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-semibold hover:scale-105 active:scale-95 transition-transform"
               >
