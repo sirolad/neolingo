@@ -18,7 +18,7 @@ export async function analyzeRequest(request: {
 }) {
   try {
     const { object } = await generateObject({
-      model: openai('gpt-3.5-turbo'),
+      model: openai('gpt-4o-mini'),
       schema: ReviewResultSchema,
       prompt: `
         You are a strict linguistic curator for a dictionary app called Neolingo.
