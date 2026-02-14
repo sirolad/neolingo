@@ -22,7 +22,7 @@ interface WordCard {
 }
 
 export default function HomePage() {
-  const { appUser, userRole, userNeoCommunity, isLoading } = useAuth();
+  const { appUser, userRole, userNeoCommunity, isLoading, can } = useAuth();
   const [refreshing, setRefreshing] = useState(false);
   const user = appUser;
   const router = useRouter();
@@ -130,8 +130,8 @@ export default function HomePage() {
 
                     {/* Right Column - Leaderboard (Desktop) or Third Card (Mobile) */}
                     <div className="lg:sticky lg:top-8 lg:h-fit space-y-6 md:space-y-8">
-                      {/* Review Card - Visible to Admin/Juror */}
-                      {(userRole === 'ADMIN' || userRole === 'JUROR') && (
+                      {/* Review Card - Visible to users with review permission */}
+                      {can('review:requests') && (
                         <CtaCard
                           title="Review Requests"
                           subTitle="Approve or reject new requests"
