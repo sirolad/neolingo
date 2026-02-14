@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/contexts/AuthContext';
 import { LanguageSwitchTag } from '@/components/ui/LanguageSwitchTag';
 import { NeoDicoWord } from '@/components/ui/NeoDicoWord';
+import { DictionaryPageSkeleton } from '@/components/dictionary/DictionaryPageSkeleton';
 import Image from 'next/image';
 
 interface DictionaryWord {
@@ -38,6 +39,10 @@ export default function DictionaryPage() {
   const [words, setWords] = useState<DictionaryWord[]>([]);
   const [currentAlphabet, setCurrentAlphabet] = useState('A');
   const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+  const handleGoBack = () => {
+    router.push('/home');
+  };
 
   useEffect(() => {
     // Wait for auth check to complete
@@ -337,12 +342,41 @@ export default function DictionaryPage() {
   if (loading || authLoading) {
     return (
       <Layout variant="home">
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-4"></div>
-            <p className="body-base text-neutral-600 dark:text-neutral-400">
-              Loading...
-            </p>
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+          {/* Header */}
+          <div className="flex items-center justify-between py-4 md:py-6 lg:py-8">
+            <button
+              onClick={handleGoBack}
+              className="inline-flex items-center text-neutral-950 dark:text-neutral-50 hover:text-primary-800 dark:hover:text-primary-200 transition-colors p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800"
+            >
+              <ArrowLeft className="w-5 h-5 md:w-6 md:h-6 mr-2" />
+              <span className="body-small md:body-base font-medium hidden lg:block">
+                Back
+              </span>
+            </button>
+            <span className="heading-4 text-neutral-950 dark:text-neutral-50">
+              NeoDiko {userNeoCommunity ? `${userNeoCommunity.name}` : ''}
+            </span>
+            <div className="md:w-20">
+              <LanguageSwitchTag
+                userNeoCommunity={userNeoCommunity}
+                user={appUser}
+              />
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 space-y-6 md:space-y-8 lg:space-y-10 pb-20 md:pb-8">
+            {/* Search Bar Skeleton */}
+            <div className="h-12 bg-neutral-200 dark:bg-neutral-800 rounded-full animate-pulse"></div>
+
+            <div className="flex space-x-4">
+              <div className="flex-1">
+                <DictionaryPageSkeleton />
+              </div>
+              {/* Alphabet sidebar skeleton */}
+              <div className="w-10 h-96 bg-neutral-200 dark:bg-neutral-800 rounded-full animate-pulse"></div>
+            </div>
           </div>
         </div>
       </Layout>
@@ -374,10 +408,6 @@ export default function DictionaryPage() {
       if (a.usage !== b.usage) return b.usage - a.usage;
       return a.translation.localeCompare(b.translation);
     });
-
-  const handleGoBack = () => {
-    router.push('/home');
-  };
 
   return (
     <Layout variant="home">
