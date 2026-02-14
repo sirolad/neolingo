@@ -14,11 +14,12 @@ export function CtaCard({
   subTitle: string;
   word: string;
   ctaText?: string;
-  variant: 'suggest' | 'vote' | 'request';
+  variant: 'suggest' | 'vote' | 'request' | 'review';
   onHandleClick: () => void;
 }) {
   switch (variant) {
     case 'suggest':
+    default:
       return (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -53,7 +54,7 @@ export function CtaCard({
                 leftIcon={
                   <Lightbulb className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
                 }
-                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-medium hover:scale-105 active:scale-95 transition-transform"
+                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-semibold hover:scale-105 active:scale-95 transition-transform"
               >
                 Curate
               </Button>
@@ -99,7 +100,7 @@ export function CtaCard({
                 leftIcon={
                   <Vote className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
                 }
-                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-medium hover:scale-105 active:scale-95 transition-transform"
+                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-semibold hover:scale-105 active:scale-95 transition-transform"
               >
                 Vote
               </Button>
@@ -145,7 +146,7 @@ export function CtaCard({
                 leftIcon={
                   <BookPlus className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
                 }
-                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-medium hover:scale-105 active:scale-95 transition-transform"
+                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-semibold hover:scale-105 active:scale-95 transition-transform"
               >
                 Request
               </Button>
@@ -156,7 +157,7 @@ export function CtaCard({
           </div>
         </motion.div>
       );
-    default:
+    case 'review':
       return (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -174,15 +175,15 @@ export function CtaCard({
             </p>
           </div>
 
-          {/* Word Display */}
+          {/* Review Display */}
           <div
-            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-800 border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
+            className={`mx-6 md:mx-8 lg:mx-10 mb-6 md:mb-8 lg:mb-10 bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-800 border rounded-xl md:rounded-2xl lg:rounded-3xl p-4 md:p-6 lg:p-8`}
           >
             <div className="flex items-center justify-between mb-3 md:mb-4 lg:mb-6">
               <div
-                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full body-xs md:body-small lg:body-base font-medium bg-blue-100 dark:bg-blue-800/50 text-blue-800 dark:text-blue-200`}
+                className={`px-3 md:px-4 lg:px-5 py-1 md:py-1.5 lg:py-2 rounded-full body-xs md:body-small lg:body-base font-medium bg-indigo-100 dark:bg-indigo-800/50 text-indigo-800 dark:text-indigo-200`}
               >
-                {ctaText || 'Word of the day'}
+                {ctaText || 'Pending Review'}
               </div>
               <Button
                 variant="primary"
@@ -191,9 +192,9 @@ export function CtaCard({
                 leftIcon={
                   <Lightbulb className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6" />
                 }
-                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-medium hover:scale-105 active:scale-95 transition-transform"
+                className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 rounded-2xl md:rounded-3xl body-xs md:body-small lg:body-base font-semibold hover:scale-105 active:scale-95 transition-transform bg-indigo-600 hover:bg-indigo-700 text-white"
               >
-                Curate
+                Review
               </Button>
             </div>
             <span className="heading-4 md:heading-3 lg:heading-2 font-light text-neutral-950 dark:text-neutral-50">

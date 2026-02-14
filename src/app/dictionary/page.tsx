@@ -512,7 +512,7 @@ export default function DictionaryPage() {
             className="fixed bottom-24 right-4 md:right-8 z-50 bg-neutral-950 dark:bg-neutral-100 text-white dark:text-neutral-900 px-5 py-3 rounded-full shadow-lg flex items-center gap-2 text-button hover:bg-neutral-900 dark:hover:bg-neutral-200 transition-colors"
           >
             <BookPlus className="w-5 h-5" />
-            <span className="body-base">Request Neo</span>
+            <span className="body-base font-semibold">Request Neo</span>
           </motion.button>
         </div>
       </div>

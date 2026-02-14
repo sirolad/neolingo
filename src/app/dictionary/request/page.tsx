@@ -15,6 +15,8 @@ import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/supabase/server';
 import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 
+import { RequestSubmitButton } from '@/components/dictionary/RequestSubmitButton';
+
 interface Language {
   id: number;
   name: string;
@@ -110,14 +112,7 @@ export default async function RequestNeoPage() {
                 userId={user.id}
               />
             </div>
-            <Button
-              form="request-form"
-              type="submit"
-              variant="primary"
-              className="w-full h-12 md:h-14 text-base md:text-lg font-semibold my-12 rounded-full"
-            >
-              Submit Request
-            </Button>
+            <RequestSubmitButton formId="request-form" />
           </div>
         </div>
       </div>

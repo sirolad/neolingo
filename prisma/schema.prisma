@@ -170,6 +170,12 @@ model Domain {
   @@map("domains")
 }
 
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model TranslationRequest {
   id               Int          @id @default(autoincrement())
   word             String
@@ -192,9 +198,10 @@ model TranslationRequest {
   domains          DomainsOnRequests[]
 
   // Approval System
-  isApproved       Boolean      @default(false)
+  status           RequestStatus @default(PENDING)
   approvedById     String?      @db.Uuid
   approvedBy       UserProfile? @relation("ApprovedBy", fields: [approvedById], references: [userId])
+  rejectionReason  String?
 
   createdAt        DateTime     @default(now())
   updatedAt        DateTime     @updatedAt

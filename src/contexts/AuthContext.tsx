@@ -49,14 +49,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
         setUser(null);
       } else {
-        fetch('/api/get-extra?from=checkAuth')
-          .then(res => res.json())
-          .then(data => {
-            setRoleName(data.extra?.role || null);
-            setLanguageId(data.extra?.languageId || null);
-            setUserNeoCommunityId(data.extra?.neoCommunityId);
-            setUserNeoCommunity(data.extra?.neoCommunity || null);
-          });
+        const res = await fetch('/api/get-extra?from=checkAuth');
+        const extraData = await res.json();
+
+        setRoleName(extraData.extra?.role || null);
+        setLanguageId(extraData.extra?.languageId || null);
+        setUserNeoCommunityId(extraData.extra?.neoCommunityId);
+        setUserNeoCommunity(extraData.extra?.neoCommunity || null);
+
+        // Set user only AFTER fetching extra data to avoid flicker
         setUser(data?.user ?? null);
       }
     } catch (err) {
@@ -77,18 +78,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // console.log('🔄 Auth state changed:', event, session?.user?.email);
 
       if (event === 'SIGNED_IN') {
-        fetch('/api/get-extra?from=onAuthStateChange-SIGNED_IN')
-          .then(res => res.json())
-          .then(data => {
-            setRoleName(data.extra?.role || null);
-            setLanguageId(data.extra?.languageId || null);
-            setUserNeoCommunityId(data.extra?.neoCommunityId);
-            setUserNeoCommunity(data.extra?.neoCommunity || null);
-          });
+        const res = await fetch(
+          '/api/get-extra?from=onAuthStateChange-SIGNED_IN'
+        );
+        const extraData = await res.json();
+
+        setRoleName(extraData.extra?.role || null);
+        setLanguageId(extraData.extra?.languageId || null);
+        setUserNeoCommunityId(extraData.extra?.neoCommunityId);
+        setUserNeoCommunity(extraData.extra?.neoCommunity || null);
+
         setUser(session?.user ?? null);
         setIsLoading(false);
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
+        setRoleName(null); // Clear role on sign out
         setIsLoading(false);
       } else if (event === 'TOKEN_REFRESHED') {
         setUser(session?.user ?? null);
