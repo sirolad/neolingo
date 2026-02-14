@@ -33,7 +33,7 @@ const roleAccess: Record<string, string[]> = {
   '/admin': ['ADMIN'],
   '/suggest': ['CONTRIBUTOR', 'ADMIN', 'JURY'],
   '/vote': ['JURY', 'ADMIN', 'CONTRIBUTOR'],
-  '/requests': ['CONTRIBUTOR', 'ADMIN', 'JURY', 'USER'],
+  '/requests': ['CONTRIBUTOR', 'ADMIN', 'JURY', 'EXPLORER'],
 };
 
 function isPublicRoute(pathname: string): boolean {

@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [roleName, setRoleName] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const userRole = useMemo(() => roleName || 'VISITOR', [roleName]);
+  const userRole = useMemo(() => roleName || 'EXPLORER', [roleName]);
   const [languageId, setLanguageId] = useState<number | null>(null);
   const userLanguageId = useMemo(() => languageId, [languageId]);
   const [userNeoCommunityId, setUserNeoCommunityId] = useState<number | null>(
