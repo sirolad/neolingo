@@ -16,6 +16,7 @@ import { getPendingRequests, reviewRequest } from '@/actions/review';
 import { analyzeRequest, ReviewResult } from '@/actions/ai-review';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { RequestReviewSkeleton } from './RequestReviewSkeleton';
 
 interface Request {
   id: number;
@@ -104,11 +105,7 @@ export function RequestReviewList() {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center p-12">
-        <RefreshCw className="w-6 h-6 animate-spin text-neutral-400" />
-      </div>
-    );
+    return <RequestReviewSkeleton />;
   }
 
   if (requests.length === 0) {
