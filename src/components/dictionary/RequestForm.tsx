@@ -31,7 +31,6 @@ interface RequestFormProps {
   showButton?: boolean;
   userTargetLanguages?: Array<{ id: number; name: string }>;
   availableDomains?: Array<{ id: number; name: string }>;
-  userId?: string;
 }
 
 export function RequestForm({
@@ -41,10 +40,7 @@ export function RequestForm({
   showButton = true,
   userTargetLanguages,
   availableDomains = [],
-  userId,
 }: RequestFormProps) {
-  const { appUser } = useAuth();
-  const currentUserId = userId || appUser?.id || '';
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(submitRequest, {
     success: false,
@@ -98,7 +94,6 @@ export function RequestForm({
       sourceLanguageId: englishId,
       targetLanguageId: userLangId,
       partOfSpeechId: 0,
-      userId: currentUserId,
       domains: [],
     },
   });
@@ -109,13 +104,6 @@ export function RequestForm({
     form.setValue('sourceLanguageId', selectedSourceId);
     form.setValue('targetLanguageId', targetId);
   }, [selectedSourceId, userLangId, englishId, form]);
-
-  // Update hidden userId field when auth loads or prop changes
-  useEffect(() => {
-    if (currentUserId) {
-      form.setValue('userId', currentUserId);
-    }
-  }, [currentUserId, form]);
 
   // Show toast notification when there's an error (especially for duplicate words)
   useEffect(() => {
@@ -182,8 +170,6 @@ export function RequestForm({
             }}
             className="space-y-5"
           >
-            <input type="hidden" name="userId" value={currentUserId} />
-
             {/* Language Selection - Radio Style Source Toggle */}
             <div className="space-y-2">
               <label className="text-label text-neutral-700 dark:text-neutral-300">

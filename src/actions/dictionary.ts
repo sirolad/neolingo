@@ -3,11 +3,24 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { requestSchema, SubmitRequestState } from '@/lib/schemas/dictionary';
+import { requireAuth } from '@/lib/auth/server-auth';
 
 export async function submitRequest(
   prevState: SubmitRequestState,
   formData: FormData
 ): Promise<SubmitRequestState> {
+  // Verify user is authenticated
+  let user;
+  try {
+    const result = await requireAuth();
+    user = result.user;
+  } catch (_error) {
+    return {
+      message: 'Unauthorized: Please sign in to submit a request',
+      success: false,
+    };
+  }
+
   // Parse domains manually if sent as a stringified JSON array
   const domainsRaw = formData.get('domains');
   let domains: string[] = [];
@@ -26,7 +39,6 @@ export async function submitRequest(
     targetLanguageId: formData.get('targetLanguageId'),
     partOfSpeechId: formData.get('partOfSpeechId'),
     domains: domains,
-    userId: formData.get('userId'),
   });
 
   if (!validatedFields.success) {
@@ -44,7 +56,6 @@ export async function submitRequest(
     targetLanguageId,
     partOfSpeechId,
     domains: domainNames,
-    userId,
   } = validatedFields.data;
 
   try {
@@ -113,7 +124,7 @@ export async function submitRequest(
       }
     }
 
-    // 4. Create the Translation Request
+    // 4. Create the Translation Request with verified user ID
     await prisma.translationRequest.create({
       data: {
         word,
@@ -121,7 +132,7 @@ export async function submitRequest(
         sourceLanguageId,
         targetLanguageId,
         partOfSpeechId,
-        userId,
+        userId: user.id, // Use server-verified user ID
         domains: {
           create: domainRecords.map(domain => ({
             domain: {

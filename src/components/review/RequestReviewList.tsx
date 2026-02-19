@@ -78,17 +78,15 @@ export function RequestReviewList() {
     status: 'APPROVED' | 'REJECTED',
     reason?: string
   ) => {
-    if (!appUser?.id) return;
-
     // Optimistic update
     setRequests(prev => prev.filter(req => req.id !== id));
 
-    const res = await reviewRequest(id, status, appUser.id, reason);
+    const res = await reviewRequest(id, status, reason);
 
     if (res.success) {
       toast.success(`Request ${status.toLowerCase()}`);
     } else {
-      toast.error('Failed to update status');
+      toast.error(res.error || 'Failed to update status');
       loadRequests(0); // Revert on failure
     }
   };
