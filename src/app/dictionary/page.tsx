@@ -38,6 +38,9 @@ export default function DictionaryPage() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [words, setWords] = useState<DictionaryWord[]>([]);
   const [currentAlphabet, setCurrentAlphabet] = useState('A');
+  const [activeLanguage, setActiveLanguage] = useState<'community' | 'english'>(
+    'english'
+  );
   const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
   const handleGoBack = () => {
@@ -60,7 +63,6 @@ export default function DictionaryPage() {
   const loadDictionaryWords = () => {
     const mockWords: DictionaryWord[] = [
       {
-        // Mock dictionary For Words starting with B
         id: '1',
         translation: 'Bookumaaki',
         englishWord: 'BookMark',
@@ -217,10 +219,9 @@ export default function DictionaryPage() {
         ],
       },
       {
-        // Mock dictionary For Words starting with A
         id: '7',
         translation: 'Abokiti',
-        englishWord: 'Aboringinal',
+        englishWord: 'Aboriginal',
         definition:
           'A person, typically a member of a community, who is the original inhabitant of a country or region, especially one who has been displaced or marginalized by colonization or migration.',
         context: 'The aboriginal people have a rich cultural heritage',
@@ -335,8 +336,117 @@ export default function DictionaryPage() {
           },
         ],
       },
+      // New Data for C
+      {
+        id: '12',
+        translation: 'Chemela',
+        englishWord: 'Camera',
+        definition:
+          'A device for recording visual images in the form of photographs, film, or video signals.',
+        context: 'I took diverse pictures with my camera',
+        category: 'technology',
+        difficulty: 'beginner',
+        isFavorite: true,
+        usage: 320,
+        translations: [
+          {
+            id: '12a',
+            communityWord: 'Chemela',
+            audioUrl: 'https://example.com/audio/chemela.mp3',
+            votes: 25,
+          },
+        ],
+      },
+      {
+        id: '13',
+        translation: 'Chokolo',
+        englishWord: 'Chocolate',
+        definition:
+          'A food preparation in the form of a paste or solid block made from roasted and ground cacao seeds, typically sweetened.',
+        context: 'The children love chocolate ice cream',
+        category: 'food',
+        difficulty: 'beginner',
+        isFavorite: true,
+        usage: 500,
+        translations: [],
+      },
+      // New Data for D
+      {
+        id: '14',
+        translation: 'Dogo',
+        englishWord: 'Dog',
+        definition:
+          'A domesticated carnivorous mammal that typically has a long snout, an acute sense of smell, non-retractable claws, and a barking, howling, or whining voice.',
+        context: 'The dog barked at the stranger',
+        category: 'animals',
+        difficulty: 'beginner',
+        isFavorite: true,
+        usage: 600,
+        translations: [],
+      },
+      {
+        id: '15',
+        translation: 'Daramu',
+        englishWord: 'Drum',
+        definition:
+          'A percussion instrument sounded by being struck with sticks or the hands, typically cylindrical, barrel-shaped, or bowl-shaped, with a taut membrane over one or both ends.',
+        context: 'He played the drum in the band',
+        category: 'music',
+        difficulty: 'intermediate',
+        isFavorite: false,
+        usage: 120,
+        translations: [],
+      },
+      // New Data for E
+      {
+        id: '16',
+        translation: 'Elefanti',
+        englishWord: 'Elephant',
+        definition:
+          'A heavy plant-eating mammal with a prehensile trunk, long curved ivory tusks, and large ears, native to Africa and southern Asia.',
+        context: 'The elephant is the largest land animal',
+        category: 'animals',
+        difficulty: 'intermediate',
+        isFavorite: true,
+        usage: 220,
+        translations: [],
+      },
+      {
+        id: '17',
+        translation: 'Egu',
+        englishWord: 'Egg',
+        definition:
+          'An oval or round object laid by a female bird, reptile, fish, or invertebrate, usually containing a developing embryo.',
+        context: 'I had boiled eggs for breakfast',
+        category: 'food',
+        difficulty: 'beginner',
+        isFavorite: false,
+        usage: 450,
+        translations: [],
+      },
     ];
     setWords(mockWords);
+  };
+
+  const getActiveWord = (word: DictionaryWord) => {
+    return activeLanguage === 'english' ? word.englishWord : word.translation;
+  };
+
+  const getSecondaryWord = (word: DictionaryWord) => {
+    return activeLanguage === 'english' ? word.translation : word.englishWord;
+  };
+
+  const toggleLanguage = () => {
+    setActiveLanguage(prev => (prev === 'english' ? 'community' : 'english'));
+    // Optionally reset alphabet or search when toggling?
+    // Let's keep filters, but maybe reset alphabet to match the new language?
+    // If I'm on 'B' for 'Bookmark', switching to community 'Bookumaaki' (still B) works.
+    // If 'A' for 'Apple', switching to community 'Aja' (still A) works.
+    // But 'Aboriginal' -> 'Abokiti' (A->A).
+    // 'Dog' -> 'Dogo' (D->D).
+    // Most translations often start similarly for cognates, but not always.
+    // Let's reset alphabet if filtered list is empty? Or just let user navigate.
+    // Simpler: Keep current filters. User can adjust.
   };
 
   if (loading || authLoading) {
@@ -357,10 +467,12 @@ export default function DictionaryPage() {
             <span className="heading-4 text-neutral-950 dark:text-neutral-50">
               NeoDiko {userNeoCommunity ? `${userNeoCommunity.name}` : ''}
             </span>
-            <div className="md:w-20">
+            <div className="flex-shrink-0">
               <LanguageSwitchTag
                 userNeoCommunity={userNeoCommunity}
                 user={appUser}
+                activeLanguage={activeLanguage}
+                onToggle={toggleLanguage}
               />
             </div>
           </div>
@@ -389,24 +501,26 @@ export default function DictionaryPage() {
 
   const filteredWords = words
     .filter(word => {
+      const displayWord = getActiveWord(word);
+      const secondaryWord = getSecondaryWord(word);
+
       const matchesSearch =
         searchQuery === '' ||
-        word.translation.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        word.englishWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        displayWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        secondaryWord.toLowerCase().includes(searchQuery.toLowerCase()) ||
         word.definition.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesAlphabet =
         currentAlphabet === '' ||
-        word.englishWord
-          .toUpperCase()
-          .startsWith(currentAlphabet.toUpperCase());
+        displayWord.toUpperCase().startsWith(currentAlphabet.toUpperCase());
 
       return matchesSearch && matchesAlphabet;
     })
     .sort((a, b) => {
-      // Sort by usage (most used first), then alphabetically
-      if (a.usage !== b.usage) return b.usage - a.usage;
-      return a.translation.localeCompare(b.translation);
+      // Sort alphabetically by the ACTIVE word
+      const wordA = getActiveWord(a);
+      const wordB = getActiveWord(b);
+      return wordA.localeCompare(wordB);
     });
 
   return (
@@ -426,10 +540,12 @@ export default function DictionaryPage() {
           <span className="heading-4 text-neutral-950 dark:text-neutral-50">
             NeoDiko {userNeoCommunity ? `${userNeoCommunity.name}` : ''}
           </span>
-          <div className="md:w-20">
+          <div className="flex-shrink-0">
             <LanguageSwitchTag
               userNeoCommunity={userNeoCommunity}
               user={appUser}
+              activeLanguage={activeLanguage}
+              onToggle={toggleLanguage}
             />
           </div>{' '}
           {/* Spacer for centering */}
@@ -444,7 +560,7 @@ export default function DictionaryPage() {
               setSearchQuery(val);
               setCurrentAlphabet(val.charAt(0).toUpperCase());
             }}
-            placeholder="Search words"
+            placeholder={`Search ${activeLanguage === 'english' ? 'English' : userNeoCommunity?.name || 'Community'} words`}
             onClear={() => setSearchQuery('')}
             className="mb-4 md:mb-6 lg:mb-8"
             iconPosition="right"
@@ -460,12 +576,16 @@ export default function DictionaryPage() {
                     //
                     <NeoDicoWord
                       key={word.id}
-                      word={word.englishWord}
-                      translation={word.translation}
+                      word={getActiveWord(word)}
+                      translation={getSecondaryWord(word)}
                       // definition={`${word.definition}  eg: ${word.context}`}
                       definition={`${word.definition}`}
                       languageName={
-                        userNeoCommunity ? userNeoCommunity.name : 'NeoLingo'
+                        activeLanguage === 'english'
+                          ? 'English'
+                          : userNeoCommunity
+                            ? userNeoCommunity.name
+                            : 'NeoLingo'
                       }
                       index={index}
                       translations={word.translations}

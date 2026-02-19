@@ -11,7 +11,7 @@ export function normalizeUser(u: User | null): AppUser | null {
     id: u.id,
     email: u.email ?? null,
     displayName: (meta && (meta.name || meta.full_name)) ?? null,
-    avatar: (meta && (meta.avatar || meta.picture)) ?? null,
+    avatar: (meta && (meta.avatar || meta.picture || meta.avatar_url)) ?? null,
     provider: appMeta?.provider ?? null,
     createdAt: (u as User).created_at ?? null,
     raw: u,

@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import { CtaCard } from '@/components/ui/WordCtaCard';
 import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 import { HomePageSkeleton } from '@/components/home/HomePageSkeleton';
-import { log } from 'node:console';
 
 interface WordCard {
   id: string;
