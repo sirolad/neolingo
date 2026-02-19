@@ -32,7 +32,7 @@ export async function getPendingRequests(limit = 10, offset = 0) {
   }
 }
 
-export class ReviewActions {
+class ReviewActions {
   @Authorized('review:requests')
   static async reviewRequest(
     requestId: number,
@@ -70,4 +70,10 @@ export class ReviewActions {
   }
 }
 
-export const reviewRequest = ReviewActions.reviewRequest;
+export async function reviewRequest(
+  requestId: number,
+  status: RequestStatus,
+  reason?: string
+) {
+  return ReviewActions.reviewRequest(requestId, status, reason);
+}

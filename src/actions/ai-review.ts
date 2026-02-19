@@ -15,7 +15,7 @@ const ReviewResultSchema = z.object({
 
 export type ReviewResult = z.infer<typeof ReviewResultSchema>;
 
-export class AiReviewActions {
+class AiReviewActions {
   @Authorized('review:requests')
   static async analyzeRequest(request: {
     word: string;
@@ -66,4 +66,9 @@ export class AiReviewActions {
 }
 
 // Export the static method as a standalone function to maintain API compatibility
-export const analyzeRequest = AiReviewActions.analyzeRequest;
+export async function analyzeRequest(request: {
+  word: string;
+  meaning?: string | null;
+}) {
+  return AiReviewActions.analyzeRequest(request);
+}
