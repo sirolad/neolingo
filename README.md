@@ -4,159 +4,127 @@
 [![Deploy](https://github.com/sirolad/neolingo-app/actions/workflows/deploy.yml/badge.svg)](https://github.com/sirolad/neolingo-app/actions/workflows/deploy.yml)
 [![Dependency Update](https://github.com/sirolad/neolingo-app/actions/workflows/dependency-update.yml/badge.svg)](https://github.com/sirolad/neolingo-app/actions/workflows/dependency-update.yml)
 
-A modern language learning application built with Next.js 15, TypeScript, and Tailwind CSS. This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+A modern, community-driven language learning platform built with **Next.js 16**. Neolingo empowers communities to preserve and expand their languages through a curated dictionary, voting system, and gamified learning experience.
 
-## Features
+This project is bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-- 🚀 **Next.js 15** with App Router and Turbopack
-- 🎨 **Modern UI** with shadcn/ui components and Tailwind CSS
-- 🔐 **Authentication** with Supabase
-- 📱 **PWA Support** with offline capabilities
-- 🌍 **Multi-language** support for language learning
-- 📚 **Dictionary** and word suggestion system
-- 🗳️ **Voting system** for community-driven content
-- 🎯 **TypeScript** for type safety
-- 🧪 **Automated CI/CD** with GitHub Actions
+## Key Features
+
+- **🚀 Next.js 16**: Leveraging the latest App Router, Server Actions, and Turbopack for performance.
+- **🔐 Robust Auth & RBAC**: Supabase authentication integrated with a custom Role-Based Access Control system (Admin, Juror, Contributor, Explorer).
+- **� Dynamic Dictionary**: Community-sourced definitions with support for audio pronunciations and usage examples.
+- **�️ Curator Workflow**: Dedicated dashboards for Jurors to review, approve, or reject word submissions.
+- **🎨 Custom Design System**: A meticulously crafted UI using CSS variables and semantic tokens (no utility-first CSS libraries), ensuring a unique and premium aesthetic.
+- **🌍 Multi-language Support**: Scalable architecture for supporting multiple languages and dialects.
+- **� PWA Ready**: Installable on mobile devices with offline capabilities.
+- **🧪 Type-Safe**: End-to-end type safety with TypeScript, Zod, and Prisma.
 
 ## Tech Stack
 
-- **Framework**: Next.js 15 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui with Radix UI
-- **Authentication**: Supabase (planned)
-- **Database**: Supabase (planned)
-- **Deployment**: Vercel
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Server Actions)
+- **Language**: TypeScript 5.x
+- **Database**: PostgreSQL (via Supabase) and [Prisma ORM](https://www.prisma.io/)
+- **Authentication**: Supabase Auth + Custom Authorization Hooks
+- **Styling**: Vanilla CSS Modules with a comprehensive Design System (Variables, Tokens)
+- **State Management**: React Context + Server State (via Server Components)
+- **Testing**: [Vitest](https://vitest.dev/) for unit and integration tests
 - **Icons**: Lucide React
-- **Forms**: React Hook Form with Zod validation
+- **Validation**: Zod
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 20 or later
-- npm, yarn, pnpm, or bun
+- npm, pnpm, or yarn
+- A local or remote PostgreSQL database URL (env variable)
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository:**
 
-```bash
-git clone https://github.com/sirolad/neolingo-app.git
-cd neolingo-app
-```
+   ```bash
+   git clone https://github.com/sirolad/neolingo-app.git
+   cd neolingo-app
+   ```
 
-2. Install dependencies:
+2. **Install dependencies:**
 
-```bash
-npm install
-# or
-yarn install
-# or
-pnpm install
-```
+   ```bash
+   npm install
+   # or
+   pnpm install
+   ```
 
-3. Set up environment variables:
+3. **Environment Setup:**
 
-```bash
-cp .env.example .env.local
-# Edit .env.local with your configuration
-```
+   ```bash
+   cp .env.example .env.local
+   # Update .env.local with your Supabase credentials and DATABASE_URL
+   ```
 
-4. Run the development server:
+4. **Database Migration:**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+   Initialize your database schema:
 
-5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+   ```bash
+   npx prisma migrate dev --name init
+   ```
+
+5. **Run Development Server:**
+
+   ```bash
+   npm run dev
+   ```
+
+   Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ## Available Scripts
 
-- `npm run dev` - Start development server with Turbopack
-- `npm run build` - Build production app with Turbopack
-- `npm start` - Start production server
-- `npm run lint` - Run ESLint for code quality checks
-
-## Prisma
-
-1. Generate Prisma Client:
-
-```bash
-npx prisma generate
-```
-
-2. Run Prisma Migrations:
-
-```bash
-npx prisma migrate dev --name init
-```
-
-Select to run prisma with specific env file
-
-```bash
-npx prisma migrate dev --name init --env-file .env.local
-```
-
-or
-
-```bash
-npx dotenv -e .env.local -- npx prisma migrate dev
-```
+- `npm run dev`: Start the development server with Turbopack.
+- `npm run build`: Build the application for production.
+- `npm start`: Start the production server.
+- `npm run lint`: Run ESLint.
+- `npm run type-check`: Run TypeScript compiler check (no emit).
+- `npm run test`: Run tests with Vitest.
+- `npm run format`: Format code with Prettier.
 
 ## Project Structure
 
-```
+```bash
 src/
-├── app/                    # Next.js App Router pages
-├── components/             # React components
-│   ├── ui/                # Reusable UI components
-│   ├── auth/              # Authentication components
-│   └── layout/            # Layout components
-├── contexts/              # React contexts
-├── lib/                   # Utilities and configurations
-│   ├── schemas/           # Zod validation schemas
-│   └── supabase/          # Supabase client configuration
-└── types/                 # TypeScript type definitions
+├── actions/         # Server Actions (data mutations, API calls)
+├── app/             # Next.js App Router pages and layouts
+├── components/      # React components
+│   ├── auth/        # Auth-related components (PermissionGate, etc.)
+│   ├── layout/      # Layout wrappers
+│   ├── ui/          # Reusable design system components
+│   └── ...
+├── contexts/        # React Context providers (AuthContext, etc.)
+├── hooks/           # Custom hooks (usePermissions, etc.)
+├── lib/             # Utilities and configurations
+│   ├── auth/        # RBAC logic, decorators, permissions
+│   ├── prisma.ts    # Prisma client instance
+│   └── ...
+└── types/           # TypeScript definitions
 ```
 
-## CI/CD Pipeline
+## Documentation
 
-This project uses GitHub Actions for continuous integration and deployment:
+Comprehensive documentation for developers can be found in the [`docs/`](./docs) directory:
 
-- **CI Workflow**: Runs on every push and PR, includes linting, type checking, building, and security audits
-- **Deploy Workflow**: Automatically deploys to Vercel on main branch pushes
-- **Dependency Update**: Weekly automated dependency updates with PR creation
+- [**RBAC Developer Guide**](./docs/rbac_developer_guide.md): How to use the permission system, `PermissionGate`, and decorators.
+- [**Typogaphy System**](./docs/TYPOGRAPHY.md): Guide to the custom font sizes and weights.
+- [**Testing Guide**](./docs/TESTING.md): How to write and run tests.
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add some amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature/amazing-feature`.
+3. Commit your changes: `git commit -m 'Add some amazing feature'`.
+4. Push to the branch: `git push origin feature/amazing-feature`.
+5. Open a Pull Request.
 
 ## License
 
 This project is licensed under the MIT License.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
