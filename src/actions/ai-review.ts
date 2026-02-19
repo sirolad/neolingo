@@ -3,8 +3,9 @@
 import { generateText, Output } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { z } from 'zod';
-import { requirePermission } from '@/lib/auth/server-auth';
+import { requireAuth } from '@/lib/auth/server-auth';
 import { logAudit } from '@/lib/audit';
+import { Authorized } from '@/lib/auth/decorators';
 
 const ReviewResultSchema = z.object({
   strictDict: z.enum(['Approved', 'Rejected', 'Needs Review']),
@@ -14,30 +15,22 @@ const ReviewResultSchema = z.object({
 
 export type ReviewResult = z.infer<typeof ReviewResultSchema>;
 
-export async function analyzeRequest(request: {
-  word: string;
-  meaning?: string | null;
-}) {
-  // Verify user has permission to use AI analysis
-  let user;
-  try {
-    const result = await requirePermission('review:requests');
-    user = result.user;
-  } catch (error) {
-    return {
-      success: false,
-      error:
-        error instanceof Error
-          ? error.message
-          : 'Unauthorized to use AI analysis',
-    };
-  }
+export class AiReviewActions {
+  @Authorized('review:requests')
+  static async analyzeRequest(request: {
+    word: string;
+    meaning?: string | null;
+  }) {
+    // We can assume user is authorized here because of the decorator
+    // However, we still need the user object for logging, so we fetch it.
+    // requireAuth() is cheap since it re-uses the session check.
+    const { user } = await requireAuth();
 
-  try {
-    const { output } = await generateText({
-      model: openai('gpt-4o-mini'),
-      output: Output.object({ schema: ReviewResultSchema }),
-      prompt: `
+    try {
+      const { output } = await generateText({
+        model: openai('gpt-4o-mini'),
+        output: Output.object({ schema: ReviewResultSchema }),
+        prompt: `
         You are a strict linguistic curator for a dictionary app called Neolingo.
         Your task is to review a "Translation Request" where a user asks for a translation of a specific word.
 
@@ -54,19 +47,23 @@ export async function analyzeRequest(request: {
         - reason: A short explanation (max 1 sentence).
         - score: Confidence score (0-100).
       `,
-    });
+      });
 
-    // Log AI usage for audit trail
-    await logAudit({
-      userId: user.id,
-      action: 'ai:analyze:request',
-      resourceId: request.word,
-      metadata: { meaning: request.meaning, result: output.strictDict },
-    });
+      // Log AI usage for audit trail
+      await logAudit({
+        userId: user.id,
+        action: 'ai:analyze:request',
+        resourceId: request.word,
+        metadata: { meaning: request.meaning, result: output.strictDict },
+      });
 
-    return { success: true, data: output };
-  } catch (error) {
-    console.error('AI Analysis failed:', error);
-    return { success: false, error: 'Failed to analyze request' };
+      return { success: true, data: output };
+    } catch (error) {
+      console.error('AI Analysis failed:', error);
+      return { success: false, error: 'Failed to analyze request' };
+    }
   }
 }
+
+// Export the static method as a standalone function to maintain API compatibility
+export const analyzeRequest = AiReviewActions.analyzeRequest;
