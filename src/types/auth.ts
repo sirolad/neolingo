@@ -30,6 +30,14 @@ export interface AuthContextType {
     provider: 'google' | 'apple',
     redirectTo?: string
   ) => Promise<import('@supabase/supabase-js').User | null>;
+  // Permission helpers
+  can: (permission: import('@/lib/auth/permissions').Permission) => boolean;
+  canAny: (
+    permissions: import('@/lib/auth/permissions').Permission[]
+  ) => boolean;
+  canAll: (
+    permissions: import('@/lib/auth/permissions').Permission[]
+  ) => boolean;
 }
 
 // Form data types (inferred from Zod schemas)

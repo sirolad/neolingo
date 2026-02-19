@@ -6,6 +6,11 @@ import {
   isOnboardingCompleted,
 } from '@/lib/onboarding';
 import { getUserContext } from '@/actions/auth';
+import {
+  hasPermission,
+  type Permission,
+  type Role,
+} from '@/lib/auth/permissions';
 
 const PUBLIC_ROUTES = [
   '/signin',
@@ -29,11 +34,15 @@ const AUTH_ROUTES = [
   '/home',
 ];
 
-const roleAccess: Record<string, string[]> = {
-  '/admin': ['ADMIN'],
-  '/suggest': ['CONTRIBUTOR', 'ADMIN', 'JURY'],
-  '/vote': ['JURY', 'ADMIN', 'CONTRIBUTOR'],
-  '/requests': ['CONTRIBUTOR', 'ADMIN', 'JURY', 'EXPLORER'],
+/**
+ * Route-to-permission mapping
+ * Maps route prefixes to required permissions
+ */
+const ROUTE_PERMISSIONS: Record<string, Permission> = {
+  '/admin': 'view:admin',
+  '/suggest': 'create:requests',
+  '/vote': 'vote:suggestions',
+  '/requests': 'create:requests', // All authenticated users can view requests
 };
 
 function isPublicRoute(pathname: string): boolean {
@@ -156,17 +165,39 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  const userRoleName = userRole?.role?.name;
-  // Check if the route requires a role
-  const allowedRoles = Object.entries(roleAccess).find(([route]) =>
+  // Check if the route requires a specific permission
+  const requiredPermission = Object.entries(ROUTE_PERMISSIONS).find(([route]) =>
     pathname.startsWith(route)
   )?.[1];
 
-  if (allowedRoles) {
-    // Check if user role is allowed
-    if (!allowedRoles.some(role => userRoleName === role)) {
+  if (requiredPermission && user) {
+    const userRoleName = (userRole?.role?.name as Role) || 'EXPLORER';
+
+    // Check if user has the required permission
+    if (!hasPermission(userRoleName, requiredPermission)) {
+      // Log unauthorized access attempt (non-blocking)
+      try {
+        // Import dynamically to avoid circular dependencies
+        const { logAudit } = await import('@/lib/audit');
+        await logAudit({
+          userId: user.id,
+          action: 'access:denied',
+          resourceId: pathname,
+          metadata: {
+            requiredPermission,
+            userRole: userRoleName,
+            isApi: pathname.startsWith('/api/'),
+          },
+        });
+      } catch (error) {
+        console.error('Failed to log unauthorized access:', error);
+      }
+
       if (pathname.startsWith('/api/')) {
-        return NextResponse.json({ message: 'Forbidden' }, { status: 403 });
+        return NextResponse.json(
+          { message: 'Forbidden: Insufficient permissions' },
+          { status: 403 }
+        );
       }
       return NextResponse.redirect(new URL('/unauthorized', request.url));
     }
