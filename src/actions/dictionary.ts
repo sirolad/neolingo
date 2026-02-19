@@ -158,40 +158,6 @@ export async function submitRequest(
   }
 }
 
-export async function getPartsOfSpeech() {
-  try {
-    return await prisma.partOfSpeech.findMany({
-      orderBy: { name: 'asc' },
-    });
-  } catch (error) {
-    console.error('Failed to fetch parts of speech:', error);
-    return [];
-  }
-}
-
-export async function getSourceLanguages() {
-  try {
-    return await prisma.language.findMany({
-      orderBy: { name: 'asc' },
-    });
-  } catch (error) {
-    console.error('Failed to fetch source languages:', error);
-    return [];
-  }
-}
-
-export async function getTargetLanguagesForDict() {
-  try {
-    return await prisma.language.findMany({
-      where: { type: 'LRL' },
-      orderBy: { name: 'asc' },
-    });
-  } catch (error) {
-    console.error('Failed to fetch target languages:', error);
-    return [];
-  }
-}
-
 export async function getUserProfileForRequest(userId: string) {
   try {
     return await prisma.userProfile.findUnique({
@@ -208,35 +174,5 @@ export async function getUserProfileForRequest(userId: string) {
   } catch (error) {
     console.error('Failed to fetch user profile:', error);
     return null;
-  }
-}
-
-export async function getAllDomains() {
-  try {
-    return await prisma.domain.findMany({
-      orderBy: { name: 'asc' },
-    });
-  } catch (error) {
-    console.error('Failed to fetch all domains:', error);
-    return [];
-  }
-}
-
-export async function searchDomains(query: string) {
-  if (!query || query.length < 2) return [];
-  try {
-    return await prisma.domain.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: 'insensitive',
-        },
-      },
-      take: 5,
-      orderBy: { name: 'asc' },
-    });
-  } catch (error) {
-    console.error('Failed to search domains:', error);
-    return [];
   }
 }
