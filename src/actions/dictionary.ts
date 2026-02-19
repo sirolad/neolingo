@@ -158,17 +158,6 @@ export async function submitRequest(
   }
 }
 
-// Re-exported from catalog.ts — single source of truth for reference data
-export {
-  getPartsOfSpeech,
-  getSourceLanguages,
-  getAllDomains,
-  searchDomains,
-} from './catalog';
-
-// Alias for backward compatibility (was getTargetLanguagesForDict)
-export { getTargetLanguages as getTargetLanguagesForDict } from './catalog';
-
 export async function getUserProfileForRequest(userId: string) {
   try {
     return await prisma.userProfile.findUnique({

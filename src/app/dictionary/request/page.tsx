@@ -1,11 +1,11 @@
 import React from 'react';
+import { getUserProfileForRequest } from '@/actions/dictionary';
 import {
   getSourceLanguages,
-  getTargetLanguagesForDict,
+  getTargetLanguages as getTargetLanguagesForDict,
   getPartsOfSpeech,
-  getUserProfileForRequest,
   getAllDomains,
-} from '@/actions/dictionary';
+} from '@/actions/catalog';
 import { RequestForm } from '@/components/dictionary/RequestForm';
 import { Layout } from '@/components/layout/Layout';
 import { ArrowLeft } from 'lucide-react';
