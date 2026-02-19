@@ -9,12 +9,18 @@ import { requirePermission } from '@/lib/auth/server-auth';
  * @param permission - The required permission to execute the method.
  */
 export function Authorized(permission: Permission) {
-  return function (originalMethod: any, context: ClassMethodDecoratorContext) {
-    if (context.kind !== 'method') {
+  return function (
+    target: any,
+    propertyKey: string | symbol,
+    descriptor: PropertyDescriptor
+  ) {
+    const originalMethod = descriptor.value;
+
+    if (typeof originalMethod !== 'function') {
       throw new Error('Authorized decorator can only be used on methods');
     }
 
-    return async function (this: any, ...args: any[]) {
+    descriptor.value = async function (...args: any[]) {
       try {
         await requirePermission(permission);
         return await originalMethod.apply(this, args);
@@ -27,5 +33,7 @@ export function Authorized(permission: Permission) {
         return { success: false, error: 'Unauthorized' };
       }
     };
+
+    return descriptor;
   };
 }
