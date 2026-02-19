@@ -23,12 +23,17 @@ const PART_OF_SPEECH_PRIORITY: Record<string, number> = {
   determiner: 9,
 };
 
+/** Fallback priority for parts of speech not in the known list — sorts them after all known entries */
+const UNKNOWN_POS_PRIORITY = Number.MAX_SAFE_INTEGER;
+
 export async function getPartsOfSpeech(): Promise<PartOfSpeech[]> {
   try {
     const data = await prisma.partOfSpeech.findMany();
     return data.sort((a, b) => {
-      const pa = PART_OF_SPEECH_PRIORITY[a.name.toLowerCase()] ?? 99;
-      const pb = PART_OF_SPEECH_PRIORITY[b.name.toLowerCase()] ?? 99;
+      const pa =
+        PART_OF_SPEECH_PRIORITY[a.name.toLowerCase()] ?? UNKNOWN_POS_PRIORITY;
+      const pb =
+        PART_OF_SPEECH_PRIORITY[b.name.toLowerCase()] ?? UNKNOWN_POS_PRIORITY;
       if (pa !== pb) return pa - pb;
       return a.name.localeCompare(b.name); // alphabetical fallback
     });
