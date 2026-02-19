@@ -13,6 +13,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/lib/supabase/server';
+import { normalizeUser } from '@/lib/user';
 import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 
 import { RequestSubmitButton } from '@/components/dictionary/RequestSubmitButton';
@@ -53,6 +54,8 @@ export default async function RequestNeoPage() {
     }));
   }
 
+  const appUser = normalizeUser(user);
+
   return (
     <Layout variant="fullbleed">
       <div className="flex flex-col h-full">
@@ -71,7 +74,7 @@ export default async function RequestNeoPage() {
             <span className="heading-4 text-neutral-950 dark:text-neutral-50">
               Request A Neo
             </span>
-            <div className="md:w-20">
+            <div className="flex-shrink-0">
               <MyCommunityTag
                 userNeoCommunity={
                   userProfile?.targetLanguages?.[0]
@@ -86,8 +89,8 @@ export default async function RequestNeoPage() {
                     : null
                 }
                 user={{
-                  name: userProfile?.name || null,
-                  avatar: null,
+                  name: userProfile?.name || appUser?.displayName || 'User',
+                  avatar: appUser?.avatar || null,
                 }}
               />
             </div>

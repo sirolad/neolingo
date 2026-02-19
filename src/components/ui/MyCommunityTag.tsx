@@ -1,50 +1,59 @@
 'use client';
 
 import { NeoCommunity } from '@/types/neocommunity';
-import { CircleUser } from 'lucide-react';
+import { User as UserIcon } from 'lucide-react';
 import Image from 'next/image';
 import ReactCountryFlag from 'react-country-flag';
+import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 export function MyCommunityTag({
   userNeoCommunity,
   user,
+  className,
+  hideAvatar = false,
 }: {
   userNeoCommunity: NeoCommunity | null;
   user: { avatar?: string | null; name?: string | null } | null;
+  className?: string;
+  hideAvatar?: boolean;
 }) {
   const router = useRouter();
 
   return (
-    <div className="text-2xl md:text-3xl lg:text-4xl lg:hidden flex  justify-end align-middle">
-      <div className="from-primary-600 to-primary-700 flex items-center justify-center mr-2 py-1">
-        <div className="flex items-center rounded-xs px-2 py-0.5 bg-white border border-neutral-200">
+    <div
+      className={cn('flex justify-end items-center gap-2 lg:hidden', className)}
+    >
+      <div className="from-primary-600 to-primary-700 flex items-center justify-center py-1">
+        <div className="flex items-center rounded-md px-2 py-1 bg-white dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 shadow-sm">
           <ReactCountryFlag
             countryCode={userNeoCommunity?.flagIcon || 'NG'}
             svg
-            className="w-4 h-4"
+            className="w-4 h-4 rounded-sm"
           />
-          <span className="body-xs font-bold text-zinc-800 pl-2">
+          <span className="text-xs font-bold text-neutral-800 dark:text-neutral-200 pl-2">
             {userNeoCommunity?.short}
           </span>
         </div>
       </div>
-      <button
-        onClick={() => router.push('/profile')}
-        className="focus:outline-none transition-transform active:scale-95"
-      >
-        {user?.avatar ? (
-          <Image
-            src={user.avatar}
-            alt={user?.name || 'Contributor'}
-            width={40}
-            height={40}
-            className="rounded-full"
-          />
-        ) : (
-          <CircleUser className="w-10 h-10 text-neutral-400" />
-        )}
-      </button>
+      {!hideAvatar && (
+        <button
+          onClick={() => router.push('/profile')}
+          className="w-10 h-10 rounded-full overflow-hidden border-2 border-neutral-200 dark:border-neutral-700 hover:opacity-80 transition-opacity flex items-center justify-center bg-neutral-100 dark:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-900 dark:focus:ring-neutral-100 shrink-0"
+        >
+          {user?.avatar ? (
+            <Image
+              src={user.avatar}
+              alt={user?.name || 'Contributor'}
+              width={40}
+              height={40}
+              className="object-cover w-full h-full"
+            />
+          ) : (
+            <UserIcon className="w-5 h-5 text-neutral-500" />
+          )}
+        </button>
+      )}
     </div>
   );
 }
