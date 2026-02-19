@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 import Image from 'next/image';
 
 interface NavItemProps {
@@ -42,7 +43,7 @@ function NavItem({ icon, label, active = false, onClick }: NavItemProps) {
 export function TopNavigation() {
   const router = useRouter();
   const pathname = usePathname();
-  const { appUser, logout, userRole } = useAuth();
+  const { appUser, logout, userRole, userNeoCommunity } = useAuth();
   const user = appUser;
 
   const navItems = [
@@ -137,6 +138,14 @@ export function TopNavigation() {
         >
           {user && (
             <>
+              {/* Community Tag - Visible on desktop */}
+              <MyCommunityTag
+                userNeoCommunity={userNeoCommunity}
+                user={user}
+                className="lg:flex hidden"
+                hideAvatar={true}
+              />
+
               {/* Theme Toggle */}
               <ThemeToggle />
 
