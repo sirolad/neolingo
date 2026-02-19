@@ -1,6 +1,7 @@
 import 'server-only';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { cache } from 'react';
 
 export default async function createClient(token?: string) {
   const cookieStore = await cookies();
@@ -42,10 +43,10 @@ export default async function createClient(token?: string) {
   );
 }
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async () => {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   return user;
-}
+});
