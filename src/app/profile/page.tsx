@@ -12,6 +12,7 @@ import {
   LogOut,
   User as UserIcon,
   Award,
+  ShieldCheck,
 } from 'lucide-react';
 import ReactCountryFlag from 'react-country-flag';
 import { Layout } from '@/components/layout/Layout';
@@ -19,6 +20,7 @@ import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/contexts/AuthContext';
 import { formatJoinedDate } from '@/lib/utils';
+import { PermissionGate } from '@/components/auth/PermissionGate';
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -249,6 +251,27 @@ export default function ProfilePage() {
                       </span>
                     </div>
                   </div>
+
+                  {/* Administration — visible to admins only */}
+                  <PermissionGate permission="view:admin">
+                    <div className="h-px bg-neutral-100 dark:bg-neutral-800 w-full" />
+                    <div className="space-y-2">
+                      <h4 className="text-label text-neutral-400 uppercase tracking-wider hidden sm:block">
+                        Administration
+                      </h4>
+                      <div
+                        className="flex items-center gap-3 cursor-pointer p-2 hover:bg-neutral-50 dark:hover:bg-neutral-800 rounded-xl transition-colors group"
+                        onClick={() => router.push('/admin')}
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-900/30 flex items-center justify-center text-rose-600 dark:text-rose-400 group-hover:scale-110 transition-transform">
+                          <ShieldCheck className="w-4 h-4" />
+                        </div>
+                        <span className="body-small font-medium text-neutral-700 dark:text-neutral-300">
+                          Admin Dashboard
+                        </span>
+                      </div>
+                    </div>
+                  </PermissionGate>
 
                   {/* Mobile Log Out (Hidden on Desktop) */}
                   <div className="pt-4 mt-4 border-t border-neutral-100 dark:border-neutral-800 lg:hidden">
