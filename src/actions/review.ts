@@ -18,6 +18,7 @@ export async function getPendingRequests(limit = 10, offset = 0) {
         user: true,
         sourceLanguage: true,
         targetLanguage: true,
+        partOfSpeech: true,
       },
       take: limit,
       skip: offset,
@@ -70,10 +71,51 @@ class ReviewActions {
   }
 }
 
+class EditActions {
+  @Authorized('review:requests')
+  static async updateRequest(
+    requestId: number,
+    data: { word: string; meaning: string | null; partOfSpeechId: number }
+  ) {
+    const { user } = await requireAuth();
+
+    try {
+      await prisma.translationRequest.update({
+        where: { id: requestId },
+        data: {
+          word: data.word,
+          meaning: data.meaning,
+          partOfSpeechId: data.partOfSpeechId,
+        },
+      });
+
+      await logAudit({
+        userId: user.id,
+        action: 'review:request:edited',
+        resourceId: requestId.toString(),
+        metadata: { word: data.word, partOfSpeechId: data.partOfSpeechId },
+      });
+
+      revalidatePath('/admin/requests');
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to update request:', error);
+      return { success: false, error: 'Failed to update request' };
+    }
+  }
+}
+
 export async function reviewRequest(
   requestId: number,
   status: RequestStatus,
   reason?: string
 ) {
   return ReviewActions.reviewRequest(requestId, status, reason);
+}
+
+export async function updateRequest(
+  requestId: number,
+  data: { word: string; meaning: string | null; partOfSpeechId: number }
+) {
+  return EditActions.updateRequest(requestId, data);
 }

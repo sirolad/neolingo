@@ -66,3 +66,16 @@ export interface NeoLanguageOption {
   description: string;
   color: string;
 }
+
+// Part of speech reference type
+export interface PartOfSpeech {
+  id: number;
+  name: string;
+  code: string;
+}
+
+// Domain tag reference type
+export interface Domain {
+  id: number;
+  name: string;
+}
