@@ -25,7 +25,7 @@ import { PermissionGate } from '@/components/auth/PermissionGate';
 export default function ProfilePage() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { appUser, logout, userNeoCommunity } = useAuth();
+  const { appUser, logout, userNeoCommunity, userRole } = useAuth();
   const user = appUser;
 
   const isDarkMode = theme === 'dark';
