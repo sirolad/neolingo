@@ -55,16 +55,7 @@ export default function SuggestPage() {
       audioUrl: string | null;
       error: string | null;
     }[]
-  >([
-    {
-      type: '',
-      description:
-        'Please select a suggestion type and provide your suggestion for the word of the day.',
-      text: '',
-      audioUrl: null,
-      error: null,
-    },
-  ]);
+  >([]);
   const [state, formAction] = useActionState(curateNeo, {
     success: false,
     message: '',
@@ -116,7 +107,7 @@ export default function SuggestPage() {
           appUser?.id || ''
         );
         console.log('fetchedTerms _ fetchedTerms ', fetchedTerms);
-        if (fetchedTerms[0]._count.neos == 5) {
+        if (fetchedTerms[0]._count.neos >= 5) {
           toast(
             'Your can only suggest 5 neos per word, click "Next Words" to explore other terms',
             {
@@ -130,6 +121,16 @@ export default function SuggestPage() {
           setAvailableNeoSlots(0);
           return;
         } else if (fetchedTerms[0]) {
+          setSuggestions([
+            {
+              type: '',
+              description:
+                'Please select a suggestion type and provide your suggestion for the word of the day.',
+              text: '',
+              audioUrl: null,
+              error: null,
+            },
+          ]);
           setTerm(fetchedTerms[0]);
           setAvailableNeoSlots(5 - fetchedTerms[0]._count.neos);
         }
@@ -448,7 +449,8 @@ export default function SuggestPage() {
                     loading={submitting}
                     disabled={
                       suggestions.filter(s => !s.text.trim()).length > 0 ||
-                      suggestions.filter(s => !s.type).length > 0
+                      suggestions.filter(s => !s.type).length > 0 ||
+                      suggestions.length == 0
                     }
                     className="h-12 md:h-14 lg:h-16 rounded-full md:rounded-full font-medium text-base md:text-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
                   >
