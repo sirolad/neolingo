@@ -118,7 +118,7 @@ export default function SuggestPage() {
         console.log('fetchedTerms _ fetchedTerms ', fetchedTerms);
         if (fetchedTerms[0]._count.neos == 5) {
           toast(
-            'No more terms available for suggestion. Please click on the "Next Words" button to explore other terms.',
+            'Your can only suggest 5 neos per word, click "Next Words" to explore other terms',
             {
               description:
                 'You have made suggestions for all available terms today.',
