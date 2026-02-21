@@ -16,6 +16,7 @@ import {
   Edit2,
   Save,
   X,
+  Search,
 } from 'lucide-react';
 import Papa from 'papaparse';
 import {
@@ -67,21 +68,40 @@ export default function AdminQuizPage() {
     null
   );
   const [editContent, setEditContent] = useState<any>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  // Debounce search query
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setCurrentPage(1); // Reset page on new search
+    }, 500);
+    return () => clearTimeout(handler);
+  }, [searchQuery]);
 
   // Fetch Existing Questions
   useEffect(() => {
     if (activeTab === 'manage' && selectedLanguageId) {
       const fetchQuestions = async () => {
         setIsLoadingQuestions(true);
-        const res = await getAdminQuizQuestions(Number(selectedLanguageId));
+        const res = await getAdminQuizQuestions(
+          Number(selectedLanguageId),
+          currentPage,
+          20,
+          debouncedSearch
+        );
         if (res.success && res.questions) {
           setExistingQuestions(res.questions);
+          setTotalPages(res.pagination?.totalPages || 1);
         }
         setIsLoadingQuestions(false);
       };
       fetchQuestions();
     }
-  }, [activeTab, selectedLanguageId]);
+  }, [activeTab, selectedLanguageId, currentPage, debouncedSearch]);
 
   const handleEditClick = (q: any) => {
     setEditingQuestionId(q.id);
@@ -328,7 +348,10 @@ export default function AdminQuizPage() {
           </label>
           <select
             value={selectedLanguageId}
-            onChange={e => setSelectedLanguageId(Number(e.target.value))}
+            onChange={e => {
+              setSelectedLanguageId(Number(e.target.value));
+              setCurrentPage(1);
+            }}
             className="w-full md:w-1/2 p-3 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary"
             disabled={languages.length === 0}
           >
@@ -378,6 +401,16 @@ export default function AdminQuizPage() {
         {/* Manage Form */}
         {activeTab === 'manage' && (
           <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-800">
+            <div className="mb-6 relative">
+              <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400" />
+              <Input
+                placeholder="Search questions by text..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
             {isLoadingQuestions ? (
               <div className="flex items-center justify-center p-8">
                 <p className="text-neutral-500">Loading questions...</p>
@@ -523,6 +556,37 @@ export default function AdminQuizPage() {
                     )}
                   </div>
                 ))}
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-between pt-4 border-t border-neutral-200 dark:border-neutral-800 mt-6">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setCurrentPage(prev => Math.max(1, prev - 1))
+                      }
+                      disabled={currentPage === 1 || isLoadingQuestions}
+                    >
+                      Previous
+                    </Button>
+                    <span className="text-sm text-neutral-500 dark:text-neutral-400">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setCurrentPage(prev => Math.min(totalPages, prev + 1))
+                      }
+                      disabled={
+                        currentPage === totalPages || isLoadingQuestions
+                      }
+                    >
+                      Next
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
           </div>

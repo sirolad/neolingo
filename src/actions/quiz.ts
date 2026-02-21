@@ -52,13 +52,47 @@ export async function bulkAddQuizQuestions(questions: QuizQuestionInput[]) {
   }
 }
 
-export async function getAdminQuizQuestions(languageId: number) {
+export async function getAdminQuizQuestions(
+  languageId: number,
+  page: number = 1,
+  limit: number = 20,
+  searchQuery?: string
+) {
   try {
-    const questions = await prisma.quizQuestion.findMany({
-      where: { languageId },
-      orderBy: { createdAt: 'desc' },
-    });
-    return { success: true, questions };
+    const skip = (page - 1) * limit;
+
+    const where: Prisma.QuizQuestionWhereInput = {
+      languageId,
+      ...(searchQuery
+        ? {
+            text: {
+              contains: searchQuery,
+              mode: 'insensitive',
+            },
+          }
+        : {}),
+    };
+
+    const [questions, totalCount] = await prisma.$transaction([
+      prisma.quizQuestion.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take: limit,
+      }),
+      prisma.quizQuestion.count({ where }),
+    ]);
+
+    return {
+      success: true,
+      questions,
+      pagination: {
+        total: totalCount,
+        page,
+        limit,
+        totalPages: Math.ceil(totalCount / limit),
+      },
+    };
   } catch (error) {
     console.error('Failed to get admin quiz questions:', error);
     return { success: false, error: 'Failed to fetch questions' };
