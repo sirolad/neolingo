@@ -20,6 +20,7 @@ import {
   Menu,
   X,
   HelpCircle,
+  Home,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
@@ -60,6 +61,12 @@ const NAV_ITEMS = [
     icon: Settings2,
     href: '/admin/settings',
     active: false,
+  },
+  {
+    label: 'Go Home',
+    icon: Home,
+    href: '/home',
+    active: true,
   },
 ];
 
@@ -274,25 +281,33 @@ export default function AdminPage() {
             </p>
           </div>
 
-          {/* Avatar (desktop, mobile already has sidebar footer) */}
-          <button
-            onClick={() => router.push('/profile')}
-            className="ml-auto w-9 h-9 rounded-full overflow-hidden border-2 border-neutral-200 dark:border-neutral-700 hover:opacity-80 transition-opacity flex items-center justify-center bg-neutral-100 dark:bg-neutral-800 shrink-0"
-          >
-            {appUser.avatar ? (
-              <Image
-                src={appUser.avatar}
-                alt={appUser.name || 'Profile'}
-                width={36}
-                height={36}
-                className="object-cover w-full h-full"
-              />
-            ) : (
-              <UserIcon className="w-5 h-5 text-neutral-500" />
-            )}
-          </button>
-        </header>
-
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              onClick={() => router.push('/home')}
+              className="p-2 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors"
+              title="Go Home"
+            >
+              <Home className="w-5 h-5" />
+            </button>
+            {/* Avatar (desktop, mobile already has sidebar footer) */}
+            <button
+              onClick={() => router.push('/profile')}
+              className="w-9 h-9 rounded-full overflow-hidden border-2 border-neutral-200 dark:border-neutral-700 hover:opacity-80 transition-opacity flex items-center justify-center bg-neutral-100 dark:bg-neutral-800 shrink-0"
+            >
+              {appUser.avatar ? (
+                <Image
+                  src={appUser.avatar}
+                  alt={appUser.name || 'Profile'}
+                  width={36}
+                  height={36}
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <UserIcon className="w-5 h-5 text-neutral-500" />
+              )}
+            </button>
+          </div>
+        </header>{' '}
         {/* Page body */}
         <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
           {/* Section heading */}

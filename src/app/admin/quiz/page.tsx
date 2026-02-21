@@ -17,6 +17,7 @@ import {
   Save,
   X,
   Search,
+  Home,
 } from 'lucide-react';
 import Papa from 'papaparse';
 import {
@@ -325,9 +326,16 @@ export default function AdminQuizPage() {
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <h1 className="heading-6 text-neutral-950 dark:text-neutral-50">
+        <h1 className="heading-6 text-neutral-950 dark:text-neutral-50 flex-1 truncate">
           Quiz Settings
         </h1>
+        <button
+          onClick={() => router.push('/home')}
+          className="p-2 -mr-2 text-neutral-600 dark:text-neutral-400 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded-lg transition-colors shrink-0 ml-4"
+          title="Go Home"
+        >
+          <Home className="w-5 h-5" />
+        </button>
       </header>
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-4xl mx-auto w-full">
