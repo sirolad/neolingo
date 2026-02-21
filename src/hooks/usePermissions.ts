@@ -1,5 +1,6 @@
 'use client';
 
+import { useCallback, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   hasPermission,
@@ -15,49 +16,67 @@ import {
  */
 export function usePermissions() {
   const { userRole } = useAuth();
-  const role = (userRole as Role) || 'EXPLORER';
+  const role = useMemo(() => (userRole as Role) || 'EXPLORER', [userRole]);
 
   /**
    * Check if the current user has a specific permission
    */
-  const can = (permission: Permission): boolean => {
-    return hasPermission(role, permission);
-  };
+  const can = useCallback(
+    (permission: Permission): boolean => {
+      return hasPermission(role, permission);
+    },
+    [role]
+  );
 
   /**
    * Check if the current user has any of the specified permissions
    */
-  const canAny = (permissions: Permission[]): boolean => {
-    return hasAnyPermission(role, permissions);
-  };
+  const canAny = useCallback(
+    (permissions: Permission[]): boolean => {
+      return hasAnyPermission(role, permissions);
+    },
+    [role]
+  );
 
   /**
    * Check if the current user has all of the specified permissions
    */
-  const canAll = (permissions: Permission[]): boolean => {
-    return hasAllPermissions(role, permissions);
-  };
+  const canAll = useCallback(
+    (permissions: Permission[]): boolean => {
+      return hasAllPermissions(role, permissions);
+    },
+    [role]
+  );
 
   /**
    * Check if the current user has a specific role
    */
-  const hasRole = (targetRole: Role): boolean => {
-    return role === targetRole;
-  };
+  const hasRole = useCallback(
+    (targetRole: Role): boolean => {
+      return role === targetRole;
+    },
+    [role]
+  );
 
   /**
    * Check if the current user has any of the specified roles
    */
-  const hasAnyRole = (roles: Role[]): boolean => {
-    return roles.includes(role);
-  };
+  const hasAnyRole = useCallback(
+    (roles: Role[]): boolean => {
+      return roles.includes(role);
+    },
+    [role]
+  );
 
-  return {
-    role,
-    can,
-    canAny,
-    canAll,
-    hasRole,
-    hasAnyRole,
-  };
+  return useMemo(
+    () => ({
+      role,
+      can,
+      canAny,
+      canAll,
+      hasRole,
+      hasAnyRole,
+    }),
+    [role, can, canAny, canAll, hasRole, hasAnyRole]
+  );
 }
