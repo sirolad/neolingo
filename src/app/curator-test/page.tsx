@@ -1,9 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  getCuratorTestQuestions,
+  canUserTakeQuiz,
+  submitQuizAttempt,
+} from '@/actions/quiz';
+import { formatDistanceToNow } from 'date-fns';
 
 interface Question {
   id: number;
@@ -12,71 +19,166 @@ interface Question {
   correctAnswer: string;
 }
 
-// Mock questions - in production, these would come from an API
-const questions: Question[] = [
-  {
-    id: 1,
-    text: 'In the Yoruba culture, which of these birds is known to pick up young chicks?',
-    options: [
-      { label: 'A', value: 'Asa' },
-      { label: 'B', value: 'Adaba' },
-      { label: 'C', value: 'Okin' },
-      { label: 'D', value: 'Ewure' },
-    ],
-    correctAnswer: 'Asa',
-  },
-  {
-    id: 2,
-    text: 'What is the Yoruba word for "good morning"?',
-    options: [
-      { label: 'A', value: 'E kaale' },
-      { label: 'B', value: 'E kaaro' },
-      { label: 'C', value: 'E kasan' },
-      { label: 'D', value: 'O dabo' },
-    ],
-    correctAnswer: 'E kaaro',
-  },
-  {
-    id: 3,
-    text: 'Which deity is known as the god of iron in Yoruba mythology?',
-    options: [
-      { label: 'A', value: 'Sango' },
-      { label: 'B', value: 'Ogun' },
-      { label: 'C', value: 'Osun' },
-      { label: 'D', value: 'Obatala' },
-    ],
-    correctAnswer: 'Ogun',
-  },
-  {
-    id: 4,
-    text: 'What does "Omo" mean in Yoruba?',
-    options: [
-      { label: 'A', value: 'Father' },
-      { label: 'B', value: 'Mother' },
-      { label: 'C', value: 'Child' },
-      { label: 'D', value: 'Elder' },
-    ],
-    correctAnswer: 'Child',
-  },
-  {
-    id: 5,
-    text: 'Which Yoruba festival celebrates the new yam harvest?',
-    options: [
-      { label: 'A', value: 'Egungun' },
-      { label: 'B', value: 'Odun Ijesu' },
-      { label: 'C', value: 'Odun Isu' },
-      { label: 'D', value: 'Gelede' },
-    ],
-    correctAnswer: 'Odun Isu',
-  },
-];
-
 export default function CuratorTestPage() {
   const router = useRouter();
+  const { appUser, isLoading: authLoading } = useAuth();
+
+  // Checking Eligibility State
+  const [isChecking, setIsChecking] = useState(true);
+  const [eligibilityData, setEligibilityData] = useState<{
+    canTake: boolean;
+    reason?: string;
+    eligibleAt?: Date;
+  } | null>(null);
+
+  // Quiz State
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // Active Test State
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [answers, setAnswers] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    async function initTest() {
+      if (authLoading) return;
+      if (!appUser) {
+        router.push('/signin');
+        return;
+      }
+
+      // Check Eligibility
+      const eligibilityResult = await canUserTakeQuiz(appUser.id);
+      setIsChecking(false);
+
+      if (!eligibilityResult.success || !eligibilityResult.canTake) {
+        setEligibilityData({
+          canTake: false,
+          reason:
+            eligibilityResult.reason ||
+            'You are not eligible to take this test at the moment.',
+          eligibleAt: eligibilityResult.eligibleAt,
+        });
+        setIsLoadingQuestions(false);
+        return;
+      }
+
+      setEligibilityData({ canTake: true });
+
+      // Fetch Questions
+      const questionsResult = await getCuratorTestQuestions(appUser.id);
+      if (questionsResult.success && questionsResult.questions) {
+        // Handle case where fewer questions are available than requested
+        if (questionsResult.questions.length === 0) {
+          setFetchError(
+            'No questions are currently available for your target language. Please try again later.'
+          );
+        } else {
+          setQuestions(questionsResult.questions);
+        }
+      } else {
+        setFetchError(
+          questionsResult.error ||
+            'Failed to load questions. Please check your target language settings.'
+        );
+      }
+      setIsLoadingQuestions(false);
+    }
+
+    initTest();
+  }, [appUser, authLoading, router]);
+
+  if (authLoading || isChecking) {
+    return (
+      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 flex flex-col justify-center items-center">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-12 h-12 bg-neutral-300 dark:bg-neutral-800 rounded-full mb-4"></div>
+          <div className="h-4 w-32 bg-neutral-300 dark:bg-neutral-800 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Ineligible View ---
+  if (eligibilityData && !eligibilityData.canTake) {
+    return (
+      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 flex flex-col items-center justify-center p-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-2xl p-8 max-w-md w-full text-center border border-neutral-200 dark:border-neutral-800 shadow-sm">
+          <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+          <h1 className="heading-5 text-neutral-900 dark:text-neutral-100 mb-2">
+            Test Unavailable
+          </h1>
+          <p className="body-base text-neutral-600 dark:text-neutral-400 mb-6">
+            {eligibilityData.reason}
+            {eligibilityData.eligibleAt && (
+              <span className="block mt-2 font-medium">
+                You can try again in{' '}
+                {formatDistanceToNow(eligibilityData.eligibleAt)}.
+              </span>
+            )}
+          </p>
+          <Button onClick={() => router.push('/home')} className="w-full">
+            Return to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Loading / Error Fetching Questions ---
+  if (isLoadingQuestions) {
+    return (
+      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 flex flex-col">
+        <header className="px-4 py-4 lg:px-8 lg:py-6">
+          <div className="w-10 h-10 bg-neutral-200 dark:bg-neutral-800 rounded-full animate-pulse"></div>
+        </header>
+        <main className="flex-1 px-5 pb-8 lg:px-8 lg:pb-16 mt-8">
+          <div className="max-w-md lg:max-w-lg mx-auto">
+            <div className="bg-white dark:bg-neutral-900 rounded-[20px] p-6 lg:p-8 animate-pulse border border-neutral-200 dark:border-neutral-800 shadow-sm">
+              <div className="h-8 bg-neutral-200 dark:bg-neutral-800 rounded w-2/3 mx-auto mb-2"></div>
+              <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-1/2 mx-auto mb-10"></div>
+
+              <div className="h-4 bg-neutral-200 dark:bg-neutral-800 rounded w-full mb-8"></div>
+              <div className="h-6 bg-neutral-200 dark:bg-neutral-800 rounded w-full mb-8 max-w-sm"></div>
+
+              <div className="space-y-4">
+                {[1, 2, 3, 4].map(i => (
+                  <div
+                    key={i}
+                    className="h-16 bg-neutral-200 dark:bg-neutral-800 rounded-lg"
+                  ></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (fetchError || questions.length === 0) {
+    return (
+      <div className="min-h-screen bg-neutral-100 dark:bg-neutral-950 flex flex-col items-center justify-center p-6">
+        <div className="bg-white dark:bg-neutral-900 rounded-2xl p-8 max-w-md w-full text-center border border-neutral-200 dark:border-neutral-800 shadow-sm">
+          <AlertCircle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
+          <h1 className="heading-5 text-neutral-900 dark:text-neutral-100 mb-2">
+            Unable to Load Test
+          </h1>
+          <p className="body-base text-neutral-600 dark:text-neutral-400 mb-6">
+            {fetchError || 'An unexpected error occurred.'}
+          </p>
+          <Button onClick={() => router.push('/home')} className="w-full">
+            Return to Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- Active Test Flow ---
   const currentQuestion = questions[currentQuestionIndex];
   const totalQuestions = questions.length;
   const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
@@ -94,22 +196,35 @@ export default function CuratorTestPage() {
     setSelectedAnswer(value);
   };
 
-  const handleNext = () => {
-    if (!selectedAnswer) return;
+  const handleNext = async () => {
+    if (!selectedAnswer || !appUser) return;
 
     const newAnswers = [...answers];
     newAnswers[currentQuestionIndex] = selectedAnswer;
     setAnswers(newAnswers);
 
     if (isLastQuestion) {
-      // Calculate score and navigate to result
+      setIsSubmitting(true);
+      // Calculate score
       const correctCount = newAnswers.filter(
         (answer, index) => answer === questions[index].correctAnswer
       ).length;
-      const passed = correctCount >= 3; // Pass if 3 or more correct
-      router.push(
-        `/curator-test/result?passed=${passed}&score=${correctCount}`
+
+      const submitResult = await submitQuizAttempt(
+        appUser.id,
+        correctCount,
+        totalQuestions
       );
+
+      if (submitResult.success) {
+        router.push(
+          `/curator-test/result?passed=${submitResult.passed}&score=${correctCount}`
+        );
+      } else {
+        // Handle edge case where db submission fails, but UI still needs to advance ideally
+        setIsSubmitting(false);
+        alert('Failed to submit results. Please try again.');
+      }
     } else {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedAnswer(answers[currentQuestionIndex + 1] || null);
@@ -122,7 +237,8 @@ export default function CuratorTestPage() {
       <header className="px-4 py-4 lg:px-8 lg:py-6">
         <button
           onClick={handleBack}
-          className="p-2 -ml-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full transition-colors"
+          disabled={isSubmitting}
+          className="p-2 -ml-2 text-neutral-800 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-800 rounded-full transition-colors disabled:opacity-50"
           aria-label="Go back"
         >
           <ArrowLeft className="w-6 h-6" />
@@ -130,8 +246,8 @@ export default function CuratorTestPage() {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 px-5 pb-8 lg:px-8 lg:pb-16">
-        <div className="max-w-md lg:max-w-lg mx-auto">
+      <main className="flex-1 px-5 pb-8 lg:px-8 lg:pb-16 flex flex-col md:justify-center">
+        <div className="max-w-md lg:max-w-lg mx-auto w-full">
           {/* Question Card */}
           <div className="bg-white dark:bg-neutral-900 rounded-[20px] border border-neutral-200 dark:border-neutral-800 p-6 lg:p-8">
             {/* Card Header */}
@@ -154,7 +270,7 @@ export default function CuratorTestPage() {
                 {Array.from({ length: totalQuestions }).map((_, index) => (
                   <div
                     key={index}
-                    className={`h-1.5 w-8 rounded-full transition-colors ${
+                    className={`h-1.5 w-6 rounded-full transition-colors ${
                       index <= currentQuestionIndex
                         ? 'bg-neutral-950 dark:bg-neutral-50'
                         : 'bg-neutral-200 dark:bg-neutral-700'
@@ -175,14 +291,24 @@ export default function CuratorTestPage() {
                 <button
                   key={option.label}
                   onClick={() => handleSelectAnswer(option.value)}
-                  className={`w-full text-left p-4 rounded-lg border transition-all ${
+                  disabled={isSubmitting}
+                  className={`w-full flex items-center p-4 rounded-xl border transition-all ${
                     selectedAnswer === option.value
                       ? 'border-primary bg-neutral-50 dark:bg-neutral-800 ring-1 ring-primary'
                       : 'border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 dark:hover:border-neutral-600 hover:bg-neutral-50 dark:hover:bg-neutral-800'
                   }`}
                 >
-                  <span className="body-base font-medium text-neutral-800 dark:text-neutral-200">
-                    {option.label}. {option.value}
+                  <span
+                    className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mr-4 text-sm font-bold ${
+                      selectedAnswer === option.value
+                        ? 'bg-primary text-white'
+                        : 'bg-neutral-200 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400'
+                    }`}
+                  >
+                    {option.label}
+                  </span>
+                  <span className="body-base font-medium text-neutral-800 dark:text-neutral-200 text-left w-full h-full flex items-center py-1">
+                    {option.value}
                   </span>
                 </button>
               ))}
@@ -192,18 +318,22 @@ export default function CuratorTestPage() {
       </main>
 
       {/* Footer Button */}
-      <div className="px-5 pb-8 lg:px-8 lg:pb-12">
+      <div className="px-5 pb-8 lg:px-8 lg:pb-12 mt-auto">
         <div className="max-w-md lg:max-w-lg mx-auto">
           <Button
             onClick={handleNext}
-            disabled={!selectedAnswer}
+            disabled={!selectedAnswer || isSubmitting}
             className={`w-full rounded-full h-14 lg:h-16 text-lg lg:text-xl font-semibold transition-colors ${
               selectedAnswer
                 ? 'bg-neutral-950 dark:bg-neutral-50 hover:bg-neutral-800 dark:hover:bg-neutral-200 text-white dark:text-neutral-950'
                 : 'bg-neutral-300 dark:bg-neutral-700 text-neutral-500 dark:text-neutral-500 cursor-not-allowed'
             }`}
           >
-            {isLastQuestion ? 'Submit Test' : 'Next Question'}
+            {isSubmitting
+              ? 'Sumitting...'
+              : isLastQuestion
+                ? 'Submit Test'
+                : 'Next Question'}
           </Button>
         </div>
       </div>

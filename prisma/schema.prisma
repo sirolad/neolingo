@@ -9,34 +9,35 @@ datasource db {
 
 // UI Language for application interface ONLY
 model UILanguage {
-  id            Int           @id @default(autoincrement())
-  name          String        @unique  // "English", "Spanish"
-  code          String        @unique  // "en", "es"
-  icon          String?
-  is_supported  Boolean       @default(false)
-  userProfiles  UserProfile[]
-  
+  id           Int           @id @default(autoincrement())
+  name         String        @unique // "English", "Spanish"
+  code         String        @unique // "en", "es"
+  icon         String?
+  is_supported Boolean       @default(false)
+  userProfiles UserProfile[]
+
   @@map("ui_languages")
 }
 
 model UserProfile {
-  id                  Int                  @id @default(autoincrement())
-  userId              String               @db.Uuid
-  name                String?
-  phone               String?
-  
+  id     Int     @id @default(autoincrement())
+  userId String  @db.Uuid
+  name   String?
+  phone  String?
+
   // UI language preference (separate from translation languages)
-  uiLanguageId        Int?
-  uiLanguage          UILanguage?          @relation(fields: [uiLanguageId], references: [id])
-  
-  onboardingCompleted Boolean              @default(false)
-  
+  uiLanguageId Int?
+  uiLanguage   UILanguage? @relation(fields: [uiLanguageId], references: [id])
+
+  onboardingCompleted Boolean @default(false)
+
   // Communities user joined (for LRL contributions)
-  targetLanguages     UserTargetLanguage[]
-  votes               Vote[]
-  requests            TranslationRequest[] @relation("RequestedBy")
-  approvals           TranslationRequest[] @relation("ApprovedBy")
-  
+  targetLanguages UserTargetLanguage[]
+  votes           Vote[]
+  requests        TranslationRequest[] @relation("RequestedBy")
+  approvals       TranslationRequest[] @relation("ApprovedBy")
+  quizAttempts    QuizAttempt[]
+
   @@unique([userId])
   @@map("user_profile")
 }
@@ -62,29 +63,30 @@ model UserRole {
 
 // Unified language table for all translations (both HRL and LRL)
 model Language {
-  id              Int                  @id @default(autoincrement())
-  name            String               @unique  // "English", "Yoruba", "Hausa"
-  code            String               @unique  // ISO 639-3: "eng", "yor", "hau"
-  short           String?              // Short name or abbreviation
-  type            LanguageType                  // HRL or LRL
-  description     String?
-  icon            String?
-  is_supported    Boolean              @default(true)
-  metadata        Json?                         // For LRL community info
-  
+  id           Int          @id @default(autoincrement())
+  name         String       @unique // "English", "Yoruba", "Hausa"
+  code         String       @unique // ISO 639-3: "eng", "yor", "hau"
+  short        String? // Short name or abbreviation
+  type         LanguageType // HRL or LRL
+  description  String?
+  icon         String?
+  is_supported Boolean      @default(true)
+  metadata     Json? // For LRL community info
+
   // Relations
-  sourceTerms     Term[]               @relation("SourceLanguage")
-  targetTerms     Term[]               @relation("TargetLanguage")
-  sourceRequests  TranslationRequest[] @relation("SourceLanguageRequest")
-  targetRequests  TranslationRequest[] @relation("TargetLanguageRequest")
-  userLanguages   UserTargetLanguage[]
-  
+  sourceTerms    Term[]               @relation("SourceLanguage")
+  targetTerms    Term[]               @relation("TargetLanguage")
+  sourceRequests TranslationRequest[] @relation("SourceLanguageRequest")
+  targetRequests TranslationRequest[] @relation("TargetLanguageRequest")
+  userLanguages  UserTargetLanguage[]
+  quizQuestions  QuizQuestion[]
+
   @@map("languages")
 }
 
 enum LanguageType {
-  HRL  // High-Resource Language
-  LRL  // Low-Resource Language
+  HRL // High-Resource Language
+  LRL // Low-Resource Language
 }
 
 model PartOfSpeech {
@@ -98,10 +100,10 @@ model PartOfSpeech {
 }
 
 model Concept {
-  id          Int          @id @default(autoincrement())
-  gloss       String?      // Universal explanation of the concept
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id        Int      @id @default(autoincrement())
+  gloss     String? // Universal explanation of the concept
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   terms       Term[]
   definitions Definition[]
@@ -110,53 +112,53 @@ model Concept {
 }
 
 model Term {
-  id               Int          @id @default(autoincrement())
-  text             String
-  
+  id   Int    @id @default(autoincrement())
+  text String
+
   // Source language (e.g., English word "Peace")
   sourceLanguageId Int
-  sourceLanguage   Language     @relation("SourceLanguage", fields: [sourceLanguageId], references: [id])
-  
+  sourceLanguage   Language @relation("SourceLanguage", fields: [sourceLanguageId], references: [id])
+
   // Target language (e.g., Yoruba translation "Alafia")
   targetLanguageId Int
-  targetLanguage   Language     @relation("TargetLanguage", fields: [targetLanguageId], references: [id])
+  targetLanguage   Language @relation("TargetLanguage", fields: [targetLanguageId], references: [id])
 
-  partOfSpeechId   Int
-  partOfSpeech     PartOfSpeech @relation(fields: [partOfSpeechId], references: [id])
+  partOfSpeechId Int
+  partOfSpeech   PartOfSpeech @relation(fields: [partOfSpeechId], references: [id])
 
-  conceptId        Int
-  concept          Concept      @relation(fields: [conceptId], references: [id])
-  
-  votes            Vote[]
-  voteScore        Int          @default(0) // Cached score for sorting
+  conceptId Int
+  concept   Concept @relation(fields: [conceptId], references: [id])
 
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
+  votes     Vote[]
+  voteScore Int    @default(0) // Cached score for sorting
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("terms")
 }
 
 model Definition {
-  id        Int      @id @default(autoincrement())
-  text      String
+  id   Int    @id @default(autoincrement())
+  text String
 
   conceptId Int
-  concept   Concept  @relation(fields: [conceptId], references: [id])
+  concept   Concept @relation(fields: [conceptId], references: [id])
 
   @@map("definitions")
 }
 
 model Vote {
-  id        Int         @id @default(autoincrement())
-  value     Int         // 1 for upvote, -1 for downvote
-  
-  userId    String      @db.Uuid
-  user      UserProfile @relation(fields: [userId], references: [userId])
-  
-  termId    Int
-  term      Term        @relation(fields: [termId], references: [id])
-  
-  createdAt DateTime    @default(now())
+  id    Int @id @default(autoincrement())
+  value Int // 1 for upvote, -1 for downvote
+
+  userId String      @db.Uuid
+  user   UserProfile @relation(fields: [userId], references: [userId])
+
+  termId Int
+  term   Term @relation(fields: [termId], references: [id])
+
+  createdAt DateTime @default(now())
 
   @@unique([userId, termId])
   @@map("votes")
@@ -177,58 +179,58 @@ enum RequestStatus {
 }
 
 model TranslationRequest {
-  id               Int          @id @default(autoincrement())
-  word             String
-  meaning          String?      // Context provided by user
-  
+  id      Int     @id @default(autoincrement())
+  word    String
+  meaning String? // Context provided by user
+
   // Source language (what language is the word in)
   sourceLanguageId Int
-  sourceLanguage   Language     @relation("SourceLanguageRequest", fields: [sourceLanguageId], references: [id])
-  
+  sourceLanguage   Language @relation("SourceLanguageRequest", fields: [sourceLanguageId], references: [id])
+
   // Target language (what language to translate TO)
   targetLanguageId Int
-  targetLanguage   Language     @relation("TargetLanguageRequest", fields: [targetLanguageId], references: [id])
-  
-  partOfSpeechId   Int
-  partOfSpeech     PartOfSpeech @relation(fields: [partOfSpeechId], references: [id])
+  targetLanguage   Language @relation("TargetLanguageRequest", fields: [targetLanguageId], references: [id])
 
-  userId           String       @db.Uuid
-  user             UserProfile  @relation("RequestedBy", fields: [userId], references: [userId])
+  partOfSpeechId Int
+  partOfSpeech   PartOfSpeech @relation(fields: [partOfSpeechId], references: [id])
 
-  domains          DomainsOnRequests[]
+  userId String      @db.Uuid
+  user   UserProfile @relation("RequestedBy", fields: [userId], references: [userId])
+
+  domains DomainsOnRequests[]
 
   // Approval System
-  status           RequestStatus @default(PENDING)
-  approvedById     String?      @db.Uuid
-  approvedBy       UserProfile? @relation("ApprovedBy", fields: [approvedById], references: [userId])
-  rejectionReason  String?
+  status          RequestStatus @default(PENDING)
+  approvedById    String?       @db.Uuid
+  approvedBy      UserProfile?  @relation("ApprovedBy", fields: [approvedById], references: [userId])
+  rejectionReason String?
 
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@map("translation_requests")
 }
 
 model DomainsOnRequests {
   requestId Int
   request   TranslationRequest @relation(fields: [requestId], references: [id])
-  
-  domainId  Int
-  domain    Domain             @relation(fields: [domainId], references: [id])
-  
+
+  domainId Int
+  domain   Domain @relation(fields: [domainId], references: [id])
+
   @@id([requestId, domainId])
   @@map("domains_on_requests")
 }
 
 // Join table for users joining LRL language communities
 model UserTargetLanguage {
-  id         Int          @id @default(autoincrement())
-  userId     String       @db.Uuid
+  id         Int    @id @default(autoincrement())
+  userId     String @db.Uuid
   languageId Int
-  
-  user       UserProfile  @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  language   Language     @relation(fields: [languageId], references: [id], onDelete: Cascade)
-  
+
+  user     UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  language Language    @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
   @@unique([userId, languageId])
   @@map("user_target_languages")
 }
@@ -237,13 +239,48 @@ model UserTargetLanguage {
 model AuditLog {
   id         Int      @id @default(autoincrement())
   userId     String   @db.Uuid
-  action     String   // e.g., "review:request:approved", "ai:analyze:request"
-  resourceId String?  // ID of the affected resource
-  metadata   Json?    // Additional context (reason, old values, etc.)
+  action     String // e.g., "review:request:approved", "ai:analyze:request"
+  resourceId String? // ID of the affected resource
+  metadata   Json? // Additional context (reason, old values, etc.)
   createdAt  DateTime @default(now())
-  
-  @@map("audit_logs")
+
   @@index([userId])
   @@index([action])
   @@index([createdAt])
+  @@map("audit_logs")
+}
+
+// ─── Quiz System Models ──────────────────────────────────────────────────────
+
+model QuizQuestion {
+  id Int @id @default(autoincrement())
+
+  // The language this question belongs to (e.g., Hausa, Yoruba)
+  languageId Int
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+
+  text          String
+  options       Json // e.g., [{"label": "A", "value": "Option 1"}]
+  correctAnswer String // Must match the "value" of one of the options directly
+
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("quiz_questions")
+}
+
+model QuizAttempt {
+  id     Int         @id @default(autoincrement())
+  userId String      @db.Uuid
+  user   UserProfile @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  score  Int
+  passed Boolean
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("quiz_attempts")
 }
