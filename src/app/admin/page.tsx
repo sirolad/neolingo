@@ -46,6 +46,12 @@ const NAV_ITEMS = [
     active: false,
   },
   {
+    label: 'Quiz Settings',
+    icon: FileCheck2,
+    href: '/admin/quiz',
+    active: true,
+  },
+  {
     label: 'Settings',
     icon: Settings2,
     href: '/admin/settings',
@@ -330,16 +336,52 @@ export default function AdminPage() {
                   icon: Users,
                   color:
                     'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
+                  href: null,
+                },
+                {
+                  label: 'Quiz Settings',
+                  desc: 'Manage Curator test questions',
+                  icon: FileCheck2,
+                  color:
+                    'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+                  href: '/admin/quiz',
                 },
                 {
                   label: 'View Analytics',
                   desc: 'Platform usage statistics',
                   icon: BarChart3,
                   color:
-                    'bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400',
+                    'bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
+                  href: null,
                 },
               ].map(item => {
                 const Icon = item.icon;
+
+                if (item.href) {
+                  return (
+                    <button
+                      key={item.label}
+                      onClick={() => router.push(item.href as string)}
+                      className="bg-white dark:bg-neutral-900 rounded-2xl p-5 shadow-sm border border-neutral-100 dark:border-neutral-800 flex items-center gap-4 hover:shadow-md hover:border-neutral-200 dark:hover:border-neutral-700 transition-all text-left group"
+                    >
+                      <div
+                        className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform ${item.color}`}
+                      >
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="body-small font-semibold text-neutral-800 dark:text-neutral-200">
+                          {item.label}
+                        </p>
+                        <p className="text-caption text-neutral-500 dark:text-neutral-400 truncate">
+                          {item.desc}
+                        </p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 text-neutral-400 ml-auto shrink-0" />
+                    </button>
+                  );
+                }
+
                 return (
                   <div
                     key={item.label}
