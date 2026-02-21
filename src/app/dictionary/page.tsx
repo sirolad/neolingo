@@ -39,7 +39,7 @@ export default function DictionaryPage() {
   const [words, setWords] = useState<DictionaryWord[]>([]);
   const [currentAlphabet, setCurrentAlphabet] = useState('A');
   const [activeLanguage, setActiveLanguage] = useState<'community' | 'english'>(
-    'english'
+    'community'
   );
   const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 
@@ -582,10 +582,8 @@ export default function DictionaryPage() {
                       definition={`${word.definition}`}
                       languageName={
                         activeLanguage === 'english'
-                          ? 'English'
-                          : userNeoCommunity
-                            ? userNeoCommunity.name
-                            : 'NeoLingo'
+                          ? userNeoCommunity?.name || 'NeoLingo'
+                          : 'English'
                       }
                       index={index}
                       translations={word.translations}

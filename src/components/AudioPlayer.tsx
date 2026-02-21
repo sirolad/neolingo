@@ -40,13 +40,26 @@ export default function AudioPlayer({ audioUrl, className }: AudioPlayerProps) {
 
   return (
     <div className={`flex items-center space-x-4 ${className}`}>
-      <audio ref={audioRef} src={audioUrl} />
+      {audioUrl !== '' && audioUrl !== undefined && audioUrl !== null ? (
+        <audio ref={audioRef} src={audioUrl} />
+      ) : (
+        <audio ref={audioRef} src={undefined} />
+      )}
       <button
+        disabled={
+          audioUrl === '' || audioUrl === undefined || audioUrl === null
+        }
         onClick={togglePlay}
         className="self-end"
         // className="p-2 bg-gray-200 rounded-full hover:bg-gray-300"
       >
-        {isPlaying ? <PauseCircleIcon /> : <Play />}
+        {isPlaying ? (
+          <PauseCircleIcon />
+        ) : (
+          <Play
+            className={`${audioUrl === '' || audioUrl === undefined || audioUrl === null ? 'dark:text-neutral-400 text-neutral-400' : 'dark:text-neutral-50 text-neutral-950'}`}
+          />
+        )}
       </button>
     </div>
   );

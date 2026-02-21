@@ -32,12 +32,14 @@ model UserProfile {
   onboardingCompleted Boolean @default(false)
 
   // Communities user joined (for LRL contributions)
-  targetLanguages UserTargetLanguage[]
-  votes           Vote[]
-  requests        TranslationRequest[] @relation("RequestedBy")
-  approvals       TranslationRequest[] @relation("ApprovedBy")
+  targetLanguages     UserTargetLanguage[]
+  votes               Vote[]
+  requests            TranslationRequest[] @relation("RequestedBy")
+  approvals           TranslationRequest[] @relation("ApprovedBy")
+  ratings             NeoRating[]          @relation("RatedBy")
+  neos                Neo[]
   quizAttempts    QuizAttempt[]
-
+  
   @@unique([userId])
   @@map("user_profile")
 }
@@ -129,11 +131,12 @@ model Term {
   conceptId Int
   concept   Concept @relation(fields: [conceptId], references: [id])
 
+  neos           Neo[]
   votes     Vote[]
   voteScore Int    @default(0) // Cached score for sorting
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
 
   @@map("terms")
 }
@@ -149,16 +152,19 @@ model Definition {
 }
 
 model Vote {
-  id    Int @id @default(autoincrement())
-  value Int // 1 for upvote, -1 for downvote
+  id        Int         @id @default(autoincrement())
+  value     Int         // 1 for upvote, -1 for downvote
+  
+  userId    String      @db.Uuid
+  user      UserProfile @relation(fields: [userId], references: [userId])
+  
+  termId    Int
+  term      Term        @relation(fields: [termId], references: [id])
 
-  userId String      @db.Uuid
-  user   UserProfile @relation(fields: [userId], references: [userId])
-
-  termId Int
-  term   Term @relation(fields: [termId], references: [id])
-
-  createdAt DateTime @default(now())
+  neoId     Int
+  neo       Neo         @relation(fields: [neoId], references: [id])
+  
+  createdAt DateTime    @default(now())
 
   @@unique([userId, termId])
   @@map("votes")
@@ -283,4 +289,52 @@ model QuizAttempt {
   @@index([userId])
   @@index([createdAt])
   @@map("quiz_attempts")
+}
+
+enum NeoType {
+  POPULAR
+  ADOPTIVE
+  FUNCTIONAL
+  ROOT
+  CREATIVE
+}
+
+model Neo {
+  id        Int         @id @default(autoincrement())
+  text      String
+  type      NeoType @default(POPULAR)
+  audioUrl  String?
+  userId    String      @db.Uuid
+  user      UserProfile @relation(fields: [userId], references: [userId])
+  
+  termId    Int
+  term      Term        @relation(fields: [termId], references: [id])
+  ratingCount Int       @default(0)
+  ratingScore  Int       @default(0)
+  rejectCount Int       @default(0)
+
+  votes       Vote[]
+  neoRatings  NeoRating[]
+  
+  createdAt DateTime    @default(now())
+
+  @@map("neos")
+}
+
+
+model NeoRating {
+  id        Int         @id @default(autoincrement())
+  value     Int         
+  
+  userId    String      @db.Uuid
+
+  neoId     Int
+  neo       Neo         @relation(fields: [neoId], references: [id])
+  ratedBy   UserProfile? @relation("RatedBy", fields: [userId], references: [userId])
+  rejectionReason  String?
+  
+  createdAt DateTime    @default(now())
+
+  @@unique([userId, neoId])
+  @@map("neo_rating")
 }

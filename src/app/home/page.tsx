@@ -106,16 +106,25 @@ export default function HomePage() {
                         variant="request"
                         onHandleClick={() => handleCta('/dictionary/request')}
                       />
-
-                      {/* Suggestion Card */}
-                      <CtaCard
-                        title="Make Your Suggestion"
-                        subTitle={`Suggest a ${userNeoCommunity?.name} word for the word of the day!`}
-                        word={wordCards[0].word}
-                        ctaText="Word of the day"
-                        variant="suggest"
-                        onHandleClick={() => handleCta('/suggest')}
-                      />
+                      {can('rate:neos') ? (
+                        <CtaCard
+                          title="Jury Dashboard"
+                          subTitle="Review and manage word suggestions"
+                          word="Your jury dashboard"
+                          ctaText="Go to dashboard"
+                          variant="jury"
+                          onHandleClick={() => handleCta('/jury')}
+                        />
+                      ) : (
+                        <CtaCard
+                          title="Make Your Suggestion"
+                          subTitle={`Suggest a ${userNeoCommunity?.name} word for the word of the day!`}
+                          word={wordCards[0].word}
+                          ctaText="Word of the day"
+                          variant="suggest"
+                          onHandleClick={() => handleCta('/suggest')}
+                        />
+                      )}
                       {/* Voting Card */}
                       <CtaCard
                         title="Vote for today's best word"

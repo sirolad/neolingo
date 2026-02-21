@@ -14,7 +14,8 @@ export type Permission =
   | 'manage:users' // Can manage user roles and permissions
   | 'create:requests' // Can create translation requests
   | 'vote:suggestions' // Can vote on translation suggestions
-  | 'view:admin'; // Can access admin pages
+  | 'view:admin' // Can access admin pages
+  | 'rate:neos'; // Can rate neologisms
 
 /**
  * Available roles in the system
@@ -38,6 +39,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'create:requests',
     'vote:suggestions',
     'view:admin',
+    'rate:neos',
   ],
   CONTRIBUTOR: ['create:requests', 'vote:suggestions'],
   EXPLORER: [],
