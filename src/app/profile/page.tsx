@@ -25,7 +25,7 @@ import { PermissionGate } from '@/components/auth/PermissionGate';
 export default function ProfilePage() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { appUser, logout, userNeoCommunity, userRole } = useAuth();
+  const { appUser, logout, userNeoCommunity, can } = useAuth();
   const user = appUser;
 
   const isDarkMode = theme === 'dark';
@@ -136,7 +136,7 @@ export default function ProfilePage() {
               </div>
 
               {/* Desktop-only Curator CTA (moved from bottom) */}
-              {userRole === 'explorer' || userRole === 'EXPLORER' ? (
+              {!can('vote:suggestions') ? (
                 <div className="hidden lg:block">
                   <div className="bg-neutral-950 rounded-[2rem] p-6 text-white text-center shadow-lg relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-10 translate-x-10 group-hover:translate-y-0 transition-transform duration-700" />
@@ -286,8 +286,7 @@ export default function ProfilePage() {
                     </button>
                   </div>
                 </div>
-
-                {userRole === 'explorer' || userRole === 'EXPLORER' ? (
+                {!can('vote:suggestions') ? (
                   <div className="mt-8 lg:hidden">
                     <Button
                       onClick={() => router.push('/become-curator')}
