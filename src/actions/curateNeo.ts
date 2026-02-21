@@ -185,7 +185,7 @@ export const getTermNeos: Neo = async (termId, getRated = true, userId) => {
       .sort((a, b) =>
         getRated ? b.ratingScore - a.ratingScore : b.ratingCount - a.ratingCount
       )
-      .slice(0, 10);
+      .slice(0, 11);
   } catch (error) {
     console.error('Failed to fetch neos for term:', error);
     return null;

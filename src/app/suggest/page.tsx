@@ -10,6 +10,7 @@ import {
   Circle,
   Plus,
   Recycle,
+  RefreshCcwDot,
   Star,
   TreePalmIcon,
   Wrench,
@@ -24,6 +25,7 @@ import { Modal } from '@/components/ui/Modal';
 import SuggestInput from '@/components/ui/SuggestInput';
 import { curateNeo, getTerms } from '@/actions/curateNeo';
 import { toast } from 'sonner';
+import { set } from 'zod';
 
 interface Term {
   id: number;
@@ -44,6 +46,7 @@ export default function SuggestPage() {
   const [showModal, setShowModal] = useState(false);
   const [modalTitle, setModalTitle] = useState(<></>);
   const [modalBody, setModalBody] = useState(<></>);
+  const [loadSuggestionsTrigger, setLoadSuggestionsTrigger] = useState(true);
   const [suggestions, setSuggestions] = useState<
     {
       type: string;
@@ -113,7 +116,20 @@ export default function SuggestPage() {
           appUser?.id || ''
         );
         console.log('fetchedTerms _ fetchedTerms ', fetchedTerms);
-        if (fetchedTerms[0]) {
+        if (fetchedTerms[0]._count.neos == 5) {
+          toast(
+            'No more terms available for suggestion. Please click on the "Next Words" button to explore other terms.',
+            {
+              description:
+                'You have made suggestions for all available terms today.',
+              duration: 10000,
+            }
+          );
+          setTerm(fetchedTerms[0]);
+          setSuggestions([]);
+          setAvailableNeoSlots(0);
+          return;
+        } else if (fetchedTerms[0]) {
           setTerm(fetchedTerms[0]);
           setAvailableNeoSlots(5 - fetchedTerms[0]._count.neos);
         }
@@ -122,9 +138,10 @@ export default function SuggestPage() {
         setTerm(dummyTerms[0]);
         setAvailableNeoSlots(5 - dummyTerms[0]._count.neos);
       }
+      setLoadSuggestionsTrigger(false);
     };
     fetchTerms();
-  }, [userNeoCommunity, appUser?.id, submitted]);
+  }, [loadSuggestionsTrigger]);
 
   useEffect(() => {
     if (state !== prevStateRef.current && !state.success && state.message) {
@@ -399,6 +416,27 @@ export default function SuggestPage() {
                       <hr />
                     </React.Fragment>
                   ))}
+                  <span
+                    onClick={() => {
+                      if (suggestions.length === availableNeoSlots) return;
+                      setSuggestions(prev => [
+                        ...prev,
+                        {
+                          type: '',
+                          description:
+                            'Please select a suggestion type and provide your suggestion for the word of the day.',
+                          text: '',
+                          audioUrl: '',
+                          error: null,
+                        },
+                      ]);
+                    }}
+                    className="justify-self-center text-sm text-neutral-600 dark:text-neutral-400 cursor-pointer flex"
+                  >
+                    {' '}
+                    <Plus className="ml-2 w-5 h-5 md:w-6 md:h-6" />{' '}
+                    <span>Add more Suggestion for this word</span>
+                  </span>
                 </div>
 
                 <div className="pt-4 md:pt-6">
@@ -424,23 +462,11 @@ export default function SuggestPage() {
                 <Button
                   variant="outline"
                   size="md"
-                  disabled={suggestions.length === availableNeoSlots}
-                  onClick={() => {
-                    setSuggestions(prev => [
-                      ...prev,
-                      {
-                        type: '',
-                        description:
-                          'Please select a suggestion type and provide your suggestion for the word of the day.',
-                        text: '',
-                        audioUrl: '',
-                        error: null,
-                      },
-                    ]);
-                  }}
                   className="rounded-full"
+                  onClick={() => setLoadSuggestionsTrigger(true)}
                 >
-                  Add Suggestion <Plus className="ml-2 w-5 h-5 md:w-6 md:h-6" />
+                  Refresh Neos{' '}
+                  <RefreshCcwDot className="ml-2 w-5 h-5 md:w-6 md:h-6" />
                 </Button>
                 <Button
                   variant="outline"
@@ -448,7 +474,7 @@ export default function SuggestPage() {
                   // onClick={handleSubmitAnother}
                   className="ml-4 rounded-full"
                 >
-                  Next Word{' '}
+                  Next Words{' '}
                   <ArrowLeft className="rotate-180 ml-2 w-5 h-5 md:w-6 md:h-6" />
                 </Button>
               </div>

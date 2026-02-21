@@ -45,6 +45,7 @@ export default function VotePage() {
   const [suggestions, setSuggestions] = useState<CommunitySuggestion[]>([]);
   const [myVotes, setMyVotes] = useState<number[]>([2]);
   const [term, setTerm] = useState<Term>({} as Term);
+  const [loadSuggestionsTrigger, setLoadSuggestionsTrigger] = useState(true);
 
   useEffect(() => {
     if (authLoading) return;
@@ -123,9 +124,10 @@ export default function VotePage() {
       } else {
         loadSuggestions();
       }
+      setLoadSuggestionsTrigger(false);
     };
     fetchTerms();
-  }, [userNeoCommunity]);
+  }, [loadSuggestionsTrigger]);
 
   if (loading) {
     return (
@@ -291,10 +293,10 @@ export default function VotePage() {
               <Button
                 variant="outline"
                 size="md"
-                onClick={loadFreshSuggestions}
+                onClick={() => setLoadSuggestionsTrigger(true)}
                 className="rounded-full"
               >
-                Load More{' '}
+                Refresh Neos{' '}
                 <RefreshCcwDot className="ml-2 w-5 h-5 md:w-6 md:h-6" />
               </Button>
               <Button
@@ -303,7 +305,7 @@ export default function VotePage() {
                 // onClick={handleSubmitAnother}
                 className="ml-4 rounded-full"
               >
-                Next Word{' '}
+                Next Words{' '}
                 <ArrowLeft className="rotate-180 ml-2 w-5 h-5 md:w-6 md:h-6" />
               </Button>
             </div>

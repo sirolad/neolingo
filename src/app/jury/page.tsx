@@ -54,6 +54,7 @@ interface AnimatedEmojiProps {
 import type { HTMLMotionProps } from 'framer-motion';
 import { toast } from 'sonner';
 import { Neo } from '@/types';
+import { fa } from 'zod/v4/locales';
 
 const AnimatedEmoji = ({
   emoji,
@@ -87,6 +88,7 @@ export default function JuryPage() {
   const [modalTitle, setModalTitle] = useState(<></>);
   const [modalBody, setModalBody] = useState(<></>);
   const [term, setTerm] = useState<Term>({} as Term);
+  const [loadSuggestionsTrigger, setLoadSuggestionsTrigger] = useState(true);
   const [ratedByMe, setRatedByMe] = useState<
     { neoId: number; value: number }[]
   >([]);
@@ -123,13 +125,14 @@ export default function JuryPage() {
           if (fetchNeo != null && fetchNeo.length !== 0) {
             setSuggestions(fetchNeo);
           }
+          setLoadSuggestionsTrigger(false);
         } else {
           loadSuggestions();
         }
       }
     };
     fetchTerms();
-  }, [suggestions.length, userNeoCommunity]);
+  }, [loadSuggestionsTrigger]);
 
   useEffect(() => {
     const fetchRatedByMe = async () => {
@@ -249,7 +252,7 @@ export default function JuryPage() {
 
   const loadFreshSuggestions = () => {
     // This function can be expanded to fetch real suggestions from the backend
-    setSuggestions([]);
+    setLoadSuggestionsTrigger(true);
   };
 
   const rateSuggestion = async (
@@ -348,7 +351,7 @@ export default function JuryPage() {
 
             {/* Suggestions List - Responsive Grid */}
             <div className="bg-white dark:bg-neutral-900 rounded-3xl md:rounded-[2rem] lg:rounded-[2.5rem] border border-neutral-100 dark:border-neutral-800 shadow-soft overflow-hidden hover:shadow-lg transition-all hover:scale-[1.02]">
-              {suggestions.map((suggestion, index) => (
+              {suggestions.slice(0, 10).map((suggestion, index) => (
                 <motion.div
                   key={suggestion.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -507,10 +510,11 @@ export default function JuryPage() {
                 <Button
                   variant="outline"
                   size="md"
+                  disabled={suggestions.length < 11}
                   onClick={loadFreshSuggestions}
                   className="rounded-full"
                 >
-                  Load More{' '}
+                  Refresh Neos{' '}
                   <RefreshCcwDot className="ml-2 w-5 h-5 md:w-6 md:h-6" />
                 </Button>
                 <Button
@@ -519,7 +523,7 @@ export default function JuryPage() {
                   // onClick={handleSubmitAnother}
                   className="ml-4 rounded-full"
                 >
-                  Next Word{' '}
+                  Jury Lounge{' '}
                   <ArrowLeft className="rotate-180 ml-2 w-5 h-5 md:w-6 md:h-6" />
                 </Button>
               </div>
