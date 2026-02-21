@@ -99,6 +99,11 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'Neolingo',
   },
+  other: {
+    'mobile-web-app-capable': 'yes',
+    'msapplication-TileColor': '#3B82F6',
+    'msapplication-tap-highlight': 'no',
+  },
   formatDetection: {
     telephone: false,
   },
@@ -115,10 +120,22 @@ export const metadata: Metadata = {
     description:
       'A collaborative platform for learning and expanding the Low Resource Language dictionaries',
   },
+  icons: {
+    icon: [
+      { url: '/icons/icon.svg', type: 'image/svg+xml' },
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [{ url: '/icons/icon.svg' }],
+    shortcut: ['/icons/icon.svg'],
+  },
 };
 
 export const viewport: Viewport = {
   themeColor: '#3B82F6',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({
@@ -128,23 +145,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta name="application-name" content="Neolingo" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Neolingo" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-config" content="/icons/browserconfig.xml" />
-        <meta name="msapplication-TileColor" content="#3B82F6" />
-        <meta name="msapplication-tap-highlight" content="no" />
-        <meta name="theme-color" content="#3B82F6" />
-        <link rel="apple-touch-icon" href="/icons/icon.svg" />
-        <link rel="icon" type="image/svg+xml" href="/icons/icon.svg" />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="mask-icon" href="/icons/icon.svg" color="#3B82F6" />
-        <link rel="shortcut icon" href="/icons/icon.svg" />
-      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${parkinsans.variable} ${metropolis.variable} antialiased`}
       >
