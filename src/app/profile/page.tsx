@@ -25,7 +25,7 @@ import { PermissionGate } from '@/components/auth/PermissionGate';
 export default function ProfilePage() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { appUser, logout } = useAuth();
+  const { appUser, logout, userNeoCommunity, can } = useAuth();
   const user = appUser;
 
   const isDarkMode = theme === 'dark';
@@ -136,24 +136,26 @@ export default function ProfilePage() {
               </div>
 
               {/* Desktop-only Curator CTA (moved from bottom) */}
-              <div className="hidden lg:block">
-                <div className="bg-neutral-950 rounded-[2rem] p-6 text-white text-center shadow-lg relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-10 translate-x-10 group-hover:translate-y-0 transition-transform duration-700" />
-                  <h3 className="heading-5 mb-2 relative z-10">
-                    Become a Curator
-                  </h3>
-                  <p className="body-small text-neutral-400 mb-6 relative z-10">
-                    Join our community of language experts and help preserve our
-                    heritage.
-                  </p>
-                  <Button
-                    onClick={() => router.push('/become-curator')}
-                    className="w-full bg-white text-neutral-950 hover:bg-neutral-100 border-none relative z-10 rounded-full text-base font-semibold h-12"
-                  >
-                    Apply Now
-                  </Button>
+              {!can('vote:suggestions') ? (
+                <div className="hidden lg:block">
+                  <div className="bg-neutral-950 rounded-[2rem] p-6 text-white text-center shadow-lg relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -translate-y-10 translate-x-10 group-hover:translate-y-0 transition-transform duration-700" />
+                    <h3 className="heading-5 mb-2 relative z-10">
+                      Become a Curator
+                    </h3>
+                    <p className="body-small text-neutral-400 mb-6 relative z-10">
+                      Join our community of language experts and help preserve
+                      our heritage.
+                    </p>
+                    <Button
+                      onClick={() => router.push('/become-curator')}
+                      className="w-full bg-white text-neutral-950 hover:bg-neutral-100 border-none relative z-10 rounded-full text-base font-semibold h-12"
+                    >
+                      Apply Now
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              ) : null}
             </div>
 
             {/* Right Column: Settings */}
@@ -231,12 +233,12 @@ export default function ProfilePage() {
                       </div>
                       <div className="flex items-center gap-2 bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded-md">
                         <ReactCountryFlag
-                          countryCode="NG"
+                          countryCode={userNeoCommunity?.flagIcon || 'NG'}
                           svg
                           className="w-4 h-4 rounded-sm"
                         />
                         <span className="text-caption font-medium text-neutral-600 dark:text-neutral-400">
-                          Yoruba
+                          {userNeoCommunity?.name || 'Yoruba'}
                         </span>
                       </div>
                     </div>
@@ -284,15 +286,16 @@ export default function ProfilePage() {
                     </button>
                   </div>
                 </div>
-
-                <div className="mt-8 lg:hidden">
-                  <Button
-                    onClick={() => router.push('/become-curator')}
-                    className="w-full bg-neutral-950 hover:bg-neutral-900 text-white rounded-full h-12 md:h-14 text-base md:text-lg font-semibold"
-                  >
-                    Become a Curator
-                  </Button>
-                </div>
+                {!can('vote:suggestions') ? (
+                  <div className="mt-8 lg:hidden">
+                    <Button
+                      onClick={() => router.push('/become-curator')}
+                      className="w-full bg-neutral-950 hover:bg-neutral-900 text-white rounded-full h-12 md:h-14 text-base md:text-lg font-semibold"
+                    >
+                      Become a Curator
+                    </Button>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>

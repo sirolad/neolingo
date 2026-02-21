@@ -22,9 +22,14 @@ describe('Permission System', () => {
     });
 
     it('should handle EXPLORER role with no permissions', () => {
-      expect(hasPermission('EXPLORER', 'create:requests')).toBe(false);
       expect(hasPermission('EXPLORER', 'review:requests')).toBe(false);
       expect(hasPermission('EXPLORER', 'manage:users')).toBe(false);
+    });
+
+    it('should return false for an invalid role', () => {
+      expect(hasPermission('NONEXISTENT_ROLE' as any, 'review:requests')).toBe(
+        false
+      );
     });
   });
 
@@ -114,6 +119,11 @@ describe('Permission System', () => {
       const permissions = getRolePermissions('EXPLORER');
       expect(permissions).toEqual([]);
       expect(permissions).toHaveLength(0);
+    });
+
+    it('should return empty array for an invalid role', () => {
+      const permissions = getRolePermissions('NONEXISTENT_ROLE' as any);
+      expect(permissions).toEqual([]);
     });
   });
 
