@@ -42,7 +42,7 @@ describe('user utility', () => {
         app_metadata: {
           provider: 'google',
         },
-      } as User;
+      } as unknown as User;
 
       const result = normalizeUser(mockUser);
       expect(result).toEqual({
@@ -65,7 +65,7 @@ describe('user utility', () => {
           full_name: 'Full Name',
           picture: 'https://avatar.com/full',
         },
-      } as User;
+      } as unknown as User;
 
       const result = normalizeUser(mockUser);
       expect(result?.displayName).toBe('Full Name');
