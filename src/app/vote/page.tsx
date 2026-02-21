@@ -171,7 +171,7 @@ export default function VotePage() {
   };
 
   const typeIcon = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'popular':
         return <Star className="text-neutral-600 dark:text-neutral-400" />;
       case 'adoptive':

@@ -39,7 +39,7 @@ export default function DictionaryPage() {
   const [words, setWords] = useState<DictionaryWord[]>([]);
   const [currentAlphabet, setCurrentAlphabet] = useState('A');
   const [activeLanguage, setActiveLanguage] = useState<'community' | 'english'>(
-    'english'
+    'community'
   );
   const alphabets = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 

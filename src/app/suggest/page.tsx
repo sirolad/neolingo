@@ -166,7 +166,7 @@ export default function SuggestPage() {
   }, [state]);
 
   const typeIcon = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'popular':
         return <Star className="text-[#111111CC] dark:text-[#FFFFFFCC]" />;
       case 'adoptive':
@@ -186,7 +186,7 @@ export default function SuggestPage() {
   };
 
   const getDescription = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'popular':
         return 'Suggest an existing Neo. What does your community currently call the root word?';
       case 'adoptive':
@@ -431,7 +431,7 @@ export default function SuggestPage() {
                       {
                         type: '',
                         description:
-                          'Suggest an existing Neo. What does your community currently call the root word?',
+                          'Please select a suggestion type and provide your suggestion for the word of the day.',
                         text: '',
                         audioUrl: '',
                         error: null,

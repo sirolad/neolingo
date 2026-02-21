@@ -18,7 +18,7 @@ import { Input } from './Input';
 import AudioRecorder from '../AudioRecorder';
 
 const typeIcon = (type: string) => {
-  switch (type) {
+  switch (type.toLowerCase()) {
     case 'popular':
       return <Star className="text-[#111111CC] dark:text-[#FFFFFFCC]" />;
     case 'adoptive':
@@ -80,7 +80,7 @@ export default function SuggestInput({
           </SelectTrigger>
           <SelectContent className="bg-white dark:bg-neutral-900 border border-neutral-100 dark:border-neutral-800 rounded-lg shadow-lg">
             <SelectItem
-              value="popular"
+              value="POPULAR"
               className="cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 px-4 py-2"
             >
               <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export default function SuggestInput({
               </div>
             </SelectItem>
             <SelectItem
-              value="adoptive"
+              value="ADOPTIVE"
               className="cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 px-4 py-2"
             >
               <div className="flex items-center gap-2">
@@ -96,7 +96,7 @@ export default function SuggestInput({
               </div>
             </SelectItem>
             <SelectItem
-              value="creative"
+              value="CREATIVE"
               className="cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 px-4 py-2"
             >
               <div className="flex items-center gap-2">
@@ -104,7 +104,7 @@ export default function SuggestInput({
               </div>
             </SelectItem>
             <SelectItem
-              value="functional"
+              value="FUNCTIONAL"
               className="cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 px-4 py-2"
             >
               <div className="flex items-center gap-2">
@@ -112,7 +112,7 @@ export default function SuggestInput({
               </div>
             </SelectItem>
             <SelectItem
-              value="root"
+              value="ROOT"
               className="cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 px-4 py-2"
             >
               <div className="flex items-center gap-2">

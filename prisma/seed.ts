@@ -10,7 +10,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Predefined roles
-  const roles = ['CONTRIBUTOR', 'JURY', 'ADMIN', 'EXPLORER'];
+  const roles = ['CONTRIBUTOR', 'JUROR', 'ADMIN', 'EXPLORER'];
   const languages = [
     {
       name: 'English',

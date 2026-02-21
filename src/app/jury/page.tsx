@@ -31,9 +31,11 @@ import {
 
 interface ComunitySuggestion {
   id: number;
+  ratingCount: number;
+  ratingScore: number;
   text: string;
   audioUrl?: string | null;
-  type: 'popular' | 'adoptive' | 'functional' | 'root' | 'creative';
+  type: 'POPULAR' | 'ADOPTIVE' | 'FUNCTIONAL' | 'ROOT' | 'CREATIVE';
   vote: number;
 }
 
@@ -51,6 +53,7 @@ interface AnimatedEmojiProps {
 
 import type { HTMLMotionProps } from 'framer-motion';
 import { toast } from 'sonner';
+import { Neo } from '@/types';
 
 const AnimatedEmoji = ({
   emoji,
@@ -148,36 +151,46 @@ export default function JuryPage() {
         id: 1,
         text: 'Apo elese meta',
         audioUrl: '/audio/short-11-237304.mp3',
-        type: 'popular',
+        type: 'POPULAR',
         vote: 0,
+        ratingCount: 0,
+        ratingScore: 0,
       },
       {
         id: 2,
         text: 'Igi meta',
         audioUrl: '/audio/short-11-237304.mp3',
-        type: 'adoptive',
+        type: 'ADOPTIVE',
         vote: 0,
+        ratingCount: 0,
+        ratingScore: 0,
       },
       {
         id: 3,
         text: 'Aga elese meta',
         audioUrl: '/audio/short-11-237304.mp3',
-        type: 'functional',
+        type: 'FUNCTIONAL',
         vote: 0,
+        ratingCount: 0,
+        ratingScore: 0,
       },
       {
         id: 4,
         text: 'itile meta',
         audioUrl: '/audio/short-11-237304.mp3',
-        type: 'root',
+        type: 'ROOT',
         vote: 0,
+        ratingCount: 0,
+        ratingScore: 0,
       },
       {
         id: 5,
         text: 'itile meta',
         audioUrl: '/audio/short-11-237304.mp3',
-        type: 'creative',
+        type: 'CREATIVE',
         vote: 0,
+        ratingCount: 0,
+        ratingScore: 0,
       },
     ];
     setSuggestions(mockSuggestions);
@@ -257,7 +270,7 @@ export default function JuryPage() {
       suggestionId,
       appUser.id,
       rating,
-      rejectionReasons ? rejectionReasons.join(', ') : undefined
+      rejectionReasons ? rejectionReasons.join(', ') : null
     );
     if (result == null) {
       toast.error('Failed to submit your vote. Please try again.');
@@ -268,7 +281,7 @@ export default function JuryPage() {
 
   // const sortedSuggestions = [...suggestions].sort((a, b) => b.votes - a.votes);
   const typeIcon = (type: string) => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'popular':
         return (
           <Star className="w-5 h-5 md:w-6 md:h-6 text-[#111111CC] dark:text-neutral-400" />

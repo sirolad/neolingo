@@ -106,7 +106,7 @@ export default function HomePage() {
                         variant="request"
                         onHandleClick={() => handleCta('/dictionary/request')}
                       />
-                      {userRole === 'JURY' ? (
+                      {can('rate:neos') ? (
                         <CtaCard
                           title="Jury Dashboard"
                           subTitle="Review and manage word suggestions"

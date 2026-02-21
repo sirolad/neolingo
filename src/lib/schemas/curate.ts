@@ -4,7 +4,7 @@ import { z } from 'zod';
 export const curateNeoSchema = z.object({
   userId: z.string().uuid('Invalid user ID'),
   termId: z.coerce.number().int('Invalid term ID'),
-  type: z.enum(['popular', 'adoptive', 'functional', 'root', 'creative']),
+  type: z.enum(['POPULAR', 'ADOPTIVE', 'FUNCTIONAL', 'ROOT', 'CREATIVE']),
   text: z.string().min(1, 'Neo text is required'),
   audioUrl: z
     .union([z.string().url('Invalid audio URL'), z.literal('')])

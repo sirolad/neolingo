@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { curateNeoSchema, CurateNeoState } from '@/lib/schemas/curate';
+import { Neo, RatedByMe, RateNeo, TermWithNeoCount } from '@/types';
 
 export async function curateNeo(
   prevState: CurateNeoState,
@@ -70,15 +71,7 @@ export async function curateNeo(
 export async function getTerms(
   userCommunityId: number,
   userId?: string
-): Promise<
-  {
-    id: number;
-    text: string;
-    partOfSpeech: { name: string };
-    concept: { gloss: string | null };
-    _count: { neos: number };
-  }[]
-> {
+): Promise<TermWithNeoCount[]> {
   try {
     let termIds: number[] = [];
     if (!userId) {
@@ -118,7 +111,11 @@ export async function getTerms(
         },
         _count: {
           select: {
-            neos: true,
+            neos: {
+              where: {
+                userId: userId,
+              },
+            },
           },
         },
       },
@@ -130,27 +127,14 @@ export async function getTerms(
   }
 }
 
-export async function getTermNeos(
-  termId: number,
-  getRated = true,
-  userId?: string
-): Promise<
-  | {
-      id: number;
-      text: string;
-      type: 'popular' | 'adoptive' | 'functional' | 'root' | 'creative';
-      audioUrl: string | null;
-      vote: number;
-      ratingCount: number;
-      ratingScore: number;
-    }[]
-  | null
-> {
+export const getTermNeos: Neo = async (termId, getRated = true, userId) => {
   try {
     const neos = await prisma.neo.findMany({
       where: { termId },
       select: {
         id: true,
+        userId: true,
+        termId: true,
         text: true,
         type: true,
         audioUrl: true,
@@ -206,15 +190,12 @@ export async function getTermNeos(
     console.error('Failed to fetch neos for term:', error);
     return null;
   }
-}
+};
 
-export async function getNeosRatedByMe(
-  userId: string,
-  neoIDs?: number[]
-): Promise<{ neoId: number; value: number }[]> {
+export const getNeosRatedByMe: RatedByMe = async (userId, neoIds) => {
   try {
     const ratedByMe = await prisma.neoRating.findMany({
-      where: { userId, neoId: neoIDs ? { in: neoIDs } : undefined },
+      where: { userId, neoId: neoIds ? { in: neoIds } : undefined },
       include: { ratedBy: true },
     });
     return ratedByMe.map(({ neoId, value }) => ({
@@ -225,18 +206,14 @@ export async function getNeosRatedByMe(
     console.error('Failed to fetch neos rated by user:', error);
     return [];
   }
-}
+};
 
-export async function rateNeo(
-  neoId: number,
-  userId: string,
-  rating: number,
-  rejectionReason: string | null = null
-): Promise<{
-  success: boolean;
-  message: string;
-  data: { neoId: number; value: number }[];
-} | null> {
+export const rateNeo: RateNeo = async (
+  neoId,
+  userId,
+  rating,
+  rejectionReason = null
+) => {
   try {
     await prisma.$transaction(async tx => {
       const neoRating = await tx.neoRating.upsert({
@@ -290,4 +267,4 @@ export async function rateNeo(
     console.error('Failed to rate neo:', error);
     return null;
   }
-}
+};

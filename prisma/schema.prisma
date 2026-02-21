@@ -256,17 +256,17 @@ model AuditLog {
 }
 
 enum NeoType {
-  popular
-  adoptive
-  functional
-  root
-  creative
+  POPULAR
+  ADOPTIVE
+  FUNCTIONAL
+  ROOT
+  CREATIVE
 }
 
 model Neo {
   id        Int         @id @default(autoincrement())
   text      String
-  type      NeoType @default(popular)
+  type      NeoType @default(POPULAR)
   audioUrl  String?
   userId    String      @db.Uuid
   user      UserProfile @relation(fields: [userId], references: [userId])
