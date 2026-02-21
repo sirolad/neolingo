@@ -3,29 +3,48 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Vote, ArrowLeft, RefreshCcwDot } from 'lucide-react';
+import {
+  Vote,
+  ArrowLeft,
+  RefreshCcwDot,
+  Recycle,
+  Star,
+  Wrench,
+  TreePalmIcon,
+  Brain,
+  Circle,
+} from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { useAuth } from '@/contexts/AuthContext';
 import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
 import { WordOfTheDay } from '@/components/ui/WordOfTheDay';
 import AudioPlayer from '@/components/AudioPlayer';
 import { Button } from '@/components/ui/Button';
+import { getTermNeos, getTerms } from '@/actions/curateNeo';
 
 interface CommunitySuggestion {
-  id: string;
-  communityWord: string;
-  audioUrl?: string;
-  votes: number;
+  id: number;
+  text: string;
+  type: string;
+  audioUrl?: string | null;
+  vote: number;
+  ratingCount: number;
+  ratingScore: number;
+}
+interface Term {
+  id: number;
+  text: string;
+  partOfSpeech: { name: string };
+  concept: { gloss: string | null };
 }
 
 export default function VotePage() {
   const router = useRouter();
   const { appUser, isLoading: authLoading, userNeoCommunity } = useAuth();
   const [loading, setLoading] = useState(true);
-  // const [refreshing, setRefreshing] = useState(false);
   const [suggestions, setSuggestions] = useState<CommunitySuggestion[]>([]);
-  const [myVotes, setMyVotes] = useState<string[]>(['2']);
-  const [currentWord, setCurrentWord] = useState<string>('Tripod');
+  const [myVotes, setMyVotes] = useState<number[]>([2]);
+  const [term, setTerm] = useState<Term>({} as Term);
 
   useEffect(() => {
     if (authLoading) return;
@@ -34,43 +53,79 @@ export default function VotePage() {
       router.push('/signin');
       return;
     }
-
-    loadSuggestions();
     setLoading(false);
-    setMyVotes(['2']); // Mock: user has voted for suggestion with id '2'
-    setCurrentWord('Tripod');
+    setMyVotes([20]); // Mock: user has voted for suggestion with id '2'
   }, [router, appUser, authLoading]);
 
   const loadSuggestions = () => {
     // Mock data for word suggestions
     const mockSuggestions: CommunitySuggestion[] = [
       {
-        id: '1',
-        communityWord: 'Apo elese meta',
+        id: 1,
+        text: 'Apo elese meta',
+        type: 'popular',
         audioUrl: '/audio/short-11-237304.mp3',
-        votes: 5,
+        vote: 2,
+        ratingCount: 3,
+        ratingScore: 4.5,
       },
       {
-        id: '2',
-        communityWord: 'Igi meta',
+        id: 2,
+        text: 'Igi meta',
+        type: 'adoptive',
         audioUrl: '/audio/short-11-237304.mp3',
-        votes: 3,
+        vote: 5,
+        ratingCount: 2,
+        ratingScore: 3.5,
       },
       {
-        id: '3',
-        communityWord: 'Aga elese meta',
+        id: 3,
+        text: 'Aga elese meta',
+        type: 'functional',
         audioUrl: '/audio/short-11-237304.mp3',
-        votes: 4,
+        vote: 2,
+        ratingCount: 4,
+        ratingScore: 4.0,
       },
       {
-        id: '4',
-        communityWord: 'itile meta',
+        id: 4,
+        text: 'itile meta',
+        type: 'root',
         audioUrl: '/audio/short-11-237304.mp3',
-        votes: 6,
+        vote: 0,
+        ratingCount: 1,
+        ratingScore: 2.0,
       },
     ];
     setSuggestions(mockSuggestions);
   };
+
+  useEffect(() => {
+    const fetchTerms = async () => {
+      if (userNeoCommunity != null) {
+        let userNeoCommunityId: number;
+        if (typeof userNeoCommunity.id === 'number') {
+          userNeoCommunityId = userNeoCommunity.id;
+        } else {
+          userNeoCommunityId = parseInt(userNeoCommunity.id);
+        }
+        const fetchedTerms = await getTerms(userNeoCommunityId);
+
+        if (fetchedTerms && fetchedTerms.length > 0) {
+          setTerm(fetchedTerms[0]);
+          const fetchNeo = await getTermNeos(fetchedTerms[0].id);
+          if (fetchNeo != null && fetchNeo.length !== 0) {
+            setSuggestions(fetchNeo);
+          }
+        } else {
+          loadSuggestions();
+        }
+      } else {
+        loadSuggestions();
+      }
+    };
+    fetchTerms();
+  }, [userNeoCommunity]);
 
   if (loading) {
     return (
@@ -110,7 +165,34 @@ export default function VotePage() {
     router.push('/home');
   };
 
-  const sortedSuggestions = [...suggestions].sort((a, b) => b.votes - a.votes);
+  const loadFreshSuggestions = () => {
+    // This function can be expanded to fetch real suggestions from the backend
+    setSuggestions([]);
+  };
+
+  const typeIcon = (type: string) => {
+    switch (type) {
+      case 'popular':
+        return <Star className="text-neutral-600 dark:text-neutral-400" />;
+      case 'adoptive':
+        return <Recycle className="text-neutral-600 dark:text-neutral-400" />;
+      case 'functional':
+        return <Wrench className="text-neutral-600 dark:text-neutral-400" />;
+      case 'root':
+        return (
+          <TreePalmIcon className="text-neutral-600 dark:text-neutral-400" />
+        );
+      case 'non-conforming':
+      case 'creative':
+        return <Brain className="text-neutral-600 dark:text-neutral-400" />;
+      default:
+        return <Circle className="text-neutral-600 dark:text-neutral-400" />;
+    }
+  };
+
+  const sortedSuggestions = [...suggestions].sort(
+    (a, b) => b.ratingScore - a.ratingScore
+  );
 
   return (
     <Layout variant="home">
@@ -129,15 +211,6 @@ export default function VotePage() {
           <span className="heading-4 text-neutral-950 dark:text-neutral-50">
             Voting Lounge
           </span>
-          {/* <button
-            onClick={handleRefresh}
-            disabled={refreshing}
-            className="p-2 md:p-3 lg:p-4 rounded-full hover:bg-neutral-100 transition-colors active:scale-95"
-          >
-            <RefreshCcw
-              className={`w-5 h-5 md:w-6 md:h-6 text-neutral-600 ${refreshing ? 'animate-spin' : ''}`}
-            />
-          </button> */}
           <div className="md:w-20">
             <MyCommunityTag
               userNeoCommunity={userNeoCommunity}
@@ -150,9 +223,9 @@ export default function VotePage() {
         <div className="flex-1 space-y-6 md:space-y-8 lg:space-y-10 pb-20 md:pb-8">
           {/* Header Card */}
           <WordOfTheDay
-            word={currentWord}
-            definition="A three-legged stand or support, often used to hold a camera or other device steady."
-            partOfSpeech="noun"
+            word={term?.text || 'Loading...'}
+            definition={term?.concept?.gloss || 'No definition available.'}
+            partOfSpeech={term?.partOfSpeech?.name || 'noun'}
           />
 
           {/* Suggestions List - Responsive Grid */}
@@ -168,8 +241,8 @@ export default function VotePage() {
                 <div>
                   <div className="flex items-center justify-between mb-4 md:mb-6">
                     <div className="flex items-center gap-2 body-small md:body-base text-neutral-600 dark:text-neutral-400">
-                      <span>{(index + 1).toString().padStart(2, '0')}.</span>
-                      <span>{suggestion.communityWord}</span>
+                      <span>{typeIcon(suggestion.type)}</span>
+                      <span>{suggestion.text}</span>
                     </div>
                     <div className="flex items-center gap-1 md:gap-2 body-small md:body-base px-2 md:px-3 py-1 md:py-1.5">
                       <AudioPlayer audioUrl={suggestion.audioUrl || ''} />
@@ -213,24 +286,27 @@ export default function VotePage() {
               </p>
             </motion.div>
           )}
-          <div className="flex flex-row justify-center gap-4 mt-6 md:mt-8 lg:mt-10">
-            <Button
-              variant="outline"
-              size="md"
-              onClick={handleGoBack}
-              className="h-12 md:h-14 lg:h-16 text-base md:text-lg font-medium rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all px-6 md:px-8"
-            >
-              Load More <RefreshCcwDot className="ml-2 w-5 h-5 md:w-6 md:h-6" />
-            </Button>
-            <Button
-              variant="outline"
-              size="md"
-              // onClick={handleSubmitAnother}
-              className="h-12 md:h-14 lg:h-16 text-base md:text-lg font-medium rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all px-6 md:px-8"
-            >
-              Next Word{' '}
-              <ArrowLeft className="rotate-180 ml-2 w-5 h-5 md:w-6 md:h-6" />
-            </Button>
+          <div className="flex flex-row justify-center mt-6 md:mt-8 lg:mt-10">
+            <div className="flex  gap-1 flex-row justify-center">
+              <Button
+                variant="outline"
+                size="md"
+                onClick={loadFreshSuggestions}
+                className="rounded-full"
+              >
+                Load More{' '}
+                <RefreshCcwDot className="ml-2 w-5 h-5 md:w-6 md:h-6" />
+              </Button>
+              <Button
+                variant="outline"
+                size="md"
+                // onClick={handleSubmitAnother}
+                className="ml-4 rounded-full"
+              >
+                Next Word{' '}
+                <ArrowLeft className="rotate-180 ml-2 w-5 h-5 md:w-6 md:h-6" />
+              </Button>
+            </div>
           </div>
         </div>
       </div>

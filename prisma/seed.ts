@@ -46,7 +46,7 @@ async function main() {
       flagIcon: 'NG',
     },
     {
-      name: 'twi',
+      name: 'Twi',
       short: 'TW',
       flagIcon: 'GH',
     },

@@ -1,6 +1,12 @@
 import type { DicoWord } from '@/types';
 import { motion } from 'framer-motion';
-import { ChevronDown, Lightbulb, LineChart, VoteIcon } from 'lucide-react';
+import {
+  ChevronDown,
+  Lightbulb,
+  LineChart,
+  Share2,
+  VoteIcon,
+} from 'lucide-react';
 import { SuggestionsRow } from './SugesstionRow';
 
 import { useState } from 'react';
@@ -16,7 +22,7 @@ export function NeoDicoWord({
   translations,
 }: DicoWord) {
   const [isOpen, setIsOpen] = useState(false);
-  const selected = 'Top Suggestion Ranking';
+  const selected = 'Top Suggestions';
   return (
     <motion.div
       key={word}
@@ -27,10 +33,11 @@ export function NeoDicoWord({
     >
       <div className={`p-4 bg-white dark:bg-neutral-900`}>
         <div className={`p-2 w-full rounded-xl bg-white dark:bg-neutral-900`}>
-          <div className="mb-2">
+          <div className="mb-2 flex justify-between items-center">
             <span className="body-base text-neutral-950 dark:text-neutral-50">
               {word}
             </span>
+            <Share2 className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 text-neutral-600 dark:text-neutral-400 inline-block ml-2 cursor-pointer" />
           </div>
           <div className="mb-1">
             <em className="body-base text-[#A30202] dark:text-red-400 mr-1">

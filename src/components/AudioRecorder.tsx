@@ -78,7 +78,7 @@ export default function AudioRecorder({
   };
 
   return (
-    <div className="border border-neutral-200 dark:border-neutral-700 rounded-2xl md:rounded-2xl bg-white dark:bg-neutral-800 text-neutral-950 dark:text-neutral-50 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-lg transition-all h-12 md:h-14 lg:h-16 flex items-center px-4 md:px-5 lg:px-6 w-full justify-between">
+    <div className="rounded-md border border-input bg-transparent text-neutral-950 dark:text-neutral-50 placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base md:text-lg transition-all h-12 md:h-14 lg:h-16 flex items-center px-2 md:px-5 lg:px-6 w-full justify-between">
       {audioUrl === null ? (
         <>
           {!recording ? (
@@ -90,14 +90,14 @@ export default function AudioRecorder({
                 type="button"
                 aria-label="Start recording"
                 onClick={startRecording}
-                className="rounded-2xl text-neutral-950 dark:text-neutral-50 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all h-12 w-12 flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="rounded-2xl text-neutral-950 dark:text-neutral-50 hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-all h-12 w-12 focus:outline-none focus:ring-2 focus:ring-primary-500 flex items-center justify-end"
               >
                 <Mic className="w-5 h-5 text-neutral-500 dark:text-neutral-400" />
               </button>
             </>
           ) : (
             <>
-              <p className="text-caption text-red-700 dark:text-red-400">
+              <p className="text-[10px] text-caption text-red-700 dark:text-red-400">
                 Recording...
               </p>
               <button

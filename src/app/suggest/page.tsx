@@ -1,117 +1,205 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useActionState, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Check, Info, RefreshCcwDot } from 'lucide-react';
+import {
+  ArrowLeft,
+  Brain,
+  Check,
+  Circle,
+  Plus,
+  Recycle,
+  Star,
+  TreePalmIcon,
+  Wrench,
+} from 'lucide-react';
 import { Layout } from '@/components/layout/Layout';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { WordOfTheDay } from '@/components/ui/WordOfTheDay';
-import AudioRecorder from '@/components/AudioRecorder';
 import { MyCommunityTag } from '@/components/ui/MyCommunityTag';
+import { Modal } from '@/components/ui/Modal';
+import SuggestInput from '@/components/ui/SuggestInput';
+import { curateNeo, getTerms } from '@/actions/curateNeo';
+import { toast } from 'sonner';
 
-interface SuggestionForm {
-  existingWord: string;
-  adoptiveWord: string;
-  functionalWord: string;
-  rootWord: string;
-  nonConformingWord?: string;
+interface Term {
+  id: number;
+  text: string;
+  partOfSpeech: { name: string };
+  concept: { gloss: string | null };
+  _count: { neos: number };
 }
 
 export default function SuggestPage() {
   const router = useRouter();
 
   const { userNeoCommunity, appUser } = useAuth();
+  const [availableNeoSlots, setAvailableNeoSlots] = useState(5);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [formData, setFormData] = useState<SuggestionForm>({
-    existingWord: '',
-    adoptiveWord: '',
-    functionalWord: '',
-    rootWord: '',
-    nonConformingWord: '',
+  const [term, setTerm] = useState<Term>({} as Term);
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState(<></>);
+  const [modalBody, setModalBody] = useState(<></>);
+  const [suggestions, setSuggestions] = useState<
+    {
+      type: string;
+      description: string;
+      text: string;
+      audioUrl: string | null;
+      error: string | null;
+    }[]
+  >([
+    {
+      type: '',
+      description:
+        'Please select a suggestion type and provide your suggestion for the word of the day.',
+      text: '',
+      audioUrl: null,
+      error: null,
+    },
+  ]);
+  const [state, formAction] = useActionState(curateNeo, {
+    success: false,
+    message: '',
   });
-  const [formDataAudio, setFormDataAudio] = useState<SuggestionForm>({
-    existingWord: '',
-    adoptiveWord: '',
-    functionalWord: '',
-    rootWord: '',
-    nonConformingWord: '',
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const prevStateRef = useRef(state);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }));
-    }
-  };
+  const dummyTerms = [
+    {
+      id: 1,
+      text: 'Hydrogen',
+      partOfSpeech: { name: 'noun' },
+      concept: {
+        gloss:
+          'A colorless, odorless, highly flammable gas that is the lightest and most abundant element in the universe.',
+      },
+      _count: { neos: 0 },
+    },
+    {
+      id: 2,
+      text: 'Euphoria',
+      partOfSpeech: { name: 'noun' },
+      concept: { gloss: 'A state of intense happiness and well-being.' },
+      _count: { neos: 0 },
+    },
+    {
+      id: 3,
+      text: 'Serendipity',
+      partOfSpeech: { name: 'noun' },
+      concept: {
+        gloss:
+          'The phenomenon of finding valuable or pleasant things that are not looked for.',
+      },
+      _count: { neos: 0 },
+    },
+  ];
 
-  const handleAudioUrl = (field: string, url: string) => {
-    switch (field) {
-      case 'existingWord':
-        setFormDataAudio(prev => ({ ...prev, existingWord: url }));
-        break;
-      case 'adoptiveWord':
-        setFormDataAudio(prev => ({ ...prev, adoptiveWord: url }));
-        break;
-      case 'functionalWord':
-        setFormDataAudio(prev => ({ ...prev, functionalWord: url }));
-        break;
-      case 'rootWord':
-        setFormDataAudio(prev => ({ ...prev, rootWord: url }));
-        break;
-      case 'nonConformingWord':
-        setFormDataAudio(prev => ({ ...prev, nonConformingWord: url }));
-        break;
+  useEffect(() => {
+    const fetchTerms = async () => {
+      if (userNeoCommunity != null) {
+        let userNeoCommunityId: number;
+        if (typeof userNeoCommunity.id === 'number') {
+          userNeoCommunityId = userNeoCommunity.id;
+        } else {
+          userNeoCommunityId = parseInt(userNeoCommunity.id);
+        }
+        console.log('User Neo Community ID:', userNeoCommunityId, appUser?.id);
+        const fetchedTerms = await getTerms(
+          userNeoCommunityId,
+          appUser?.id || ''
+        );
+        console.log('fetchedTerms _ fetchedTerms ', fetchedTerms);
+        if (fetchedTerms[0]) {
+          setTerm(fetchedTerms[0]);
+          setAvailableNeoSlots(5 - fetchedTerms[0]._count.neos);
+        }
+      } else {
+        console.warn('User Neo Community is null. Using dummy terms.');
+        setTerm(dummyTerms[0]);
+        setAvailableNeoSlots(5 - dummyTerms[0]._count.neos);
+      }
+    };
+    fetchTerms();
+  }, [userNeoCommunity, appUser?.id, submitted]);
 
-      default:
-        break;
-    }
-  };
+  useEffect(() => {
+    if (state !== prevStateRef.current && !state.success && state.message) {
+      state.failedSuggestions?.forEach(failedSuggestion => {
+        const position = failedSuggestion.index;
+        let errorMessage = '';
+        for (const field in failedSuggestion.errors) {
+          errorMessage += `${failedSuggestion.errors[field].join(', ')}; `;
+        }
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+        setSuggestions(prev =>
+          prev.map((s, i) =>
+            i === position ? { ...s, error: errorMessage } : s
+          )
+        );
+      });
 
-    if (!formData.existingWord.trim()) {
-      newErrors.existingWord = 'Existing word is required';
-    }
-    if (!formData.adoptiveWord.trim()) {
-      newErrors.adoptiveWord = 'Adoptive word is required';
-    }
-    if (!formData.functionalWord.trim()) {
-      newErrors.functionalWord = 'Functional word is required';
-    }
-    if (!formData.rootWord.trim()) {
-      newErrors.rootWord = 'Root word is required';
-    }
-    if (!formData.nonConformingWord?.trim()) {
-      newErrors.nonConformingWord = 'Non Conforming word is required';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-    console.log('Form Data:', formData);
-    console.log('Audio Data:', formDataAudio);
-    setSubmitting(true);
-
-    // Simulate API call
-    setTimeout(() => {
+      toast.error(state.message);
       setSubmitting(false);
+    }
+    // Dispatch success event for external button
+    if (state !== prevStateRef.current && state.success) {
+      toast.success(state.message);
       setSubmitted(true);
-    }, 2000);
+      setSubmitting(false);
+      setSuggestions([
+        {
+          type: '',
+          description:
+            'Please select a suggestion type and provide your suggestion for the word of the day.',
+          text: '',
+          audioUrl: null,
+          error: null,
+        },
+      ]);
+      window.dispatchEvent(new Event('suggestions-submitted'));
+    }
+    prevStateRef.current = state;
+  }, [state]);
+
+  const typeIcon = (type: string) => {
+    switch (type) {
+      case 'popular':
+        return <Star className="text-[#111111CC] dark:text-[#FFFFFFCC]" />;
+      case 'adoptive':
+        return <Recycle className="text-[#111111CC] dark:text-[#FFFFFFCC]" />;
+      case 'functional':
+        return <Wrench className="text-[#111111CC] dark:text-[#FFFFFFCC]" />;
+      case 'root':
+        return (
+          <TreePalmIcon className="text-[#111111CC] dark:text-[#FFFFFFCC]" />
+        );
+      case 'non-conforming':
+      case 'creative':
+        return <Brain className="text-[#111111CC] dark:text-[#FFFFFFCC]" />;
+      default:
+        return <Circle className="text-[#111111CC] dark:text-[#FFFFFFCC]" />;
+    }
+  };
+
+  const getDescription = (type: string) => {
+    switch (type) {
+      case 'popular':
+        return 'Suggest an existing Neo. What does your community currently call the root word?';
+      case 'adoptive':
+        return 'Suggest a word that your community has adopted from another source.';
+      case 'functional':
+        return 'Suggest a word that serves a specific function or purpose within your community.';
+      case 'root':
+        return 'Suggest a word that represents the root or origin of a concept within your community.';
+      case 'creative':
+        return 'Suggest a word that is innovative or imaginative within your community.';
+      default:
+        return 'Suggest a word that does not fit into any specific category.';
+    }
   };
 
   const handleGoBack = () => {
@@ -120,13 +208,6 @@ export default function SuggestPage() {
 
   const handleSubmitAnother = () => {
     setSubmitted(false);
-    setFormData({
-      existingWord: '',
-      adoptiveWord: '',
-      functionalWord: '',
-      rootWord: '',
-      nonConformingWord: '',
-    });
   };
 
   if (submitted) {
@@ -184,6 +265,7 @@ export default function SuggestPage() {
 
   return (
     <ProtectedRoute>
+      {showModal && Modal(modalTitle, modalBody, () => setShowModal(false))}
       <Layout variant="home">
         <div className="max-w-4xl mx-auto px-4 md:px-6 lg:px-8">
           {/* Header */}
@@ -212,9 +294,9 @@ export default function SuggestPage() {
           {/* Main Content */}
           <div className="flex-1 pb-20 md:pb-8">
             <WordOfTheDay
-              word="Hydrogen"
-              definition="A colorless, odorless, highly flammable gas that is the lightest and most abundant element in the universe."
-              partOfSpeech="noun"
+              word={term?.text || 'Loading...'}
+              definition={term?.concept?.gloss || 'No definition available.'}
+              partOfSpeech={term?.partOfSpeech?.name || 'nouns'}
             />
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -224,187 +306,99 @@ export default function SuggestPage() {
             >
               {/* Form */}
               <form
-                onSubmit={handleSubmit}
+                onSubmit={() => setSubmitting(true)}
+                action={formData => {
+                  formData.append('userId', appUser?.id || '');
+                  formData.append('termId', term.id.toString());
+                  formAction(formData);
+                }}
                 className="p-6 md:p-8 lg:p-10 space-y-6 md:space-y-8 lg:space-y-10"
               >
                 {/* Two-column layout for larger screens */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                  <div className="space-y-2 md:space-y-3">
-                    <label
-                      htmlFor="existingWord"
-                      className="block text-label lg:body-base lg:font-semibold text-neutral-950 dark:text-neutral-50"
-                    >
-                      Existing / Polular{' '}
-                      <Info className="inline-block w-4 h-4 ml-1 text-red-600 dark:text-red-400" />
-                    </label>
-                    <div className="flex flex-row">
-                      <div className="w-50">
-                        <Input
-                          id="existingWord"
-                          name="existingWord"
-                          type="text"
-                          placeholder="Type here"
-                          value={formData.existingWord}
-                          onChange={handleInputChange}
-                          disabled={submitting}
-                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
-                        />
-                        {errors.existingWord && (
-                          <p className="body-small text-error-600">
-                            {errors.existingWord}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-50 ml-4 flex items-center">
-                        <AudioRecorder
-                          onRecord={url => handleAudioUrl('existingWord', url)}
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 md:space-y-3">
-                    <label
-                      htmlFor="adoptiveWord"
-                      className="block text-label lg:body-base lg:font-semibold text-neutral-950 dark:text-neutral-50"
-                    >
-                      Adoptive{' '}
-                      <Info className="inline-block w-4 h-4 ml-1 text-red-600 dark:text-red-400" />
-                    </label>
-                    <div className="flex flex-row">
-                      <div className="w-50">
-                        <Input
-                          id="adoptiveWord"
-                          name="adoptiveWord"
-                          type="text"
-                          placeholder="Type here"
-                          value={formData.adoptiveWord}
-                          onChange={handleInputChange}
-                          disabled={submitting}
-                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
-                        />
-                        {errors.adoptiveWord && (
-                          <p className="body-small text-error-600">
-                            {errors.adoptiveWord}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-50 ml-4 flex items-center">
-                        <AudioRecorder
-                          onRecord={url => handleAudioUrl('adoptiveWord', url)}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                  <div className="space-y-2 md:space-y-3">
-                    <label
-                      htmlFor="functionalWord"
-                      className="block text-label lg:body-base lg:font-semibold text-neutral-950 dark:text-neutral-50"
-                    >
-                      Functional{' '}
-                      <Info className="inline-block w-4 h-4 ml-1 text-red-600 dark:text-red-400" />
-                    </label>
-                    <div className="flex flex-row">
-                      <div className="w-50">
-                        <Input
-                          id="functionalWord"
-                          name="functionalWord"
-                          type="text"
-                          placeholder="Type here"
-                          value={formData.functionalWord}
-                          onChange={handleInputChange}
-                          disabled={submitting}
-                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
-                        />
-                        {errors.functionalWord && (
-                          <p className="body-small text-error-600">
-                            {errors.functionalWord}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-50 ml-4 flex items-center">
-                        <AudioRecorder
-                          onRecord={url =>
-                            handleAudioUrl('functionalWord', url)
+                <div className="grid grid-cols-1 lg:grid-cols-1 gap-6 md:gap-8">
+                  {suggestions.map((suggestion, index) => (
+                    <React.Fragment key={index}>
+                      <SuggestInput
+                        key={index}
+                        type={suggestion.type}
+                        value={suggestion.text}
+                        label={
+                          suggestion.type.charAt(0).toUpperCase() +
+                          suggestion.type.slice(1)
+                        }
+                        onChange={value => {
+                          suggestions[index].type = value;
+                          suggestions[index].description =
+                            getDescription(value);
+                          setSuggestions([...suggestions]);
+                        }}
+                        onInfoClick={() => {
+                          setModalTitle(
+                            <div className="flex items-center gap-2">
+                              {typeIcon(suggestion.type)}{' '}
+                              {suggestion.type.charAt(0).toUpperCase() +
+                                suggestion.type.slice(1)}
+                            </div>
+                          );
+                          setModalBody(
+                            <p className="">{suggestion.description}</p>
+                          );
+                          setShowModal(true);
+                        }}
+                        onInput={value => {
+                          suggestions[index].text = value;
+                          setSuggestions([...suggestions]);
+                        }}
+                        canDelete={index !== 0} // Prevent deletion of the first suggestion
+                        onDelete={() => {
+                          suggestions.splice(index, 1);
+                          setSuggestions([...suggestions]);
+                        }}
+                        onAudioChange={url => {
+                          suggestions[index].audioUrl = url;
+                          setSuggestions([...suggestions]);
+                        }}
+                      />
+                      <input
+                        type="hidden"
+                        name={`suggestions[${index}]`}
+                        value={JSON.stringify(suggestion)}
+                      />
+                      <input
+                        type="hidden"
+                        name={`suggestions[${index}].type`}
+                        value={suggestion.type}
+                      />
+                      <input
+                        type="hidden"
+                        name={`suggestions[${index}].text`}
+                        value={suggestion.text}
+                      />
+                      <input
+                        type="hidden"
+                        name={`suggestions[${index}].audioUrl`}
+                        value={suggestion.audioUrl || ''}
+                      />
+                      {suggestion.error && (
+                        <span
+                          onClick={() =>
+                            setSuggestions(prev =>
+                              prev.map((s, i) =>
+                                i === index ? { ...s, error: null } : s
+                              )
+                            )
                           }
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2 md:space-y-3">
-                    <label
-                      htmlFor="rootWord"
-                      className="block text-label lg:body-base lg:font-semibold text-neutral-950 dark:text-neutral-50"
-                    >
-                      Root{' '}
-                      <Info className="inline-block w-4 h-4 ml-1 text-red-600 dark:text-red-400" />
-                    </label>
-                    <div className="flex flex-row">
-                      <div className="w-50">
-                        <Input
-                          id="rootWord"
-                          name="rootWord"
-                          type="text"
-                          placeholder="Type here"
-                          value={formData.rootWord}
-                          onChange={handleInputChange}
-                          disabled={submitting}
-                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
-                        />
-                        {errors.rootWord && (
-                          <p className="body-small text-error-600">
-                            {errors.rootWord}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-50 ml-4 flex items-center">
-                        <AudioRecorder
-                          onRecord={url => handleAudioUrl('rootWord', url)}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
-                  <div className="space-y-2 md:space-y-3">
-                    <label
-                      htmlFor="nonConformingWord"
-                      className="block text-label lg:body-base lg:font-semibold text-neutral-950 dark:text-neutral-50"
-                    >
-                      Non Conforming{' '}
-                      <Info className="inline-block w-4 h-4 ml-1 text-red-600 dark:text-red-400" />
-                    </label>
-                    <div className="flex flex-row">
-                      <div className="w-50">
-                        <Input
-                          id="nonConformingWord"
-                          name="nonConformingWord"
-                          type="text"
-                          placeholder="Type here"
-                          value={formData.nonConformingWord}
-                          onChange={handleInputChange}
-                          disabled={submitting}
-                          className="h-12 md:h-14 lg:h-16 text-base md:text-lg"
-                        />
-                        {errors.nonConformingWord && (
-                          <p className="body-small text-error-600">
-                            {errors.nonConformingWord}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-50 ml-4 flex items-center">
-                        <AudioRecorder
-                          onRecord={url =>
-                            handleAudioUrl('nonConformingWord', url)
-                          }
-                        />
-                      </div>
-                    </div>
-                  </div>
+                          className="body-small text-red-600 dark:text-red-400"
+                        >
+                          {suggestion.error} &nbsp;{' '}
+                          <em className="text-[#000000] dark:text-[#FFFFFF] cursor-pointer">
+                            Dismiss
+                          </em>
+                        </span>
+                      )}
+                      <hr />
+                    </React.Fragment>
+                  ))}
                 </div>
 
                 <div className="pt-4 md:pt-6">
@@ -415,11 +409,8 @@ export default function SuggestPage() {
                     fullWidth
                     loading={submitting}
                     disabled={
-                      formData.existingWord === '' &&
-                      formData.adoptiveWord === '' &&
-                      formData.functionalWord === '' &&
-                      formData.rootWord === '' &&
-                      formData.nonConformingWord === ''
+                      suggestions.filter(s => !s.text.trim()).length > 0 ||
+                      suggestions.filter(s => !s.type).length > 0
                     }
                     className="h-12 md:h-14 lg:h-16 rounded-full md:rounded-full font-medium text-base md:text-lg hover:scale-[1.02] active:scale-[0.98] transition-all"
                   >
@@ -428,26 +419,39 @@ export default function SuggestPage() {
                 </div>
               </form>
             </motion.div>
-
-            <div className="flex flex-row justify-center gap-4 mt-6 md:mt-8 lg:mt-10">
-              <Button
-                variant="outline"
-                size="md"
-                onClick={handleGoBack}
-                className="h-12 md:h-14 lg:h-16 text-base md:text-lg font-medium rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all px-6 md:px-8"
-              >
-                Load More{' '}
-                <RefreshCcwDot className="ml-2 w-5 h-5 md:w-6 md:h-6" />
-              </Button>
-              <Button
-                variant="outline"
-                size="md"
-                onClick={handleSubmitAnother}
-                className="h-12 md:h-14 lg:h-16 text-base md:text-lg font-medium rounded-full hover:scale-[1.02] active:scale-[0.98] transition-all px-6 md:px-8"
-              >
-                Next Word{' '}
-                <ArrowLeft className="rotate-180 ml-2 w-5 h-5 md:w-6 md:h-6" />
-              </Button>
+            <div className="flex flex-row justify-center mt-6 md:mt-8 lg:mt-10">
+              <div className="flex  gap-1 flex-row justify-center">
+                <Button
+                  variant="outline"
+                  size="md"
+                  disabled={suggestions.length === availableNeoSlots}
+                  onClick={() => {
+                    setSuggestions(prev => [
+                      ...prev,
+                      {
+                        type: '',
+                        description:
+                          'Suggest an existing Neo. What does your community currently call the root word?',
+                        text: '',
+                        audioUrl: '',
+                        error: null,
+                      },
+                    ]);
+                  }}
+                  className="rounded-full"
+                >
+                  Add Suggestion <Plus className="ml-2 w-5 h-5 md:w-6 md:h-6" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="md"
+                  // onClick={handleSubmitAnother}
+                  className="ml-4 rounded-full"
+                >
+                  Next Word{' '}
+                  <ArrowLeft className="rotate-180 ml-2 w-5 h-5 md:w-6 md:h-6" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
