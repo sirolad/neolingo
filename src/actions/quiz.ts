@@ -1,6 +1,7 @@
 'use server';
 
 import prisma from '@/lib/prisma';
+import { Prisma } from '@/generated/prisma';
 import { revalidatePath } from 'next/cache';
 
 export interface QuizOption {
@@ -21,7 +22,7 @@ export async function addQuizQuestion(data: QuizQuestionInput) {
       data: {
         languageId: data.languageId,
         text: data.text,
-        options: data.options as any,
+        options: data.options as unknown as Prisma.InputJsonValue,
         correctAnswer: data.correctAnswer,
         isActive: true,
       },
@@ -39,7 +40,7 @@ export async function bulkAddQuizQuestions(questions: QuizQuestionInput[]) {
     const result = await prisma.quizQuestion.createMany({
       data: questions.map(q => ({
         ...q,
-        options: q.options as any,
+        options: q.options as unknown as Prisma.InputJsonValue,
         isActive: true,
       })),
     });
@@ -48,6 +49,59 @@ export async function bulkAddQuizQuestions(questions: QuizQuestionInput[]) {
   } catch (error) {
     console.error('Failed to bulk add quiz questions:', error);
     return { success: false, error: 'Failed to bulk add questions' };
+  }
+}
+
+export async function getAdminQuizQuestions(languageId: number) {
+  try {
+    const questions = await prisma.quizQuestion.findMany({
+      where: { languageId },
+      orderBy: { createdAt: 'desc' },
+    });
+    return { success: true, questions };
+  } catch (error) {
+    console.error('Failed to get admin quiz questions:', error);
+    return { success: false, error: 'Failed to fetch questions' };
+  }
+}
+
+export async function updateQuizQuestion(
+  id: number,
+  data: Partial<QuizQuestionInput> & { isActive?: boolean }
+) {
+  try {
+    const question = await prisma.quizQuestion.update({
+      where: { id },
+      data: {
+        ...(data.languageId !== undefined && { languageId: data.languageId }),
+        ...(data.text !== undefined && { text: data.text }),
+        ...(data.options !== undefined && {
+          options: data.options as unknown as Prisma.InputJsonValue,
+        }),
+        ...(data.correctAnswer !== undefined && {
+          correctAnswer: data.correctAnswer,
+        }),
+        ...(data.isActive !== undefined && { isActive: data.isActive }),
+      },
+    });
+    revalidatePath('/admin/quiz');
+    return { success: true, question };
+  } catch (error) {
+    console.error('Failed to update quiz question:', error);
+    return { success: false, error: 'Failed to update question' };
+  }
+}
+
+export async function deleteQuizQuestion(id: number) {
+  try {
+    await prisma.quizQuestion.delete({
+      where: { id },
+    });
+    revalidatePath('/admin/quiz');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete quiz question:', error);
+    return { success: false, error: 'Failed to delete question' };
   }
 }
 
@@ -63,9 +117,9 @@ export async function getCuratorTestQuestions(userId: string) {
       return { success: false, error: 'No target language selected' };
     }
 
-    // 2. Determine number of questions (default to 5 limit)
-    const limitArray = parseInt(process.env.QUIZ_QUESTION_COUNT || '5', 10);
-    const limit = isNaN(limitArray) ? 5 : limitArray;
+    // 2. Determine number of questions (default to 10 limit)
+    const limitArray = parseInt(process.env.QUIZ_QUESTION_COUNT || '10', 10);
+    const limit = isNaN(limitArray) ? 10 : limitArray;
 
     // 3. Fetch active questions randomized
     // Note: Prisma does not have a native "ORDER BY RAND()",

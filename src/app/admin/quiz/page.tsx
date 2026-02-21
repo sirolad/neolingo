@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
 import { Button } from '@/components/ui/Button';
@@ -12,36 +12,33 @@ import {
   Plus,
   AlertCircle,
   CheckCircle2,
+  Trash2,
+  Edit2,
+  Save,
+  X,
 } from 'lucide-react';
 import Papa from 'papaparse';
 import {
   addQuizQuestion,
   bulkAddQuizQuestions,
+  getAdminQuizQuestions,
+  updateQuizQuestion,
+  deleteQuizQuestion,
   QuizOption,
 } from '@/actions/quiz';
-
-interface LanguageOption {
-  id: number;
-  name: string;
-}
-
-// Temporary hardcoded language list, ideally fetched from an API
-const AVAILABLE_LANGUAGES: LanguageOption[] = [
-  { id: 1, name: 'English' }, // Replace with actual IDs from your DB if different
-  { id: 2, name: 'Hausa' },
-  { id: 3, name: 'Yoruba' },
-  { id: 4, name: 'Igbo' },
-];
+import { getTargetLanguages } from '@/actions/language';
+import { LanguageColumns } from '@/types';
 
 export default function AdminQuizPage() {
   const router = useRouter();
   const { appUser, isLoading: authLoading } = useAuth();
   const { can } = usePermissions();
 
-  const [activeTab, setActiveTab] = useState<'manual' | 'csv'>('manual');
-  const [selectedLanguageId, setSelectedLanguageId] = useState<number>(
-    AVAILABLE_LANGUAGES[0].id
+  const [activeTab, setActiveTab] = useState<'manage' | 'manual' | 'csv'>(
+    'manage'
   );
+  const [languages, setLanguages] = useState<LanguageColumns[]>([]);
+  const [selectedLanguageId, setSelectedLanguageId] = useState<number | ''>('');
 
   // Manual Form State
   const [manualQuestion, setManualQuestion] = useState('');
@@ -63,12 +60,94 @@ export default function AdminQuizPage() {
   const [csvSuccess, setCsvSuccess] = useState<string | null>(null);
   const [csvError, setCsvError] = useState<string | null>(null);
 
+  // Manage Tab State
+  const [existingQuestions, setExistingQuestions] = useState<any[]>([]);
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState(false);
+  const [editingQuestionId, setEditingQuestionId] = useState<number | null>(
+    null
+  );
+  const [editContent, setEditContent] = useState<any>(null);
+
+  // Fetch Existing Questions
+  useEffect(() => {
+    if (activeTab === 'manage' && selectedLanguageId) {
+      const fetchQuestions = async () => {
+        setIsLoadingQuestions(true);
+        const res = await getAdminQuizQuestions(Number(selectedLanguageId));
+        if (res.success && res.questions) {
+          setExistingQuestions(res.questions);
+        }
+        setIsLoadingQuestions(false);
+      };
+      fetchQuestions();
+    }
+  }, [activeTab, selectedLanguageId]);
+
+  const handleEditClick = (q: any) => {
+    setEditingQuestionId(q.id);
+    setEditContent({ ...q });
+  };
+
+  const handleEditSave = async (id: number) => {
+    setIsSubmittingManual(true);
+    const res = await updateQuizQuestion(id, {
+      text: editContent.text,
+      options: editContent.options,
+      correctAnswer: editContent.correctAnswer,
+      isActive: editContent.isActive,
+    });
+    setIsSubmittingManual(false);
+
+    if (res.success && res.question) {
+      setExistingQuestions(prev =>
+        prev.map(q => (q.id === id ? res.question : q))
+      );
+      setEditingQuestionId(null);
+    } else {
+      alert('Failed to update question');
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!confirm('Are you sure you want to delete this question?')) return;
+    const res = await deleteQuizQuestion(id);
+    if (res.success) {
+      setExistingQuestions(prev => prev.filter(q => q.id !== id));
+    } else {
+      alert('Failed to delete question');
+    }
+  };
+
+  const fetchLanguages = useCallback(async () => {
+    const result = await getTargetLanguages();
+    if (result.success && result.data.length > 0) {
+      setLanguages(result.data);
+      setSelectedLanguageId(result.data[0].id);
+    }
+  }, []);
+
+  // Check permissions separately to avoid re-running when can function changes
+  const hasAdminAccess = can('view:admin');
+
   useEffect(() => {
     if (authLoading) return;
-    if (!appUser || !can('view:admin')) {
+    if (!appUser || !hasAdminAccess) {
       router.push('/home');
+      return;
     }
-  }, [appUser, authLoading, can, router]);
+
+    // Only fetch languages if they haven't been loaded yet
+    if (languages.length === 0) {
+      fetchLanguages();
+    }
+  }, [
+    appUser,
+    authLoading,
+    hasAdminAccess,
+    fetchLanguages,
+    router,
+    languages.length,
+  ]);
 
   if (authLoading || !appUser) return null;
 
@@ -97,7 +176,7 @@ export default function AdminQuizPage() {
 
     try {
       const result = await addQuizQuestion({
-        languageId: selectedLanguageId,
+        languageId: Number(selectedLanguageId),
         text: manualQuestion,
         options: manualOptions,
         correctAnswer: correctOption.value.trim(),
@@ -181,7 +260,7 @@ export default function AdminQuizPage() {
             const correctAnswer = correctOption ? correctOption.value : optA; // Fallback
 
             formattedQuestions.push({
-              languageId: selectedLanguageId,
+              languageId: Number(selectedLanguageId),
               text: text,
               options: options,
               correctAnswer: correctAnswer,
@@ -251,8 +330,9 @@ export default function AdminQuizPage() {
             value={selectedLanguageId}
             onChange={e => setSelectedLanguageId(Number(e.target.value))}
             className="w-full md:w-1/2 p-3 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary"
+            disabled={languages.length === 0}
           >
-            {AVAILABLE_LANGUAGES.map(lang => (
+            {languages.map(lang => (
               <option
                 key={lang.id}
                 value={lang.id}
@@ -265,10 +345,19 @@ export default function AdminQuizPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-neutral-200 dark:border-neutral-800 mb-6">
+        <div className="flex border-b border-neutral-200 dark:border-neutral-800 mb-6 w-full overflow-x-auto no-scrollbar">
+          <button
+            onClick={() => setActiveTab('manage')}
+            className={`pb-4 px-4 text-sm font-medium transition-colors relative whitespace-nowrap ${activeTab === 'manage' ? 'text-primary' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
+          >
+            Manage Existing
+            {activeTab === 'manage' && (
+              <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary rounded-t-full" />
+            )}
+          </button>
           <button
             onClick={() => setActiveTab('manual')}
-            className={`pb-4 px-4 text-sm font-medium transition-colors relative ${activeTab === 'manual' ? 'text-primary' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
+            className={`pb-4 px-4 text-sm font-medium transition-colors relative whitespace-nowrap ${activeTab === 'manual' ? 'text-primary' : 'text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300'}`}
           >
             Add Manually
             {activeTab === 'manual' && (
@@ -285,6 +374,159 @@ export default function AdminQuizPage() {
             )}
           </button>
         </div>
+
+        {/* Manage Form */}
+        {activeTab === 'manage' && (
+          <div className="bg-white dark:bg-neutral-900 rounded-2xl p-6 shadow-sm border border-neutral-100 dark:border-neutral-800">
+            {isLoadingQuestions ? (
+              <div className="flex items-center justify-center p-8">
+                <p className="text-neutral-500">Loading questions...</p>
+              </div>
+            ) : existingQuestions.length === 0 ? (
+              <div className="text-center p-8">
+                <p className="text-neutral-500 dark:text-neutral-400 mb-4">
+                  No questions found for this language.
+                </p>
+                <Button onClick={() => setActiveTab('manual')}>
+                  Add First Question
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {existingQuestions.map(q => (
+                  <div
+                    key={q.id}
+                    className="border border-neutral-200 dark:border-neutral-800 rounded-xl p-4"
+                  >
+                    {editingQuestionId === q.id ? (
+                      <div className="space-y-4">
+                        <Input
+                          value={editContent.text}
+                          onChange={e =>
+                            setEditContent({
+                              ...editContent,
+                              text: e.target.value,
+                            })
+                          }
+                          placeholder="Question text"
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          {editContent.options.map((opt: any, idx: number) => (
+                            <Input
+                              key={idx}
+                              value={opt.value}
+                              onChange={e => {
+                                const newOpts = [...editContent.options];
+                                newOpts[idx].value = e.target.value;
+                                setEditContent({
+                                  ...editContent,
+                                  options: newOpts,
+                                });
+                              }}
+                              placeholder={`Option ${opt.label}`}
+                            />
+                          ))}
+                        </div>
+                        <div className="flex gap-4 items-center">
+                          <select
+                            value={editContent.correctAnswer}
+                            onChange={e =>
+                              setEditContent({
+                                ...editContent,
+                                correctAnswer: e.target.value,
+                              })
+                            }
+                            className="p-2 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent text-sm"
+                          >
+                            {editContent.options.map((opt: any) => (
+                              <option
+                                className="dark:bg-neutral-900"
+                                key={opt.label}
+                                value={opt.value}
+                              >
+                                {opt.label} ({opt.value})
+                              </option>
+                            ))}
+                          </select>
+                          <label className="flex items-center gap-2 text-sm text-neutral-900 dark:text-neutral-100">
+                            <input
+                              type="checkbox"
+                              checked={editContent.isActive}
+                              onChange={e =>
+                                setEditContent({
+                                  ...editContent,
+                                  isActive: e.target.checked,
+                                })
+                              }
+                              className="rounded border-neutral-300"
+                            />
+                            Active
+                          </label>
+                        </div>
+                        <div className="flex justify-end gap-2 mt-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setEditingQuestionId(null)}
+                          >
+                            <X className="w-4 h-4 mr-1" /> Cancel
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => handleEditSave(q.id)}
+                            disabled={isSubmittingManual}
+                          >
+                            <Save className="w-4 h-4 mr-1" /> Save
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
+                            {q.text}
+                          </h3>
+                          <div className="flex gap-2 shrink-0 ml-4">
+                            <button
+                              onClick={() => handleEditClick(q)}
+                              className="p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(q.id)}
+                              className="p-1 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4 text-sm mt-3">
+                          {q.options.map((opt: any) => (
+                            <div
+                              key={opt.label}
+                              className={`p-2 rounded ${q.correctAnswer === opt.value ? 'bg-green-50 dark:bg-green-900/20 text-green-700 border border-green-200 dark:border-green-800' : 'bg-neutral-50 dark:bg-neutral-800/50 text-neutral-600 dark:text-neutral-400'}`}
+                            >
+                              <span className="font-semibold mr-2">
+                                {opt.label}:
+                              </span>
+                              {opt.value}
+                            </div>
+                          ))}
+                        </div>
+                        {!q.isActive && (
+                          <div className="mt-3 inline-block px-2 text-xs py-1 bg-neutral-200 dark:bg-neutral-800 rounded text-neutral-600 font-medium">
+                            Inactive / Draft
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Manual Form */}
         {activeTab === 'manual' && (
