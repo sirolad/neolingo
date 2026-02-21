@@ -582,10 +582,8 @@ export default function DictionaryPage() {
                       definition={`${word.definition}`}
                       languageName={
                         activeLanguage === 'english'
-                          ? 'English'
-                          : userNeoCommunity
-                            ? userNeoCommunity.name
-                            : 'NeoLingo'
+                          ? userNeoCommunity?.name || 'NeoLingo'
+                          : 'English'
                       }
                       index={index}
                       translations={word.translations}
