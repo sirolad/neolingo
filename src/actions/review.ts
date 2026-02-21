@@ -33,6 +33,18 @@ export async function getPendingRequests(limit = 10, offset = 0) {
   }
 }
 
+export async function getPendingReviewsCount() {
+  try {
+    const count = await prisma.translationRequest.count({
+      where: { status: 'PENDING' },
+    });
+    return { success: true, count };
+  } catch (error) {
+    console.error('Failed to fetch pending reviews count:', error);
+    return { success: false, count: 0 };
+  }
+}
+
 class ReviewActions {
   @Authorized('review:requests')
   static async reviewRequest(

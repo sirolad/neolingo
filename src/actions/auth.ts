@@ -114,3 +114,16 @@ export async function getUserContext(userId: string) {
     userProfile,
   };
 }
+
+export async function getTotalUserCount(): Promise<{
+  success: boolean;
+  count: number;
+}> {
+  try {
+    const count = await prisma.userProfile.count();
+    return { success: true, count };
+  } catch (err) {
+    console.error('Failed to get total user count:', err);
+    return { success: false, count: 0 };
+  }
+}

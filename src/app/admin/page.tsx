@@ -19,9 +19,13 @@ import {
   ChevronRight,
   Menu,
   X,
+  HelpCircle,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { usePermissions } from '@/hooks/usePermissions';
+import { getQuizQuestionCount } from '@/actions/quiz';
+import { getTotalUserCount } from '@/actions/auth';
+import { getPendingReviewsCount } from '@/actions/review';
 
 // ─── Sidebar nav items ────────────────────────────────────────────────────────
 const NAV_ITEMS = [
@@ -60,17 +64,20 @@ const NAV_ITEMS = [
 ];
 
 // ─── Metric card data (placeholder) ──────────────────────────────────────────
-const METRICS = [
+const getMetricsBase = (
+  userCount: number | string,
+  pendingCount: number | string
+) => [
   {
     label: 'Total Users',
-    value: '—',
+    value: userCount,
     trend: null,
     icon: Users,
     color: 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400',
   },
   {
     label: 'Pending Reviews',
-    value: '—',
+    value: pendingCount,
     trend: null,
     icon: Clock,
     color:
@@ -99,6 +106,9 @@ export default function AdminPage() {
   const { appUser, isLoading: authLoading } = useAuth();
   const { role, can } = usePermissions();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [questionCount, setQuestionCount] = useState<number | string>('—');
+  const [userCount, setUserCount] = useState<number | string>('—');
+  const [pendingCount, setPendingCount] = useState<number | string>('—');
 
   useEffect(() => {
     if (authLoading) return;
@@ -108,10 +118,34 @@ export default function AdminPage() {
     }
     if (!can('view:admin')) {
       router.push('/home');
+      return;
     }
+
+    const fetchDashboardMetrics = async () => {
+      const [qcRes, ucRes, prRes] = await Promise.all([
+        getQuizQuestionCount(),
+        getTotalUserCount(),
+        getPendingReviewsCount(),
+      ]);
+      if (qcRes.success) setQuestionCount(qcRes.count!);
+      if (ucRes.success) setUserCount(ucRes.count!);
+      if (prRes.success) setPendingCount(prRes.count!);
+    };
+    fetchDashboardMetrics();
   }, [appUser, authLoading, can, router]);
 
   if (authLoading || !appUser) return null;
+
+  const dashboardMetrics = [
+    ...getMetricsBase(userCount, pendingCount),
+    {
+      label: 'Question Bank',
+      value: questionCount,
+      trend: null,
+      icon: HelpCircle,
+      color: 'bg-teal-50 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400',
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-950 flex">
@@ -272,8 +306,8 @@ export default function AdminPage() {
           </div>
 
           {/* Metric cards */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            {METRICS.map(metric => {
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            {dashboardMetrics.map(metric => {
               const Icon = metric.icon;
               return (
                 <div

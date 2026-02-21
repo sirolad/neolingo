@@ -99,6 +99,16 @@ export async function getAdminQuizQuestions(
   }
 }
 
+export async function getQuizQuestionCount() {
+  try {
+    const count = await prisma.quizQuestion.count();
+    return { success: true, count };
+  } catch (error) {
+    console.error('Failed to get quiz question count:', error);
+    return { success: false, count: 0 };
+  }
+}
+
 export async function updateQuizQuestion(
   id: number,
   data: Partial<QuizQuestionInput> & { isActive?: boolean }
