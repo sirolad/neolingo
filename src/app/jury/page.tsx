@@ -132,7 +132,7 @@ export default function JuryPage() {
       }
     };
     fetchTerms();
-  }, [loadSuggestionsTrigger]);
+  }, [userNeoCommunity, loadSuggestionsTrigger]);
 
   useEffect(() => {
     const fetchRatedByMe = async () => {

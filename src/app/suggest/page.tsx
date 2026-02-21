@@ -141,7 +141,7 @@ export default function SuggestPage() {
       setLoadSuggestionsTrigger(false);
     };
     fetchTerms();
-  }, [loadSuggestionsTrigger]);
+  }, [userNeoCommunity, loadSuggestionsTrigger]);
 
   useEffect(() => {
     if (state !== prevStateRef.current && !state.success && state.message) {

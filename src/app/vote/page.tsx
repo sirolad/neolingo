@@ -127,7 +127,7 @@ export default function VotePage() {
       setLoadSuggestionsTrigger(false);
     };
     fetchTerms();
-  }, [loadSuggestionsTrigger]);
+  }, [authLoading, loadSuggestionsTrigger]);
 
   if (loading) {
     return (
