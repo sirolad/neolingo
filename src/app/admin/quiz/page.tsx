@@ -18,7 +18,21 @@ import {
   X,
   Search,
   Home,
+  MoreVertical,
 } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import Papa from 'papaparse';
 import {
   addQuizQuestion,
@@ -354,25 +368,25 @@ export default function AdminQuizPage() {
           <label className="block heading-6 text-neutral-900 dark:text-neutral-100 mb-3">
             Target Language
           </label>
-          <select
-            value={selectedLanguageId}
-            onChange={e => {
-              setSelectedLanguageId(Number(e.target.value));
+          <Select
+            value={String(selectedLanguageId)}
+            onValueChange={val => {
+              setSelectedLanguageId(Number(val));
               setCurrentPage(1);
             }}
-            className="w-full md:w-1/2 p-3 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary"
             disabled={languages.length === 0}
           >
-            {languages.map(lang => (
-              <option
-                key={lang.id}
-                value={lang.id}
-                className="dark:bg-neutral-900"
-              >
-                {lang.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full md:w-1/2">
+              <SelectValue placeholder="Select a language" />
+            </SelectTrigger>
+            <SelectContent>
+              {languages.map(lang => (
+                <SelectItem key={lang.id} value={String(lang.id)}>
+                  {lang.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Tabs */}
@@ -469,26 +483,26 @@ export default function AdminQuizPage() {
                           ))}
                         </div>
                         <div className="flex gap-4 items-center">
-                          <select
+                          <Select
                             value={editContent.correctAnswer}
-                            onChange={e =>
+                            onValueChange={val =>
                               setEditContent({
                                 ...editContent,
-                                correctAnswer: e.target.value,
+                                correctAnswer: val,
                               })
                             }
-                            className="p-2 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent text-sm"
                           >
-                            {editContent.options.map((opt: any) => (
-                              <option
-                                className="dark:bg-neutral-900"
-                                key={opt.label}
-                                value={opt.value}
-                              >
-                                {opt.label} ({opt.value})
-                              </option>
-                            ))}
-                          </select>
+                            <SelectTrigger className="w-[200px] h-9 text-sm">
+                              <SelectValue placeholder="Select correct answer" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {editContent.options.map((opt: any) => (
+                                <SelectItem key={opt.label} value={opt.value}>
+                                  {opt.label} ({opt.value})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                           <label className="flex items-center gap-2 text-sm text-neutral-900 dark:text-neutral-100">
                             <input
                               type="checkbox"
@@ -527,19 +541,34 @@ export default function AdminQuizPage() {
                           <h3 className="font-semibold text-neutral-900 dark:text-neutral-100">
                             {q.text}
                           </h3>
-                          <div className="flex gap-2 shrink-0 ml-4">
-                            <button
-                              onClick={() => handleEditClick(q)}
-                              className="p-1 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded"
-                            >
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(q.id)}
-                              className="p-1 text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 rounded"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                          <div className="flex gap-1 shrink-0 ml-4">
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-8 w-8 p-0"
+                                >
+                                  <MoreVertical className="h-4 w-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => handleEditClick(q)}
+                                  className="text-blue-600 dark:text-blue-400"
+                                >
+                                  <Edit2 className="w-4 h-4 mr-2" />
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => handleDelete(q.id)}
+                                  className="text-red-600 dark:text-red-400"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4 text-sm mt-3">
@@ -653,24 +682,20 @@ export default function AdminQuizPage() {
                 <label className="block body-small font-semibold text-neutral-700 dark:text-neutral-300 mb-2">
                   Correct Answer
                 </label>
-                <select
+                <Select
                   value={manualCorrectAnswer}
-                  onChange={e => setManualCorrectAnswer(e.target.value)}
-                  className="w-full p-3 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-transparent text-neutral-900 dark:text-neutral-100 focus:outline-none focus:ring-2 focus:ring-primary"
+                  onValueChange={setManualCorrectAnswer}
                 >
-                  <option value="A" className="dark:bg-neutral-900">
-                    Option A
-                  </option>
-                  <option value="B" className="dark:bg-neutral-900">
-                    Option B
-                  </option>
-                  <option value="C" className="dark:bg-neutral-900">
-                    Option C
-                  </option>
-                  <option value="D" className="dark:bg-neutral-900">
-                    Option D
-                  </option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select correct answer" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="A">Option A</SelectItem>
+                    <SelectItem value="B">Option B</SelectItem>
+                    <SelectItem value="C">Option C</SelectItem>
+                    <SelectItem value="D">Option D</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="pt-4 border-t border-neutral-100 dark:border-neutral-800">
