@@ -25,7 +25,7 @@ import { PermissionGate } from '@/components/auth/PermissionGate';
 export default function ProfilePage() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-  const { appUser, logout, userRole } = useAuth();
+  const { appUser, logout, userNeoCommunity, userRole } = useAuth();
   const user = appUser;
 
   const isDarkMode = theme === 'dark';
@@ -233,12 +233,12 @@ export default function ProfilePage() {
                       </div>
                       <div className="flex items-center gap-2 bg-neutral-100 dark:bg-neutral-800 px-2 py-1 rounded-md">
                         <ReactCountryFlag
-                          countryCode="NG"
+                          countryCode={userNeoCommunity?.flagIcon || 'NG'}
                           svg
                           className="w-4 h-4 rounded-sm"
                         />
                         <span className="text-caption font-medium text-neutral-600 dark:text-neutral-400">
-                          Yoruba
+                          {userNeoCommunity?.name || 'Yoruba'}
                         </span>
                       </div>
                     </div>

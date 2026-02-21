@@ -65,7 +65,7 @@ function ResultContent() {
                 : "Sorry, you didn't quite make it this time, kindly take the test again."}
             </p>
             <p className="body-small text-neutral-500 dark:text-neutral-400 mt-4">
-              Score: {score}/5
+              Score: {score}/ {process.env.QUIZ_QUESTION_COUNT || 10}
             </p>
           </div>
 
